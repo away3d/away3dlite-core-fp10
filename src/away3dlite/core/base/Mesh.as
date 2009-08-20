@@ -33,6 +33,8 @@ package away3dlite.core.base
 		private var _material:Material;
 		private var _bothsides:Boolean;
 		
+		public var sortFaces:Boolean = true;
+		
 		/**
 		 * 
 		 */

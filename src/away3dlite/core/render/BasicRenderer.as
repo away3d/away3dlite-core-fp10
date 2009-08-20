@@ -12,10 +12,9 @@ package away3dlite.core.render
 	/**
 	 * @author robbateman
 	 */
-	public class BasicRenderer implements IRenderer
+	public class BasicRenderer extends Renderer
 	{
 		private var _scene:Scene3D;
-		private var _view:View3D;
 		private var _mesh:Mesh;
 		private var _face:Face;
 		private var _mFaces:Array;
@@ -66,15 +65,7 @@ package away3dlite.core.render
 		/**
 		 * 
 		 */
-		public function setView(view:View3D):void
-		{
-			_view = view;
-		}
-		
-		/**
-		 * 
-		 */
-		public function render(object:Object3D):void
+		public override function render(object:Object3D):void
 		{
 			_scene = object as Scene3D;
 			
@@ -93,6 +84,7 @@ package away3dlite.core.render
 			
 			// sortOn (faster than Vector.sort)
 			_faces.sortOn("screenT", 16);
+			//shellSort(_faces);
 			
 			//reorder indices
 			_material = null;
@@ -162,9 +154,9 @@ package away3dlite.core.render
 					_uvt[++_k] = _uvtData[_face.t2];
 				}
 			}
+			
 			_material.graphicsData[_material.trianglesIndex] = _triangles;
 			_view.graphics.drawGraphicsData(_material.graphicsData);
-				
 		}
 	}
 	

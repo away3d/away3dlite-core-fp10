@@ -13,7 +13,7 @@ package away3dlite.containers
 	 */
 	public class View3D extends Sprite
 	{
-		private var _renderer:IRenderer;
+		private var _renderer:Renderer;
 		private var _camera:Camera3D;
 		private var _scene:ObjectContainer3D;
         
@@ -49,11 +49,11 @@ package away3dlite.containers
          * 
          * @see #render()
          */
-		public function get renderer():IRenderer
+		public function get renderer():Renderer
 		{
 			return _renderer;
 		}
-		public function set renderer(val:IRenderer):void
+		public function set renderer(val:Renderer):void
 		{
 			if (_renderer == val)
 				return;

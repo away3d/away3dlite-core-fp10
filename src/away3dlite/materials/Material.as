@@ -49,11 +49,11 @@ package away3dlite.materials
 			graphicsData.fixed = false;
 			
 			if(_debug) {
+				graphicsData.shift();
 				graphicsData.unshift(DEBUG_STROKE);
-				trianglesIndex++;
 			} else {
-				graphicsData.splice(graphicsData.indexOf(DEBUG_STROKE), 1);
-				trianglesIndex--;
+				graphicsData.shift();
+				graphicsData.unshift(_graphicsStroke);
 			}
 			
 			graphicsData.fixed = true;

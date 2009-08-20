@@ -12,8 +12,6 @@
     {
 		/** @private */
         arcane var _primitiveDirty:Boolean;
-		
-		private var _index:int;
      	
      	protected function updatePrimitive():void
      	{
