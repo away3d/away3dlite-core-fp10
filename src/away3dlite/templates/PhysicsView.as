@@ -2,8 +2,6 @@ package away3dlite.templates
 {
 	import away3dlite.materials.WireframeMaterial;
 	
-	import flash.utils.*;
-	
 	// to be release soon
 	import jiglib.plugin.away3dlite.*;
 	

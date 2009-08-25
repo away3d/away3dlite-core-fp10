@@ -1,5 +1,8 @@
 package away3dlite.materials
 {
+	import away3dlite.core.utils.Debug;
+	import away3dlite.loaders.utils.LoaderUtil;
+	
 	import flash.display.*;
 	import flash.events.*;
 	import flash.net.*;
@@ -13,16 +16,16 @@ package away3dlite.materials
 	{
 		private function loadTexture(url:String):void
 		{
-			var textureLoader:Loader = new Loader();
-			textureLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onTextureLoaded, false, 0, true);
-
-			textureLoader.load(new URLRequest(url), new LoaderContext(false, ApplicationDomain.currentDomain));
+			LoaderUtil.load(url, onTextureLoaded);
 		}
 		
 		private function onTextureLoaded(event:Event):void
 		{
-			event.target.removeEventListener(Event.COMPLETE, onTextureLoaded);
-			bitmap = Bitmap(event.target.content).bitmapData;
+			if(event.type==Event.COMPLETE)
+			{
+				event.target.removeEventListener(Event.COMPLETE, onTextureLoaded);
+				bitmap = Bitmap(event.target.content).bitmapData;
+			}
 		}
 		
 		/**
@@ -31,7 +34,6 @@ package away3dlite.materials
 		public function BitmapFileMaterial(url:String, color:uint = 0xFFFFFF, alpha:Number = 1)
 		{
 			super(new BitmapData(100, 100, (alpha < 1), color));
-			
 			loadTexture(url);
 		}
 	}

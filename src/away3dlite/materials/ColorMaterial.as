@@ -52,12 +52,10 @@ package away3dlite.materials
 			_color = color;
 			_alpha = alpha;
 			
-			_graphicsBitmapFill.bitmapData = new BitmapData(2, 2, false, _color);
-			
 			//_stroke = new GraphicsStroke(1, false, "normal", "none", "round", 0, new GraphicsSolidFill(_color, _alpha));
-			_graphicsBitmapFill = new GraphicsBitmapFill(new BitmapData(2, 2, false, color), new Matrix(), false, true);
+			_graphicsBitmapFill = new GraphicsBitmapFill(new BitmapData(2, 2, (_alpha<1), _color), new Matrix(), true, true);
 			
-			graphicsData = Vector.<IGraphicsData>([_graphicsStroke, _graphicsBitmapFill, _triangles, _graphicsEndFill]);
+			graphicsData = Vector.<IGraphicsData>([_graphicsStroke, _graphicsBitmapFill, _triangles, _graphicsBitmapFill]);
 			graphicsData.fixed = true;
 			
 			trianglesIndex = 2;
