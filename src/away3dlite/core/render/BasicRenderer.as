@@ -64,7 +64,7 @@ package away3dlite.core.render
 		{
 			_scene = object as Scene3D;
 			
-			_clipping = _view.clipping;
+			_clipping = _view.screenClipping;
 			
 			_faces.length = 0;
 			
