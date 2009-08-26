@@ -3,6 +3,7 @@ package away3dlite.core.render
 	import away3dlite.arcane;
 	import away3dlite.containers.*;
 	import away3dlite.core.base.*;
+	import away3dlite.core.clip.*;
 	import away3dlite.materials.*;
 	
 	import flash.display.*;
@@ -15,9 +16,9 @@ package away3dlite.core.render
 	public class BasicRenderer extends Renderer
 	{
 		private var _scene:Scene3D;
+		private var _clipping:Clipping;
 		private var _mesh:Mesh;
 		private var _face:Face;
-		private var _mFaces:Array;
 		private var _faces:Array = new Array();
 		private var _faceStore:Vector.<int> = new Vector.<int>();
 		private var _screenVertices:Vector.<Number>;
@@ -42,13 +43,7 @@ package away3dlite.core.render
 					collectFaces(_child);
 				
 			} else if (object is Mesh) {
-				_mesh = object as Mesh;
-				_mFaces = _mesh._faces;
-				_screenVertices = _mesh._screenVertices;
-				
-				for each (_face in _mFaces)
-					if (_mesh.bothsides || 0.5*(_screenVertices[_face.x0] * (_screenVertices[_face.y2] - _screenVertices[_face.y1]) + _screenVertices[_face.x1]*(_screenVertices[_face.y0] - _screenVertices[_face.y2]) + _screenVertices[_face.x2]*(_screenVertices[_face.y1] - _screenVertices[_face.y0])) > 0)
-						_faces[_faces.length] = _face;
+				_clipping.collectFaces(object as Mesh, _faces);
 			}
 		}
 		
@@ -68,6 +63,8 @@ package away3dlite.core.render
 		public override function render(object:Object3D):void
 		{
 			_scene = object as Scene3D;
+			
+			_clipping = _view.clipping;
 			
 			_faces.length = 0;
 			
@@ -109,13 +106,13 @@ package away3dlite.core.render
 					_screenVertices = _mesh._screenVertices;
 					_uvtData = _mesh._uvtData;
 					_faceStore.length = 0;
-					_faceStore.length = _mesh._indices.length;
+					_faceStore.length = _mesh._vertices.length/3;
 				} else if (_mesh != _face.mesh) {
 					_mesh = _face.mesh;
 					_screenVertices = _mesh._screenVertices;
 					_uvtData = _mesh._uvtData;
 					_faceStore.length = 0;
-					_faceStore.length = _mesh._indices.length;
+					_faceStore.length = _mesh._vertices.length/3;
 				}
 				
 				if (_faceStore[_face.i0]) {
@@ -155,8 +152,10 @@ package away3dlite.core.render
 				}
 			}
 			
-			_material.graphicsData[_material.trianglesIndex] = _triangles;
-			_view.graphics.drawGraphicsData(_material.graphicsData);
+			if (_material) {
+				_material.graphicsData[_material.trianglesIndex] = _triangles;
+				_view.graphics.drawGraphicsData(_material.graphicsData);
+			}
 		}
 	}
 	

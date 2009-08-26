@@ -9,7 +9,7 @@ package away3dlite.core.render
 	/**
 	 * @author robbateman
 	 */
-	public class GroupRenderer extends Renderer
+	public class FastRenderer extends Renderer
 	{
 		private var _face:Face;
 		private var _faces:Array;
@@ -22,7 +22,7 @@ package away3dlite.core.render
 		/**
 		 * 
 		 */
-		public function GroupRenderer()
+		public function FastRenderer()
 		{
 			
 		}

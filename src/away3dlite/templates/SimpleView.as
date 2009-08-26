@@ -3,7 +3,7 @@ package away3dlite.templates
 	import away3dlite.cameras.Camera3D;
 	import away3dlite.containers.Scene3D;
 	import away3dlite.containers.View3D;
-	import away3dlite.core.render.GroupRenderer;
+	import away3dlite.core.render.FastRenderer;
 	import away3dlite.core.utils.TextUtil;
 	
 	import flash.display.Sprite;
@@ -22,7 +22,7 @@ package away3dlite.templates
 	 */
 	public class SimpleView extends Sprite
 	{
-		protected var renderer:GroupRenderer;
+		protected var renderer:FastRenderer;
 
 		protected var scene:Scene3D;
 		protected var camera:Camera3D;

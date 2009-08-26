@@ -139,15 +139,15 @@ package away3dlite.cameras
         */
         public function moveCamera():Boolean
         {
-            var gx:Number = distance * Math.sin(panangle * toRADIANS) * Math.cos(tiltangle * toRADIANS);
-            var gz:Number = distance * Math.cos(panangle * toRADIANS) * Math.cos(tiltangle * toRADIANS);
-            var gy:Number = distance * Math.sin(tiltangle * toRADIANS) * yfactor;
+            var gx:Number = distance*Math.sin(panangle*toRADIANS)*Math.cos(tiltangle*toRADIANS);
+            var gz:Number = distance*Math.cos(panangle*toRADIANS)*Math.cos(tiltangle*toRADIANS);
+            var gy:Number = -distance*Math.sin(tiltangle*toRADIANS)*yfactor;
 			
             if ((x == gx) && (y == gy) && (z == gz))
                 return false;
 			
             x = gx;
-            y = -gy;
+            y = gy;
             z = gz;
 			
             return true;

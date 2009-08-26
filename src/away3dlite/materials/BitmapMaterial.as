@@ -35,5 +35,24 @@ package away3dlite.materials
 		{
 			_graphicsBitmapFill.repeat = val;
 		}
+		
+		public function get smooth():Boolean
+		{
+			return _graphicsBitmapFill.smooth;
+		}
+		public function set smooth(val:Boolean):void
+		{
+			_graphicsBitmapFill.smooth = val;
+		}
+		
+		public function get width():int
+		{
+			return _graphicsBitmapFill.bitmapData.width;
+		}
+		
+		public function get height():int
+		{
+			return _graphicsBitmapFill.bitmapData.height;
+		}
 	}
 }
