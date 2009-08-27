@@ -88,12 +88,13 @@ package away3dlite.core.render
 			_material = null;
 			_mesh = null;
 			
+			var _view_graphics_drawGraphicsData:Function = _view.graphics.drawGraphicsData;
 			for each(_face in _faces) {
 				
 				if (_material != _face.mesh.material) {
 					if (_material) {
 						_material.graphicsData[_material.trianglesIndex] = _triangles;
-						_view.graphics.drawGraphicsData(_material.graphicsData);
+						_view_graphics_drawGraphicsData(_material.graphicsData);
 					}
 					
 					_ind.length = 0;
@@ -155,7 +156,7 @@ package away3dlite.core.render
 			
 			if (_material) {
 				_material.graphicsData[_material.trianglesIndex] = _triangles;
-				_view.graphics.drawGraphicsData(_material.graphicsData);
+				_view_graphics_drawGraphicsData(_material.graphicsData);
 			}
 		}
 	}
