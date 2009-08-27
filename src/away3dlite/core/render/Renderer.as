@@ -19,7 +19,9 @@ package away3dlite.core.render
 		private var _i:int;
 		private var _j:int;
 		private var _k:int;
-		
+		private var q:Vector.<int> = new Vector.<int>(256, true);
+		private var ql:Vector.<int> = new Vector.<int>(256, true);
+		private var empty:int = -1;
 		protected var _view:View3D;
 		
 		protected function shellSort(data:Vector.<Face>, sort:Vector.<Number>):void
@@ -97,9 +99,29 @@ package away3dlite.core.render
 			 */
 		}
 		
+		public function radixSort(data:Vector.<Face>):void
+		{
+	        var i:int, j:int, k:int, l:int, m:int, np0:Vector.<Face> = new Vector.<Face>(data.length, true), np1:Vector.<int> = new Vector.<int>(data.length, true);
+	        
+	        for(k = 0; k < 16; k += 8) {
+	        	
+	        	l = 255 << k;
+	        	
+	            for(i = 0; i < data.length; np0[i] = data[i], np1[int(i++)] = empty)
+	                if(q[j = (l & data[i].screenT) >> k] == empty)
+	                    ql[j] = q[j] = i;
+	                else
+	                    ql[j] = np1[ql[j]] = i;
+	            
+	            for(m = q[i = j = 0]; i < q.length; q[int(i++)] = empty)
+	                for(m = q[i]; m != empty; m = np1[m])
+	                    data[int(j++)] = np0[m];
+	        }
+	    }
+		
 		function Renderer()
 		{
-			
+			for(var i:int = 0; i < q.length; q[int(i++)] = -1);
 		}
 		
 		/**

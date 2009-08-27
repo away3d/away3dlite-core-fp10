@@ -19,7 +19,7 @@ package away3dlite.core.render
 		private var _clipping:Clipping;
 		private var _mesh:Mesh;
 		private var _face:Face;
-		private var _faces:Array = new Array();
+		private var _faces:Vector.<Face> = new Vector.<Face>();
 		private var _faceStore:Vector.<int> = new Vector.<int>();
 		private var _screenVertices:Vector.<Number>;
 		private var _uvtData:Vector.<Number>;
@@ -80,8 +80,9 @@ package away3dlite.core.render
 				_face.calculateScreenZ();
 			
 			// sortOn (faster than Vector.sort)
-			_faces.sortOn("screenT", 16);
+			//_faces.sortOn("screenT", 16);
 			//shellSort(_faces);
+			radixSort(_faces);
 			
 			//reorder indices
 			_material = null;

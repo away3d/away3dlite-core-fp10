@@ -47,7 +47,7 @@ package away3dlite.core.clip
     {
     	protected var _view:View3D;
         protected var _face:Face;
-        protected var _faces:Array;
+        protected var _faces:Vector.<Face>;
         protected var _screenVertices:Vector.<Number>;
         protected var _uvtData:Vector.<Number>;
         protected var _index:int;
@@ -228,7 +228,7 @@ package away3dlite.core.clip
 		 * @param	mesh	The mesh used as a souce for faces.
 		 * @param	faces	The array storing the faces to be rendered.
 		 */
-        public function collectFaces(mesh:Mesh, faces:Array):void
+        public function collectFaces(mesh:Mesh, faces:Vector.<Face>):void
         {
         	_faces = mesh._faces;
         	

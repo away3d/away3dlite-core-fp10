@@ -18,7 +18,7 @@ package away3dlite.core.base
 		arcane var _uvtData:Vector.<Number>;
 		arcane var _indices:Vector.<int>;
 		arcane var _triangles:GraphicsTrianglePath = new GraphicsTrianglePath();
-		arcane var _faces:Array = new Array();
+		arcane var _faces:Vector.<Face> = new Vector.<Face>();
 		arcane var _vertices:Vector.<Number> = new Vector.<Number>();
 		
 		arcane override function updateScene(val:Scene3D):void
@@ -46,7 +46,7 @@ package away3dlite.core.base
 		/**
 		 * 
 		 */
-		public function get faces():Array
+		public function get faces():Vector.<Face>
 		{
 			return _faces;
 		}
@@ -57,7 +57,7 @@ package away3dlite.core.base
 		public function buildFaces():void
 		{
 			_faces.length = 0;
-			var i:int = _indices.length/3;
+			var i:int = _faces.length = _indices.length/3;
 			
 			while (i--) {
 				// 3 point of face 

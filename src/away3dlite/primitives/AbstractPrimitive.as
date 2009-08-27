@@ -50,7 +50,7 @@
 		/**
 		 * @inheritDoc
 		 */
-        public override function get faces():Array
+        public override function get faces():Vector.<Face>
         {
     		if (_primitiveDirty)
     			updatePrimitive();

@@ -12,7 +12,7 @@ package away3dlite.core.render
 	public class FastRenderer extends Renderer
 	{
 		private var _face:Face;
-		private var _faces:Array;
+		private var _faces:Vector.<Face>;
 		private var _indices:Vector.<int>;
 		private var _uvtData:Vector.<Number>;
 		private var _i:int;
@@ -62,8 +62,9 @@ package away3dlite.core.render
 					for each (_face in _faces)
 						_face.calculateScreenZ();
 					
-					_faces.sortOn("screenT", 16);
+					//_faces.sortOn("screenT", 16);
 					//shellSort(_faces);
+					radixSort(_faces);
 					
 					//reorder indices
 					_i = -1;

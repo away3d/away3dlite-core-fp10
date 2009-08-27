@@ -18,7 +18,7 @@ package away3dlite.core.clip
 		/**
 		 * @inheritDoc
 		 */
-        public override function collectFaces(mesh:Mesh, faces:Array):void
+        public override function collectFaces(mesh:Mesh, faces:Vector.<Face>):void
         {
         	_faces = mesh._faces;
         	_uvtData = mesh._uvtData;

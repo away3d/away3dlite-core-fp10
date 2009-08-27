@@ -44,7 +44,7 @@ package away3dlite.core.base
 		public var v2:int;
 		public var t2:int;
 		
-		public var screenT:Number;
+		public var screenT:int;
 		
 		public var normalX:Number;
 		
@@ -106,7 +106,7 @@ package away3dlite.core.base
 		
 		public function calculateScreenZ():void
 		{
-			screenT = uvtData[t0] + uvtData[t1] + uvtData[t2];
+			screenT = ((uvtData[t0] + uvtData[t1] + uvtData[t2])*100000);
 		}
 	}
 }
