@@ -21,8 +21,8 @@ package away3dlite.core.render
 			
 			i = -1;
 			_i = -1;
-            while (i < 255) {
-            	j = q1[int(++i)];
+            while (i++ < 255) {
+            	j = q1[i];
                 while (j) {
                     _face = _faces[j-1];
                     _indices[int(++_i)] = _face.i0;

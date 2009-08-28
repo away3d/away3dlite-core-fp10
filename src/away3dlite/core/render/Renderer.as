@@ -9,12 +9,7 @@ package away3dlite.core.render
 	 */
 	public class Renderer
 	{
-		private var _nextface:Face;
-		private var _prevface:Face;
-		private var _swapped:Boolean;
-		private var _tempSort1:Number;
-		private var _tempSort2:Number;
-		private var _tempData:Face;
+		private var ql:Vector.<int> = new Vector.<int>(256, true);
 		protected var i:int;
 		protected var j:int;
 		protected var k:int;
@@ -23,12 +18,6 @@ package away3dlite.core.render
 		protected var np0:Vector.<int>;
 		protected var np1:Vector.<int>;
 		protected var sort:Vector.<int>;
-		
-		//private var q0:Vector.<int> = new Vector.<int>(256, true);
-		private var q0l:Vector.<int> = new Vector.<int>(256, true);
-		//private var q1:Vector.<int> = new Vector.<int>(256, true);
-		private var q1l:Vector.<int> = new Vector.<int>(256, true);
-		//private var empty:int = -1;
 		protected var _view:View3D;
 		
 		protected var _face:Face;
@@ -45,25 +34,22 @@ package away3dlite.core.render
 	        np1 = new Vector.<int>(_faces.length + 1, true);
 	        sort = new Vector.<int>(_faces.length, true);
 	        
-        	k = 0;
         	i = -1;
+        	j = 0;
             for each (_face in _faces)
-                if(!(q0[j = (255 & (sort[int(++i)] = _face.calculateScreenZ()))]))
-                    q0l[j] = q0[j] = ++k;
+                if((q0[k = (255 & (sort[int(++i)] = _face.calculateScreenZ()))]))
+                    ql[k] = np0[ql[k]] = ++j;
                 else
-                    q0l[j] = np0[q0l[j]] = ++k;
+                    ql[k] = q0[k] = ++j;
             
             i = -1;
-            while (i < 255) {
-            	j = q0[int(++i)];
-                while (j) {
-                    if(!(q1[k = (65280 & sort[j-1]) >> 8]))
-	                    q1l[k] = q1[k] = j;
+            while (i++ < 255) {
+            	j = q0[i];
+                while (j)
+                    if((q1[k = (65280 & sort[j-1]) >> 8]))
+	                    j = np0[ql[k] = np1[ql[k]] = j];
 	                else
-	                    q1l[k] = np1[q1l[k]] = j;
-	                
-	                j = np0[j];
-                }
+	                    j = np0[ql[k] = q1[k] = j];
             }
 		}
 		
