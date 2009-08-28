@@ -11,11 +11,28 @@ package away3dlite.core.render
 	 */
 	public class FastRenderer extends Renderer
 	{
-		private var _face:Face;
-		private var _faces:Vector.<Face>;
 		private var _indices:Vector.<int>;
 		private var _uvtData:Vector.<Number>;
 		private var _i:int;
+				
+		protected override function sortFaces():void
+		{
+			super.sortFaces();
+			
+			i = -1;
+			_i = -1;
+            while (i < 255) {
+            	j = q1[int(++i)];
+                while (j) {
+                    _face = _faces[j-1];
+                    _indices[int(++_i)] = _face.i0;
+					_indices[int(++_i)] = _face.i1;
+					_indices[int(++_i)] = _face.i2;
+					
+					j = np1[j];
+                }
+            }
+		}
 		
 		public var sortMeshes:Boolean = true;
 		
@@ -57,27 +74,11 @@ package away3dlite.core.render
 				if(!_faces.length)
 					return;
 				
-				if (mesh.sortFaces) {
-					// get last depth after projected
-					for each (_face in _faces)
-						_face.calculateScreenZ();
-					
-					//_faces.sortOn("screenT", 16);
-					//shellSort(_faces);
-					radixSort(_faces);
-					
-					//reorder indices
-					_i = -1;
-					for each(_face in _faces) {
-						_indices[int(++_i)] = _face.i0;
-						_indices[int(++_i)] = _face.i1;
-						_indices[int(++_i)] = _face.i2;
-					}
-				}
+				if (mesh.sortFaces)
+					sortFaces();
 				
 				_view.graphics.drawGraphicsData(mesh.material.graphicsData);
 			}
 		}
 	}
-	
 }

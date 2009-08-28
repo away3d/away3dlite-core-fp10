@@ -15,115 +15,60 @@ package away3dlite.core.render
 		private var _tempSort1:Number;
 		private var _tempSort2:Number;
 		private var _tempData:Face;
-		private var _screenT:Number;
-		private var _i:int;
-		private var _j:int;
-		private var _k:int;
-		private var q:Vector.<int> = new Vector.<int>(256, true);
-		private var ql:Vector.<int> = new Vector.<int>(256, true);
-		private var empty:int = -1;
+		protected var i:int;
+		protected var j:int;
+		protected var k:int;
+		protected var q0:Vector.<int>;
+		protected var q1:Vector.<int>;
+		protected var np0:Vector.<int>;
+		protected var np1:Vector.<int>;
+		protected var sort:Vector.<int>;
+		
+		//private var q0:Vector.<int> = new Vector.<int>(256, true);
+		private var q0l:Vector.<int> = new Vector.<int>(256, true);
+		//private var q1:Vector.<int> = new Vector.<int>(256, true);
+		private var q1l:Vector.<int> = new Vector.<int>(256, true);
+		//private var empty:int = -1;
 		protected var _view:View3D;
 		
-		protected function shellSort(data:Vector.<Face>, sort:Vector.<Number>):void
-		{
-			var n:int = data.length;
-			var inc:int = int(n/2);
-			while(inc) {
-				for(_i = inc; _i < n; _i++) {
-					_tempSort1 = sort[_i];
-					_tempData = data[_i];
-					_j = _i;
-					
-					while(_j >= inc && (_tempSort2 = sort[_k = _j - inc]) > _tempSort1) {
-						sort[_j] = _tempSort2;
-						data[_j] = data[_k];
-						_j = _k;
-					}
-					sort[_j] = _tempSort1;
-					data[_j] = _tempData;
-				}
-				
-				inc = int(inc / 2);
-			}			
-			/*
-			while(inc) {
-				
-				for(_i; _i<n; ++_i) {
-					_tempSort1 = sort[_i];
-					_tempData = data[_i];
-					_j = _i;
-					while(_j >= inc && (_tempSort2 = sort[int(_j - inc)]) > _tempSort1) {
-						
-						sort[_j] = _tempSort2;
-						data[_j] = data[_j - inc];
-						
-						_j = _j - inc;
-					}
-					
-					sort[_j] = _tempSort1;
-					data[_j] = _tempData;
-				}
-				
-				inc = int(inc / 2.2);
-			}
-			var n:int = faces.length;
-			for (_i = 0; _i < n-1; _i++) {
-				if (faces[_i].screenT > faces[_i + 1].screenT) {
-					_temp = faces[_i];
-					faces[_i] = faces[_i + 1];
-					faces[_i + 1] = _temp;
-				}
-			}
-			var n:int = data.length;
-			
-			var inc:int = int(n/2);
-			
-			while(inc) {
-				for(_i = inc; _i < n; _i++) {
-					
-					_temp = data[_i];
-					_screenT = _temp.screenT;
-					_j = _i;
-					
-					while(_j >= inc && (data[int(_j - inc)] as Face).screenT > _screenT) {
-						data[_j] = data[int(_j - inc)];
-						_j = int(_j - inc);
-					}
-					
-					data[_j] = _temp;
-				}
-				
-				inc = int(inc / 2.2);
-			}
-			 
-			 */
-		}
+		protected var _face:Face;
 		
-		public function radixSort(data:Vector.<Face>):void
+		protected var _faces:Vector.<Face> = new Vector.<Face>();
+		
+		protected var _faceStore:Vector.<int> = new Vector.<int>();
+		
+		protected function sortFaces():void
 		{
-	        var i:int, j:int, k:int, l:int, m:int, _q_length:int, _data_length:int = data.length, np0:Vector.<Face> = new Vector.<Face>(_data_length, true), np1:Vector.<int> = new Vector.<int>(_data_length, true);
+	        q0 = new Vector.<int>(256, true);
+	        q1 = new Vector.<int>(256, true);
+	        np0 = new Vector.<int>(_faces.length + 1, true);
+	        np1 = new Vector.<int>(_faces.length + 1, true);
+	        sort = new Vector.<int>(_faces.length, true);
 	        
-	        for(k = 0; k < 16; k += 8) {
-	        	
-	        	l = 255 << k;
-	        	
-	            for(i = 0; i < _data_length; np0[i] = data[i], np1[int(i++)] = empty)
-	                if(q[j = (l & data[i].screenT) >> k] == empty)
-	                    ql[j] = q[j] = i;
+        	k = 0;
+        	i = -1;
+            for each (_face in _faces)
+                if(!(q0[j = (255 & (sort[int(++i)] = _face.calculateScreenZ()))]))
+                    q0l[j] = q0[j] = ++k;
+                else
+                    q0l[j] = np0[q0l[j]] = ++k;
+            
+            i = -1;
+            while (i < 255) {
+            	j = q0[int(++i)];
+                while (j) {
+                    if(!(q1[k = (65280 & sort[j-1]) >> 8]))
+	                    q1l[k] = q1[k] = j;
 	                else
-	                    ql[j] = np1[ql[j]] = i;
-	            
-	            _q_length = q.length;
-	            for(m = q[i = j = 0]; i < _q_length; q[int(i++)] = empty)
-	                for(m = q[i]; m != empty; m = np1[m])
-	                    data[int(j++)] = np0[m];
-	        }
-	    }
+	                    q1l[k] = np1[q1l[k]] = j;
+	                
+	                j = np0[j];
+                }
+            }
+		}
 		
 		function Renderer()
 		{
-			var _q_length:int = q.length;
-			for(var i:int = 0; i < _q_length; q[int(i++)] = -1);
 		}
 		
 		/**
