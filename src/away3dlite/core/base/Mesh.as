@@ -14,13 +14,19 @@ package away3dlite.core.base
 	 */
 	public class Mesh extends Object3D
 	{
+		/** @private */
 		arcane var _screenVertices:Vector.<Number>;
+		/** @private */
 		arcane var _uvtData:Vector.<Number>;
+		/** @private */
 		arcane var _indices:Vector.<int>;
+		/** @private */
 		arcane var _triangles:GraphicsTrianglePath = new GraphicsTrianglePath();
+		/** @private */
 		arcane var _faces:Vector.<Face> = new Vector.<Face>();
+		/** @private */
 		arcane var _vertices:Vector.<Number> = new Vector.<Number>();
-		
+		/** @private */
 		arcane override function updateScene(val:Scene3D):void
 		{
 			if (scene == val)
@@ -127,6 +133,7 @@ package away3dlite.core.base
 			_indices = _triangles.indices = new Vector.<int>();
 			
 			bothsides = false;
+			material = new ColorMaterial();
 		}
 		
 		/**

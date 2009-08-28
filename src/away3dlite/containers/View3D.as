@@ -17,9 +17,18 @@ package away3dlite.containers
 	 */
 	public class View3D extends Sprite
 	{
+		/** @private */
+		arcane var _totalFaces:int;
+		/** @private */
+		arcane var _totalObjects:int;
+		/** @private */
+		arcane var _renderedFaces:int;
+		/** @private */
+		arcane var _renderedObjects:int;
+		
 		private var _renderer:Renderer;
 		private var _camera:Camera3D;
-		private var _scene:ObjectContainer3D;
+		private var _scene:Scene3D;
         private var _clipping:Clipping;
         private var _screenClipping:Clipping;
         private var _loaderWidth:Number;
@@ -102,11 +111,11 @@ package away3dlite.containers
          * 
          * @see render()
          */
-		public function get scene():ObjectContainer3D
+		public function get scene():Scene3D
 		{
 			return _scene;
 		}
-		public function set scene(val:ObjectContainer3D):void
+		public function set scene(val:Scene3D):void
 		{
 			if (_scene == val)
 				return;
@@ -154,6 +163,9 @@ package away3dlite.containers
         	_screenClippingDirty = true;
 		}
 		
+		/**
+		 * 
+		 */
         public function get screenClipping():Clipping
         {
         	if (_screenClippingDirty) {
@@ -165,7 +177,39 @@ package away3dlite.containers
         	
         	return _screenClipping;
         }
-        
+		
+		/**
+		 * 
+		 */
+		public function get totalFaces():int
+		{
+			return _totalFaces;
+		}
+		
+		/**
+		 * 
+		 */
+		public function get totalObjects():int
+		{
+			return _totalObjects;
+		}
+		
+		/**
+		 * 
+		 */
+		public function get renderedFaces():int
+		{
+			return _renderedFaces;
+		}
+		
+		/**
+		 * 
+		 */
+		public function get renderedObjects():int
+		{
+			return _renderedObjects;
+		}
+		
 		/**
 		 * Creates a new <code>View3D</code> object.
 		 */
@@ -184,8 +228,12 @@ package away3dlite.containers
         /**
          * Renders a snapshot of the view.
          */
-		public function render():void
-		{
+		public function render():void {
+			_totalFaces = 0;
+			_totalObjects = 0;
+			_renderedFaces = 0;
+			_renderedObjects = 0;
+			
 			updateScreenClipping();
 			
 			camera.update();
@@ -194,7 +242,7 @@ package away3dlite.containers
 			
 			graphics.clear();
 			
-			renderer.render(_scene);
+			renderer.render();
 		}
 		
         

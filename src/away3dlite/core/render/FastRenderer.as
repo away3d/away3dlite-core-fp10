@@ -14,7 +14,46 @@ package away3dlite.core.render
 		private var _indices:Vector.<int>;
 		private var _uvtData:Vector.<Number>;
 		private var _i:int;
+		
+		private function collectFaces(object:Object3D):void
+		{
+			if (object is ObjectContainer3D) {
+				var container:ObjectContainer3D = object as ObjectContainer3D;
 				
+				if (sortMeshes)
+					container.children.sortOn("screenZ", 18);
+				
+				var _child:Object3D;
+				
+				for each (_child in container.children)
+					collectFaces(_child);
+				
+			} else if (object is Mesh) {
+				
+				var mesh:Mesh = object as Mesh;
+				
+				mesh.material.graphicsData[mesh.material.trianglesIndex] = mesh._triangles;
+				
+				_faces = mesh._faces;
+				_indices = mesh._indices;
+				_uvtData = mesh._uvtData;
+				
+				if(!_faces.length)
+					return;
+				
+				if (mesh.sortFaces)
+					sortFaces();
+				
+				_view.graphics.drawGraphicsData(mesh.material.graphicsData);
+				
+				_view._totalFaces += _faces.length;
+				_view._renderedFaces += _faces.length;
+			}
+			
+			_view._totalObjects++;
+			_view._renderedObjects++;
+		}
+		
 		protected override function sortFaces():void
 		{
 			super.sortFaces();
@@ -47,38 +86,11 @@ package away3dlite.core.render
 		/**
 		 * 
 		 */
-		public override function render(object:Object3D):void
+		public override function render():void
 		{
+			_scene = _view.scene;
 			
-			if (object is ObjectContainer3D) {
-				var container:ObjectContainer3D = object as ObjectContainer3D;
-				
-				if (sortMeshes)
-					container.children.sortOn("screenZ", 18);
-				
-				var _child:Object3D;
-				
-				for each (_child in container.children)
-					render(_child);
-				
-			} else if (object is Mesh) {
-				
-				var mesh:Mesh = object as Mesh;
-				
-				mesh.material.graphicsData[mesh.material.trianglesIndex] = mesh._triangles;
-				
-				_faces = mesh._faces;
-				_indices = mesh._indices;
-				_uvtData = mesh._uvtData;
-				
-				if(!_faces.length)
-					return;
-				
-				if (mesh.sortFaces)
-					sortFaces();
-				
-				_view.graphics.drawGraphicsData(mesh.material.graphicsData);
-			}
+			collectFaces(_scene);
 		}
 	}
 }

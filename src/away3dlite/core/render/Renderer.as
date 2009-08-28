@@ -1,6 +1,7 @@
 package away3dlite.core.render
 {
 
+	import away3dlite.containers.Scene3D;
 	import away3dlite.containers.View3D;
 	import away3dlite.core.base.*;
 	
@@ -10,6 +11,7 @@ package away3dlite.core.render
 	public class Renderer
 	{
 		private var ql:Vector.<int> = new Vector.<int>(256, true);
+		
 		protected var i:int;
 		protected var j:int;
 		protected var k:int;
@@ -19,11 +21,9 @@ package away3dlite.core.render
 		protected var np1:Vector.<int>;
 		protected var sort:Vector.<int>;
 		protected var _view:View3D;
-		
+		protected var _scene:Scene3D;
 		protected var _face:Face;
-		
 		protected var _faces:Vector.<Face> = new Vector.<Face>();
-		
 		protected var _faceStore:Vector.<int> = new Vector.<int>();
 		
 		protected function sortFaces():void
@@ -68,9 +68,8 @@ package away3dlite.core.render
 		/**
 		 * 
 		 */
-		public function render(object:Object3D):void
+		public function render():void
 		{
-			
 		}
 	}
 }

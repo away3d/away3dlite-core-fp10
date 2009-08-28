@@ -15,7 +15,6 @@ package away3dlite.core.render
 	 */
 	public class BasicRenderer extends Renderer
 	{
-		private var _scene:Scene3D;
 		private var _clipping:Clipping;
 		private var _mesh:Mesh;
 		private var _screenVertices:Vector.<Number>;
@@ -40,10 +39,17 @@ package away3dlite.core.render
 					collectFaces(_child);
 				
 			} else if (object is Mesh) {
-				_clipping.collectFaces(object as Mesh, _faces);
+				var mesh:Mesh = object as Mesh;
+				
+				_clipping.collectFaces(mesh, _faces);
+				
+				_view._totalFaces += mesh._faces.length;
 			}
+			
+			_view._totalObjects++;
+			_view._renderedObjects++;
 		}
-		
+
 		protected override function sortFaces():void
 		{
 			super.sortFaces();
@@ -140,18 +146,22 @@ package away3dlite.core.render
 		/**
 		 * 
 		 */
-		public override function render(object:Object3D):void
+		public override function render():void
 		{
-			_scene = object as Scene3D;
+			super.render();
+			
+			_scene = _view.scene;
 			
 			_clipping = _view.screenClipping;
 			
 			_faces.fixed = false;
 			_faces.length = 0;
 			
-			collectFaces(object);
+			collectFaces(_scene);
 			
 			_faces.fixed = true;
+			
+			_view._renderedFaces = _faces.length;
 			
 			_scene._dirtyFaces = false;
 			
