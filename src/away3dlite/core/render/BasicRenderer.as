@@ -28,14 +28,17 @@ package away3dlite.core.render
 		private var _j:int;
 		private var _k:int;
 		
+		private var _material_graphicsData:Vector.<IGraphicsData>;
+		
 		private function collectFaces(object:Object3D):void
 		{
 			if (object is ObjectContainer3D) {
 				var container:ObjectContainer3D = object as ObjectContainer3D;
+				var _container_children:Array = container.children;
 				
 				var _child:Object3D;
 				
-				for each (_child in container.children)
+				for each (_child in _container_children)
 					collectFaces(_child);
 				
 			} else if (object is Mesh) {
@@ -62,8 +65,6 @@ package away3dlite.core.render
 			_material = null;
 			_mesh = null;
 			
-			var _view_graphics_drawGraphicsData:Function = _view.graphics.drawGraphicsData;
-			
 			i = -1;
             while (i++ < 255) {
             	j = q1[i];
@@ -72,8 +73,8 @@ package away3dlite.core.render
 					
 					if (_material != _face.mesh.material) {
 						if (_material) {
-							_material.graphicsData[_material.trianglesIndex] = _triangles;
-							_view_graphics_drawGraphicsData(_material.graphicsData);
+							_material_graphicsData[_material.trianglesIndex] = _triangles;
+							_view_graphics_drawGraphicsData(_material_graphicsData);
 						}
 						
 						_ind.length = 0;
@@ -84,6 +85,7 @@ package away3dlite.core.render
 						_k = -1;
 						_mesh = _face.mesh;
 						_material = _mesh.material;
+						_material_graphicsData = _material.graphicsData;
 						_screenVertices = _mesh._screenVertices;
 						_uvtData = _mesh._uvtData;
 						_faceStore.length = 0;
@@ -100,7 +102,7 @@ package away3dlite.core.render
 						_ind[++_i] = _faceStore[_face.i0] - 1;
 					} else {
 						_vert[++_j] = _screenVertices[_face.x0];
-						_faceStore[_face.i0] = (_ind[++_i] = _j/2) + 1;
+						_faceStore[_face.i0] = (_ind[++_i] = _j*.5) + 1;
 						_vert[++_j] = _screenVertices[_face.y0];
 						
 						_uvt[++_k] = _uvtData[_face.u0];
@@ -112,7 +114,7 @@ package away3dlite.core.render
 						_ind[++_i] = _faceStore[_face.i1] - 1;
 					} else {
 						_vert[++_j] = _screenVertices[_face.x1];
-						_faceStore[_face.i1] = (_ind[++_i] = _j/2) + 1;
+						_faceStore[_face.i1] = (_ind[++_i] = _j*.5) + 1;
 						_vert[++_j] = _screenVertices[_face.y1];
 						
 						_uvt[++_k] = _uvtData[_face.u1];
@@ -124,7 +126,7 @@ package away3dlite.core.render
 						_ind[++_i] = _faceStore[_face.i2] - 1;
 					} else {
 						_vert[++_j] = _screenVertices[_face.x2];
-						_faceStore[_face.i2] = (_ind[++_i] = _j/2) + 1;
+						_faceStore[_face.i2] = (_ind[++_i] = _j*.5) + 1;
 						_vert[++_j] = _screenVertices[_face.y2];
 						
 						_uvt[++_k] = _uvtData[_face.u2];
@@ -175,8 +177,9 @@ package away3dlite.core.render
 			sortFaces();
 			
 			if (_material) {
-				_material.graphicsData[_material.trianglesIndex] = _triangles;
-				_view.graphics.drawGraphicsData(_material.graphicsData);
+				_material_graphicsData = _material.graphicsData;
+				_material_graphicsData[_material.trianglesIndex] = _triangles;
+				_view_graphics_drawGraphicsData(_material_graphicsData);
 			}
 		}
 	}

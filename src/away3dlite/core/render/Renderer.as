@@ -26,8 +26,13 @@ package away3dlite.core.render
 		protected var _faces:Vector.<Face> = new Vector.<Face>();
 		protected var _faceStore:Vector.<int> = new Vector.<int>();
 		
+		// by pass
+		protected var _view_graphics_drawGraphicsData:Function;
+		
 		protected function sortFaces():void
 		{
+	        var _faces_length:int = _faces.length;
+	        
 	        q0 = new Vector.<int>(256, true);
 	        q1 = new Vector.<int>(256, true);
 	        np0 = new Vector.<int>(_faces.length + 1, true);
@@ -63,6 +68,7 @@ package away3dlite.core.render
 		public function setView(view:View3D):void
 		{
 			_view = view;
+			_view_graphics_drawGraphicsData = _view.graphics.drawGraphicsData;
 		}
 		
 		/**

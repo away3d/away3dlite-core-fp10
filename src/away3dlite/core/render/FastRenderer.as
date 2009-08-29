@@ -3,6 +3,9 @@ package away3dlite.core.render
 	import away3dlite.arcane;
 	import away3dlite.containers.*;
 	import away3dlite.core.base.*;
+	import away3dlite.materials.Material;
+	
+	import flash.display.*;
 	
 	use namespace arcane;
 	
@@ -19,20 +22,23 @@ package away3dlite.core.render
 		{
 			if (object is ObjectContainer3D) {
 				var container:ObjectContainer3D = object as ObjectContainer3D;
+				var _container_children:Array = container.children;
 				
 				if (sortMeshes)
-					container.children.sortOn("screenZ", 18);
+					_container_children.sortOn("screenZ", 18);
 				
 				var _child:Object3D;
 				
-				for each (_child in container.children)
+				for each (_child in _container_children)
 					collectFaces(_child);
 				
 			} else if (object is Mesh) {
 				
 				var mesh:Mesh = object as Mesh;
+				var _mesh_material:Material = mesh.material;
+				var _mesh_material_graphicsData:Vector.<IGraphicsData> = _mesh_material.graphicsData;
 				
-				mesh.material.graphicsData[mesh.material.trianglesIndex] = mesh._triangles;
+				_mesh_material_graphicsData[_mesh_material.trianglesIndex] = mesh._triangles;
 				
 				_faces = mesh._faces;
 				_indices = mesh._indices;
@@ -44,10 +50,11 @@ package away3dlite.core.render
 				if (mesh.sortFaces)
 					sortFaces();
 				
-				_view.graphics.drawGraphicsData(mesh.material.graphicsData);
+				_view_graphics_drawGraphicsData(_mesh_material_graphicsData);
 				
-				_view._totalFaces += _faces.length;
-				_view._renderedFaces += _faces.length;
+				var _faces_length:int = _faces.length;
+				_view._totalFaces += _faces_length;
+				_view._renderedFaces += _faces_length;
 			}
 			
 			// except Scene3D
