@@ -207,6 +207,7 @@ package away3dlite.containers
 		 */
 		public function get renderedObjects():int
 		{
+			
 			return _renderedObjects;
 		}
 		

@@ -12,7 +12,7 @@ package away3dlite.templates
 	import net.hires.debug.Stats;
 
 	/**
-	 * SimpleView
+	 * Fast Template
 	 * @author katopz
 	 */
 	public class FastTemplate extends Sprite
@@ -158,7 +158,6 @@ package away3dlite.templates
 		
 		public function FastTemplate()
 		{
-			
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage, false, 0, true);
 		}
 		

@@ -50,8 +50,12 @@ package away3dlite.core.render
 				_view._renderedFaces += _faces.length;
 			}
 			
-			_view._totalObjects++;
-			_view._renderedObjects++;
+			// except Scene3D
+			if (!(object is Scene3D))
+			{
+				++_view._totalObjects;
+				++_view._renderedObjects;
+			}
 		}
 		
 		protected override function sortFaces():void
