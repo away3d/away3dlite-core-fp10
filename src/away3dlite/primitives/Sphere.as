@@ -1,6 +1,7 @@
 ﻿package away3dlite.primitives
 {
 	import away3dlite.arcane;
+	import away3dlite.materials.Material;
     
 	use namespace arcane;
 	
@@ -13,6 +14,37 @@
         private var _segmentsW:int = 8;
         private var _segmentsH:int = 6;
         private var _yUp:Boolean = true;
+        
+        /**
+         * for away3d user
+         * @param object
+         * 
+         */        
+        public function init(object:Object):Sphere
+        {
+        	for(var data:* in object)
+	        	try{
+	      			this[data] = object[data];
+	        	}catch(e:*){trace(e)};
+	        return this;
+		}
+        
+        /**
+         * for other engine user
+         * @param material
+         * @param radius
+         * @param segmentsW
+         * @param segmentsH
+         * 
+         */        
+        public function create(material:Material, radius:Number=100, segmentsW:int=8, segmentsH:int=6):Sphere
+        {
+        	this.material = material;
+        	this.radius = radius;
+        	this.segmentsW = segmentsW;
+        	this.segmentsH = segmentsH;
+        	return this;
+        }
         
 		/**
 		 * @inheritDoc
@@ -128,9 +160,12 @@
 		 *
 		 * @param	init			[optional]	An initialisation object for specifying default instance properties.
 		 */
-        public function Sphere()
+        public function Sphere(object:Object=null)
         {
             super();
+            
+            if(object)
+            	init(object);
 			
 			type = "Sphere";
         	url = "primitive";
