@@ -231,9 +231,9 @@ package away3dlite.containers
          */
 		public function render():void {
 			_totalFaces = 0;
-			_totalObjects = 0;
+			_totalObjects = -1;
 			_renderedFaces = 0;
-			_renderedObjects = 0;
+			_renderedObjects = -1;
 			
 			updateScreenClipping();
 			

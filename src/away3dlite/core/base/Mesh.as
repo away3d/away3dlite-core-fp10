@@ -145,5 +145,26 @@ package away3dlite.core.base
 			
 			Utils3D.projectVectors(_viewTransform, vertices, _screenVertices, _uvtData);
 		}
+		        
+		/**
+		 * Duplicates the mesh properties to another <code>Mesh</code> object.
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Mesh</code>.
+		 * @return						The new object instance with duplicated properties applied.
+		 */
+        public override function clone(object:Object3D = null):Object3D
+        {
+            var mesh:Mesh = (object as Mesh) || new Mesh();
+            super.clone(mesh);
+            mesh.type = type;
+            mesh.material = material;
+            mesh.bothsides = bothsides;
+			mesh._uvtData = mesh._triangles.uvtData = _uvtData;
+			mesh._vertices = _vertices;
+			mesh._indices = _indices.concat();
+			mesh.buildFaces();
+			
+			return mesh;
+        }
 	}
 }

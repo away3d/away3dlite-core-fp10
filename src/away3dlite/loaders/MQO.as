@@ -1,45 +1,13 @@
-﻿/**
- * Metasequoia
- *
- * @see http://snippets.libspark.org/
- * @see http://snippets.libspark.org/trac/wiki/rch850/Metasequoia
- *
- * Copyright (c) 2007-2008 rch850
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
-package away3dlite.loaders
+﻿package away3dlite.loaders
 {
-	import away3dlite.animators.data.FaceData;
 	import away3dlite.animators.data.UV;
 	import away3dlite.arcane;
-	import away3dlite.containers.ObjectContainer3D;
-	import away3dlite.core.base.Mesh;
-	import away3dlite.core.utils.*;
-	import away3dlite.loaders.utils.LoaderUtil;
-	import away3dlite.materials.*;
+	import away3dlite.containers.*;
+	import away3dlite.core.base.*;
+	import away3dlite.loaders.data.*;
 	
-	import flash.events.Event;
-	import flash.geom.Vector3D;
-	import flash.utils.ByteArray;
-	import flash.utils.Dictionary;
+	import flash.geom.*;
+	import flash.utils.*;
 		
 	use namespace arcane;
 
@@ -47,95 +15,119 @@ package away3dlite.loaders
 	 * Metasequoia
 	 * @author katopz@sleepydesign.com
 	 */
-	public class MQO extends ObjectContainer3D
+	public class MQO extends AbstractParser
 	{
+		/** @private */
+        arcane override function prepareData(data:*):void
+        {
+        	mqo = ByteArray(data);
+
+			var lines:Array = mqo.readMultiByte(mqo.length, charset).split("\r\n");
+			var l:int = 0;
+			
+			l = parseMaterialChunk(lines, 0);
+			
+			while (l != -1)
+				l = parseObjectChunk(lines, l);
+			
+			//build the meshes
+			buildMeshes();
+			
+			//build materials
+			buildMaterials();
+        }
+        
+        private var mqo:ByteArray;
+		private var _materialData:MaterialData;
+		private var _meshData:MeshData;
+		private var _geometryData:GeometryData;
+		private var _moveVector:Vector3D = new Vector3D();
+		private var _materialNames:Array = new Array();
+		
+    	/**
+    	 * Array of mesh data objects used for storing the parsed 3ds data structure.
+    	 */
+		private var meshDataList:Array = [];
+		
 		private function getMaterialChunkLine(lines:Array, startLine:int = 0):int
 		{
 			for (var i:uint = startLine; i < lines.length; ++i)
-			{
 				if (lines[i].indexOf("Material") == 0)
-				{
 					return int(i);
-				}
-			}
+			
 			return -1;
 		}
 
 		private function parseMaterialChunk(lines:Array, startLine:int):int
 		{
-			//TODO : MaterialLibrary?
-			materials = new Dictionary(true);
 			var l:int = getMaterialChunkLine(lines, startLine);
+			
 			if (l == -1)
-			{
 				return -1;
-			}
 
 			var line:String = lines[l];
 
 			var num:Number = parseInt(line.substr(9));
+			
 			if (isNaN(num))
-			{
 				return -1;
-			}
+			
 			++l;
-			_materialNames = [];
-
+			
 			var endLine:int = l + int(num);
-
-			for (; l < endLine; ++l)
-			{
-				var _material:Material;
+			
+			while (l < endLine) {
 				line = lines[l];
 
 				var nameBeginIndex:int = line.indexOf("\"");
 				var nameEndIndex:int = line.indexOf("\"", nameBeginIndex + 1);
-				var name:String = line.substring(nameBeginIndex + 1, nameEndIndex);
-				_materialNames.push(name);
-
+				
+				_materialData = _materialLibrary.addMaterial(line.substring(nameBeginIndex + 1, nameEndIndex));
+				_materialNames.push(_materialData);
+				
 				var tex:String = getParam(line, "tex");
 
-				if (tex)
-				{
+				if (tex) {
+					_materialData.materialType = MaterialData.TEXTURE_MATERIAL;
+					
 					tex = tex.substr(1, tex.length - 2);
-					if (tex.toLowerCase().search(/\.tga$/) != -1 || tex.toLowerCase().search(/\.bmp$/) != -1)
-					{
+					
+					if (tex.toLowerCase().search(/\.tga$/) != -1 || tex.toLowerCase().search(/\.bmp$/) != -1) {
 						//TODO : someone really need TGA, BMP on web?
 						//_material = loadTGAMaterial(path + tex);
 
 						trace(" ! Error : TGA, BMP not support.");
 						trace(" < Try : .png with same name...");
-
+						
 						tex = tex.replace(/\.tga$/, ".png");
 						tex = tex.replace(/\.bmp$/, ".png");
-
-						_material = new BitmapFileMaterial(path + "/" + tex);
 					}
-					else
-					{
-						_material = new BitmapFileMaterial(path + "/" + tex);
-					}
-				}
-				else
-				{
+					
+					_materialData.textureFileName = tex;
+					
+				} else {
 					var colorstr:String = getParam(line, "col");
-					if (colorstr != null)
-					{
+					
+					if (colorstr != null) {
 						var color:Array = colorstr.match(/\d+\.\d+/g);
 						var r:int = parseFloat(color[0]) * 255;
 						var g:int = parseFloat(color[1]) * 255;
 						var b:int = parseFloat(color[2]) * 255;
 						var a:Number = parseFloat(color[3]);
-						_material = new ColorMaterial((a*255 << 24) | (r << 16) | (g << 8) | b, a);
-					}
-					else
-					{
-						_material = new WireframeMaterial();
+						
+						if (shading)
+			        		_materialData.materialType = MaterialData.SHADING_MATERIAL;
+			        	else
+			            	_materialData.materialType = MaterialData.COLOR_MATERIAL;
+						
+						_materialData.diffuseColor = (a*255 << 24) | (r << 16) | (g << 8) | b;
+						_materialData.alpha = a;
+					} else {
+						_materialData.materialType = MaterialData.WIREFRAME_MATERIAL;
 					}
 				}
-
-				materials[name] = _material;
-
+				
+				++l;
 			}
 
 			return endLine;
@@ -155,38 +147,33 @@ package away3dlite.loaders
 
 		private function parseObjectChunk(lines:Array, startLine:int):int
 		{
-			var mesh:Mesh = new Mesh();
-			addChild(mesh);
-			
-			index = 0;
 			n = -1;
 			
 			var vertices:Array = [];
-			var faces:Array = [];
-
+			
 			var l:int = getObjectChunkLine(lines, startLine);
+			
 			if (l == -1)
-			{
 				return -1;
-			}
 
 			var line:String = lines[l];
-
-			var objectName:String = line.substring(8, line.indexOf("\"", 8));
+			
+			var name:String = line.substring(8, line.indexOf("\"", 8));
+			
 			++l;
 
 			var vline:int = getChunkLine(lines, "vertex", l);
+			
 			if (vline == -1)
-			{
 				return -1;
-			}
 
 			var properties:Dictionary = new Dictionary();
-			for (; l < vline; ++l)
-			{
+			
+			while (l < vline) {
 				line = lines[l];
 				var props:Array = RegExp(/^\s*([\w]+)\s+(.*)$/).exec(line);
 				properties[props[1]] = props[2];
+				++l;
 			}
 
 			line = lines[l];
@@ -196,37 +183,38 @@ package away3dlite.loaders
 			var vertexEndLine:int = l + numVertices;
 			var firstVertexIndex:int = vertices.length;
 
-			for (; l < vertexEndLine; ++l)
-			{
+			while (l < vertexEndLine) {
 				line = lines[l];
 				var coords:Array = line.match(/(-?\d+\.\d+)/g);
 				var x:Number = parseFloat(coords[0]) * scaling;
 				var y:Number = parseFloat(coords[1]) * scaling;
 				var z:Number = -parseFloat(coords[2]) * scaling;
 				vertices.push(new Vector3D(x, y, z));
+				++l;
 			}
 
 			l = getChunkLine(lines, "face", l);
+			
 			if (l == -1)
-			{
 				return -1;
-			}
+			
 			line = lines[l++];
-
+			
 			var numFaces:int = parseInt(line.substring(line.indexOf("face") + 5));
 			var faceEndLine:int = l + numFaces;
-			var _material:Material;
 			
-			for (; l < faceEndLine; ++l)
-			{
-				if (properties["visible"] == "15")
-				{
-					_material = parseFace(mesh, faces, lines[l], vertices, firstVertexIndex, properties);
+			_meshData = new MeshData();
+			meshDataList.push(_meshData);
+			
+			_meshData.name = name;
+			_geometryData = _meshData.geometry = _geometryLibrary.addGeometry(_meshData.name);
+			
+			while (l < faceEndLine) {
+				if (properties["visible"] == "15") {
+					_meshData.material = parseFace(lines[l], vertices, firstVertexIndex, properties);
 				}
+				++l;
 			}
-			
-			mesh.material = _material;
-			mesh.buildFaces();
 			
 			//TODO : do we need this?
 			/*
@@ -254,7 +242,7 @@ package away3dlite.loaders
 			return faceEndLine;
 		}
 
-		private function parseFace(mesh:Mesh, faces:Array, line:String, vertices:Array, vertexOffset:int, properties:Dictionary):Material
+		private function parseFace(line:String, vertices:Array, vertexOffset:int, properties:Dictionary):MaterialData
 		{
 			var vstr:String = getParam(line, "V");
 			var mstr:String = getParam(line, "M");
@@ -266,39 +254,31 @@ package away3dlite.loaders
 			var b:Vector3D;
 			var c:Vector3D;
 			var d:Vector3D;
-			var _material:Material;
+			var _material:MaterialData;
 			var uvA:UV;
 			var uvB:UV;
 			var uvC:UV;
 			var uvD:UV;
-			var face:FaceData;
 			var mirrorAxis:int;
-			if (v.length == 3)
-			{
+			if (v.length == 3) {
 				c = vertices[parseInt(v[0]) + vertexOffset];
 				b = vertices[parseInt(v[1]) + vertexOffset];
 				a = vertices[parseInt(v[2]) + vertexOffset];
 
 				if (mstr != null)
-				{
-					_material = materials[_materialNames[parseInt(mstr)]];
-				}
+					_material = _materialNames[parseInt(mstr)];
 
-				if (uv.length != 0)
-				{
+				if (uv.length != 0) {
 					uvC = new UV(parseFloat(uv[0]),  parseFloat(uv[1]));
 					uvB = new UV(parseFloat(uv[2]),  parseFloat(uv[3]));
 					uvA = new UV(parseFloat(uv[4]),  parseFloat(uv[5]));
-					addFace(mesh, a, b, c, uvA, uvB, uvC);
-				}
-				else
-				{
-					addFace(mesh, a, b, c, new UV(0, 0), new UV(1, 0), new UV(0, 1));
+					addFace(a, b, c, uvA, uvB, uvC);
+				} else {
+					addFace(a, b, c, new UV(0, 0), new UV(1, 0), new UV(0, 1));
 				}
 
 
-				if (properties["mirror"] == "1")
-				{
+				if (properties["mirror"] == "1") {
 					mirrorAxis = parseInt(properties["mirror_axis"]);
 					a = mirrorVertex(a, mirrorAxis);
 					b = mirrorVertex(b, mirrorAxis);
@@ -306,40 +286,33 @@ package away3dlite.loaders
 					vertices.push(a);
 					vertices.push(b);
 					vertices.push(c);
-					addFace(mesh, c, b, a, uvC, uvB, uvA);
+					addFace(c, b, a, uvC, uvB, uvA);
 				}
-			}
-			else if (v.length == 4)
-			{
+			} else if (v.length == 4) {
 				d = vertices[parseInt(v[0]) + vertexOffset];
 				c = vertices[parseInt(v[1]) + vertexOffset];
 				b = vertices[parseInt(v[2]) + vertexOffset];
 				a = vertices[parseInt(v[3]) + vertexOffset];
 
 				if (mstr != null)
-				{
-					_material = materials[_materialNames[parseInt(mstr)]];
-				}
+					_material = _materialNames[parseInt(mstr)];
 
-				if (uv.length != 0)
-				{
+				if (uv.length != 0) {
 					uvD = new UV(parseFloat(uv[0]),  parseFloat(uv[1]));
 					uvC = new UV(parseFloat(uv[2]),  parseFloat(uv[3]));
 					uvB = new UV(parseFloat(uv[4]),  parseFloat(uv[5]));
 					uvA = new UV(parseFloat(uv[6]),  parseFloat(uv[7]));
-				}
-				else
-				{
+				} else {
 					uvD = new UV(1, 1);
 					uvC = new UV(0, 1);
 					uvB = new UV(1, 0);
 					uvA = new UV(0, 0);
 				}
-				addFace(mesh, a, b, c, uvA, uvB, uvC);
-				addFace(mesh, c, d, a, uvC, uvD, uvA);
+				
+				addFace(a, b, c, uvA, uvB, uvC);
+				addFace(c, d, a, uvC, uvD, uvA);
 
-				if (properties["mirror"] == "1")
-				{
+				if (properties["mirror"] == "1") {
 					mirrorAxis = parseInt(properties["mirror_axis"]);
 					a = mirrorVertex(a, mirrorAxis);
 					b = mirrorVertex(b, mirrorAxis);
@@ -349,10 +322,11 @@ package away3dlite.loaders
 					vertices.push(b);
 					vertices.push(c);
 					vertices.push(d);
-					addFace(mesh, c, b, a, uvC, uvB, uvA);
-					addFace(mesh, a, d, c, uvA, uvD, uvC);
+					addFace(c, b, a, uvC, uvB, uvA);
+					addFace(a, d, c, uvA, uvD, uvC);
 				}
 			}
+			
 			return _material;
 		}
 
@@ -379,104 +353,147 @@ package away3dlite.loaders
 			var prefixLen:int = prefix.length;
 
 			var begin:int = line.indexOf(prefix, 0);
+			
 			if (begin == -1)
-			{
 				return null;
-			}
+			
 			var end:int = line.indexOf(")", begin + prefixLen);
+			
 			if (end == -1)
-			{
 				return null;
-			}
+			
 			return line.substring(begin + prefixLen, end);
 		}
-
-		private var index:int = 0;
+		
 		private var n:int = -1;
 
-		private function addFace(mesh:Mesh, v0:Vector3D, v1:Vector3D, v2:Vector3D, uv0:UV, uv1:UV, uv2:UV):void
+		private function addFace(v0:Vector3D, v1:Vector3D, v2:Vector3D, uv0:UV, uv1:UV, uv2:UV):void
 		{
-			mesh._vertices.push(-v0.x);
-			mesh._vertices.push(-v0.y);
-			mesh._vertices.push(v0.z);
+			_geometryData.vertices.push(-v0.x, -v0.y, v0.z);
+			_geometryData.vertices.push(-v1.x, -v1.y, v1.z);
+			_geometryData.vertices.push(-v2.x, -v2.y, v2.z);
 			
-			mesh._vertices.push(-v1.x);
-			mesh._vertices.push(-v1.y);
-			mesh._vertices.push(v1.z);
-
-			mesh._vertices.push(-v2.x);
-			mesh._vertices.push(-v2.y);
-			mesh._vertices.push(v2.z);
-
-			mesh._triangles.uvtData.push(uv0.u, uv0.v, 1);
-			mesh._triangles.uvtData.push(uv1.u, uv1.v, 1);
-			mesh._triangles.uvtData.push(uv2.u, uv2.v, 1);
+			_geometryData.uvtData.push(uv0.u, uv0.v, 1);
+			_geometryData.uvtData.push(uv1.u, uv1.v, 1);
+			_geometryData.uvtData.push(uv2.u, uv2.v, 1);
 			
 			n += 3;
 			
-			mesh._indices.push(n, n - 1, n - 2);
+			_geometryData.indices.push(n, n - 1, n - 2);
         }
         
-		private var materials:Dictionary;
-		private var _materialNames:Array;
-		private var mqo:ByteArray;
-		public var charset:String = "shift_jis";
-		private var path:String = ".";
+        private function buildMeshes():void
+		{
+			
+			for each (var _meshData:MeshData in meshDataList)
+			{
+				//create Mesh object
+				var mesh:Mesh = new Mesh();
+				//mesh.name = _meshData.name;
+				_meshData.material.meshes.push(mesh);
+				
+				_geometryData = _meshData.geometry;
+					/*
+				var geometry:Geometry = _geometryData.geometry;
+				
+				if (!geometry) {
+					geometry = _geometryData.geometry = new Geometry();
+					
+					mesh.geometry = geometry;
+					
+					//set materialdata for each face
+					for each (var _meshMaterialData:MeshMaterialData in _geometryData.materials) {
+						for each (var _faceListIndex:int in _meshMaterialData.faceList) {
+							var _faceData:FaceData = _geometryData.faces[_faceListIndex] as FaceData;
+							_faceData.materialData = materialLibrary[_meshMaterialData.symbol];
+						}
+					}
+					
+					for each(_faceData in _geometryData.faces) {
+						
+						if (_faceData.materialData)
+							_faceMaterial = _faceData.materialData.material as ITriangleMaterial;
+						else
+							_faceMaterial = null;
+						
+						var _face:Face = new Face(_geometryData.vertices[_faceData.v0],
+													_geometryData.vertices[_faceData.v1],
+													_geometryData.vertices[_faceData.v2],
+													_faceMaterial,
+													_geometryData.uvs[_faceData.v0],
+													_geometryData.uvs[_faceData.v1],
+													_geometryData.uvs[_faceData.v2]);
+						geometry.addFace(_face);
+						
+						if (_faceData.materialData)
+							_faceData.materialData.elements.push(_face);
+					}
+				} else {
+					mesh.geometry = geometry;
+				}
+					*/
+				mesh._vertices = _geometryData.vertices;
+				var uvt:Number;
+				for each (uvt in _geometryData.uvtData)
+					mesh._uvtData.push(uvt);
+				var index:int;
+				for each (index in _geometryData.indices)
+					mesh._indices.push(index);
+				
+				mesh.buildFaces();
+				
+				//center vertex points in mesh for better bounding radius calulations
+				if (centerMeshes) {
+					var i:int = mesh._vertices.length/3;
+					_moveVector.x = (_geometryData.maxX + _geometryData.minX)/2;
+					_moveVector.y = (_geometryData.maxY + _geometryData.minY)/2;
+					_moveVector.z = (_geometryData.maxZ + _geometryData.minZ)/2;
+	                while (i--) {
+	                	mesh._vertices[i*3] -= _moveVector.x;
+	                	mesh._vertices[i*3+1] -= _moveVector.y;
+						mesh._vertices[i*3+2] -= _moveVector.z;
+	                }
+	                _moveVector = mesh.transform.matrix3D.transformVector(_moveVector);
+					mesh.transform.matrix3D.position = _moveVector.clone();
+				}
+				
+				mesh.type = ".mqo";
+				(_container as ObjectContainer3D).addChild(mesh);
+			}
+		}
 		
+        
+		public var charset:String = "shift_jis";
+        
+    	/**
+    	 * Controls the use of shading materials when color textures are encountered. Defaults to false.
+    	 */
+        public var shading:Boolean = false;
+        
     	/**
     	 * A scaling factor for all geometry in the model. Defaults to 1.
     	 */
         public var scaling:Number = 1;
-                
+        
+    	/**
+    	 * Controls the automatic centering of geometry data in the model, improving culling and the accuracy of bounding dimension values.
+    	 */
+        public var centerMeshes:Boolean;
+        
 		/**
 		 * Creates a new <code>MQO</code> object.
 		 */
-		public function MQO(data:* = null)
+		public function MQO()
 		{
-			if (data)
-			{
-				if (data is ByteArray)
-				{
-					parse(data);
-				}
-				else
-				{
-					load(data);
-				}
-			}
-		}
-		
-		public function load(uri:String):Object
-		{
-			if (uri.indexOf("/") > -1)
-				path = uri.split("/")[0];
-				
-			if (uri.indexOf("\\") > -1)
-				path = uri.split("\\")[0];
-					
-			return LoaderUtil.load(uri, onLoad, "binary");
-		}
-		
-		private function onLoad(event:Event):void
-		{
-			if (event.type == Event.COMPLETE)
-				parse(ByteArray(event.target.data));
-		}
-		
-		private function parse(data:ByteArray):void
-		{
-			var byteArray:ByteArray = ByteArray(data);
-			var plainText:String = byteArray.readMultiByte(byteArray.length, charset);
-
-			var lines:Array = plainText.split("\r\n");
-			var l:int = 0;
-
-			l = parseMaterialChunk(lines, 0);
-
-			while (l != -1)
-			{
-				l = parseObjectChunk(lines, l);
-			}
+			super();
+			
+			_container = new ObjectContainer3D();
+			_container.name = "mqo";
+			
+			_container.materialLibrary = _materialLibrary;
+			_container.geometryLibrary = _geometryLibrary;
+			
+			binary = true;
 		}
 	}
 }

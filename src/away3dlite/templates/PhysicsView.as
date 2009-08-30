@@ -9,7 +9,7 @@ package away3dlite.templates
 	 * PhysicsView
 	 * @author katopz
 	 */
-	public class PhysicsView extends SimpleView
+	public class PhysicsView extends FastTemplate
 	{
 		protected var physics:Away3DLitePhysics;
 		

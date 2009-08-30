@@ -84,5 +84,27 @@ package away3dlite.core.base
 			
 			_screenZ = _viewTransform.position.z;
 		}
+		
+		/**
+		 * Duplicates the 3d object's properties to another <code>Object3D</code> object
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied
+		 * @return						The new object instance with duplicated properties applied
+		 */
+		 public function clone(object:Object3D = null):Object3D
+		 {
+            var object3D:Object3D = object || new Object3D();
+            
+            object3D.transform.matrix3D = transform.matrix3D.clone();
+            object3D.name = name;
+            object3D.filters = filters.concat();
+            object3D.blendMode = blendMode;
+            object3D.alpha = alpha;
+            object3D.visible = visible;
+            object3D.mouseEnabled = mouseEnabled;
+            object3D.useHandCursor = useHandCursor;
+            
+            return object3D;
+        }
 	}
 }

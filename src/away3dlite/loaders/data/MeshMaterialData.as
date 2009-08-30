@@ -12,7 +12,7 @@ package away3dlite.loaders.data
 		
 		/**
 		* A list of faces which are to be drawn with the material.
-		*/		
+		*/
 		public var faceList:Array = [];
 	}
 }

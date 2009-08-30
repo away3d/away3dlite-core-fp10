@@ -40,6 +40,11 @@ package away3dlite.loaders.data
 		public var name:String;
 		
 		/**
+		 * Optional alpha of the material.
+		 */
+		public var alpha:uint;
+		
+		/**
 		 * Optional ambient color of the material.
 		 */
 		public var ambientColor:uint;
@@ -87,6 +92,10 @@ package away3dlite.loaders.data
             if (_material is BitmapMaterial)
             	textureBitmap = (_material as BitmapMaterial).bitmap;
             
+            var mesh:Mesh;
+            for each(mesh in meshes)
+            	mesh.material = _material;
+            		
             /*
             var _element:Element;
             
@@ -108,6 +117,11 @@ package away3dlite.loaders.data
 		 * Array of indexes representing the elements that use the material.
 		 */
 		public var elements:Array = [];
+		
+		/**
+		 * Array of indexes representing the meshes that use the material.
+		 */
+		public var meshes:Array = [];
 		
 		public function clone(targetObj:Object3D):MaterialData
 		{

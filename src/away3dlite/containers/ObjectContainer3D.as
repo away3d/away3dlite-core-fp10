@@ -102,5 +102,23 @@ package away3dlite.containers
 			while (i--)
 				(getChildAt(i) as Object3D).project(_viewTransform);
 		}
+		
+		/**
+		 * Duplicates the 3d object's properties to another <code>ObjectContainer3D</code> object
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied
+		 * @return						The new object instance with duplicated properties applied
+		 */
+        public override function clone(object:Object3D = null):Object3D
+        {
+            var container:ObjectContainer3D = (object as ObjectContainer3D) || new ObjectContainer3D();
+            super.clone(container);
+			
+			var child:Object3D;
+            for each (child in children)
+            	container.addChild(child.clone());
+            
+            return container;
+        }
 	}
 }

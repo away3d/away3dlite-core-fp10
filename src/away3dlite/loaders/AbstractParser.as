@@ -1,8 +1,12 @@
 package away3dlite.loaders
 {
-	import away3dlite.core.base.*;
 	import away3dlite.arcane;
+	import away3dlite.core.base.*;
+	import away3dlite.core.utils.*;
 	import away3dlite.events.*;
+	import away3dlite.loaders.data.*;
+	import away3dlite.loaders.utils.*;
+	import away3dlite.materials.*;
 	
 	import flash.display.*;
 	import flash.events.*;
@@ -36,6 +40,8 @@ package away3dlite.loaders
     */
 	public class AbstractParser extends EventDispatcher
 	{
+		/** @private */
+    	arcane var _container:Object3D;
 		/** @private */
     	arcane var binary:Boolean;
 		/** @private */
@@ -97,21 +103,84 @@ package away3dlite.loaders
         private var _broadcaster:Sprite = new Sprite();
         private var _parseStart:int;
         private var _parseTime:int;
+        private var _materials:Object;
         
         private function update(event:Event):void
         {
         	parseNext();
         }
 		
-        /**
-        * 3d container object used for storing the parsed 3d object.
-        */
-		public var container:Object3D;
-		
+		protected var _materialLibrary:MaterialLibrary;
+        protected var _geometryLibrary:GeometryLibrary;
+        
+		protected function buildMaterials():void
+		{
+			for each (var _materialData:MaterialData in _materialLibrary)
+			{
+				//overridden by the material property in constructor
+				if (material)
+					_materialData.material = material;
+				
+				//overridden by materials passed in contructor
+				if (_materialData.material)
+					continue;
+				
+				switch (_materialData.materialType)
+				{
+					case MaterialData.TEXTURE_MATERIAL:
+						_materialLibrary.loadRequired = true;
+						break;
+					case MaterialData.COLOR_MATERIAL:
+						_materialData.material = new ColorMaterial(_materialData.diffuseColor, _materialData.alpha);
+						break;
+					//case MaterialData.SHADING_MATERIAL:
+					//	_materialData.material = new ShadingColorMaterial({ambient:_materialData.ambientColor, diffuse:_materialData.diffuseColor, specular:_materialData.specularColor});
+					//	break;
+					case MaterialData.WIREFRAME_MATERIAL:
+						_materialData.material = new WireframeMaterial();
+						break;
+				}
+			}
+		}
 		/**
 		 * Defines a timeout period for file parsing (in milliseconds).
 		 */
 		public var parseTimeout:int;
+
+    	/**
+    	 * Overrides all materials in the model.
+    	 */
+        public var material:Material;
+        
+    	/**
+    	 * Overides materials in the model using name:value pairs.
+    	 */
+        public function get materials():Object
+        {
+        	return _materials;
+        }
+		
+		public function set materials(val:Object):void
+		{
+			_materials = val;
+			
+			//organise the materials
+			var _materialData:MaterialData;
+            for (var name:String in _materials) {
+                _materialData = materialLibrary.addMaterial(name);
+                _materialData.material = Cast.material(_materials[name]);
+				
+                //determine material type
+                if (_materialData.material is BitmapMaterial)
+                	_materialData.materialType = MaterialData.TEXTURE_MATERIAL;
+                else if (_materialData.material is ColorMaterial)
+                	_materialData.materialType = MaterialData.COLOR_MATERIAL;
+                //else if (_materialData.material is ShadingColorMaterial)
+                //	_materialData.materialType = MaterialData.SHADING_MATERIAL;
+                else if (_materialData.material is WireframeMaterial)
+                	_materialData.materialType = MaterialData.WIREFRAME_MATERIAL;
+   			}
+		}
 		
     	/**
     	 * Returns the total number of data chunks parsed
@@ -129,6 +198,30 @@ package away3dlite.loaders
 			return _totalChunks;
 		}
 		
+        /**
+        * Retuns a materialLibrary object used for storing the parsed material objects.
+        */
+		public function get materialLibrary():MaterialLibrary
+		{
+			return _materialLibrary;
+		}
+		
+        /**
+        * Retuns a geometryLibrary object used for storing the parsed geometry data.
+        */
+		public function get geometryLibrary():GeometryLibrary
+		{
+			return _geometryLibrary;
+		}
+		
+        /**
+        * Retuns a 3d container object used for storing the parsed 3d object.
+        */
+		public function get container():Object3D
+		{
+			return _container;
+		}
+		
 		/**
 		 * Creates a new <code>AbstractParser</code> object.
 		 *
@@ -136,6 +229,9 @@ package away3dlite.loaders
 		 */
         public function AbstractParser()
         {
+        	//setup default libs
+        	_materialLibrary = new MaterialLibrary();
+			_geometryLibrary = new GeometryLibrary();
         }
         
 		/**
