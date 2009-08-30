@@ -30,7 +30,12 @@ package away3dlite.core.render
 				var _child:Object3D;
 				
 				for each (_child in _container_children)
+				{
+					if(_child.layer)
+						_child.layer.graphics.clear();
+					
 					collectFaces(_child);
+				}
 				
 			} else if (object is Mesh) {
 				
@@ -50,19 +55,20 @@ package away3dlite.core.render
 				if (mesh.sortFaces)
 					sortFaces();
 				
-				_view_graphics_drawGraphicsData(_mesh_material_graphicsData);
+				if(object.layer)
+				{
+					object.layer.graphics.drawGraphicsData(_mesh_material_graphicsData);
+				}else{
+					_view_graphics_drawGraphicsData(_mesh_material_graphicsData);
+				}
 				
 				var _faces_length:int = _faces.length;
 				_view._totalFaces += _faces_length;
 				_view._renderedFaces += _faces_length;
 			}
 			
-			// except Scene3D
-			if (!(object is Scene3D))
-			{
-				++_view._totalObjects;
-				++_view._renderedObjects;
-			}
+			++_view._totalObjects;
+			++_view._renderedObjects;
 		}
 		
 		protected override function sortFaces():void

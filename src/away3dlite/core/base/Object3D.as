@@ -21,6 +21,9 @@ package away3dlite.core.base
 		{
 		}
 		
+		// Layer
+		public var layer:Sprite;
+		
 		/**
 		 * 
 		 */

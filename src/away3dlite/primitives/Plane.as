@@ -1,6 +1,7 @@
 ﻿package away3dlite.primitives
 {
 	import away3dlite.arcane;
+	import away3dlite.materials.Material;
     
 	use namespace arcane;
 	
@@ -15,6 +16,28 @@
         private var _segmentsH:int = 1;
         private var _yUp:Boolean = true;
 		
+        /**
+         * @param object
+         */        
+        public function init(object:Object):Plane
+        {
+        	for(var data:* in object)
+	        	try{
+	      			this[data] = object[data];
+	        	}catch(e:*){trace(e)};
+	        return this;
+		}
+		
+		public function create( material:Material=null, width:Number=100, height:Number=100, segmentsW:Number=1, segmentsH:Number=1 ):Plane
+        {
+        	this.material = material;
+        	this.width = width;
+        	this.height = height;
+        	this.segmentsW = segmentsW;
+        	this.segmentsH = segmentsH;
+        	return this;
+        }
+
 		/**
 		 * @inheritDoc
 		 */
@@ -133,10 +156,13 @@
 		/**
 		 * Creates a new <code>Plane</code> object.
 		 */
-        public function Plane()
+        public function Plane(object:Object=null)
         {
             super();
-			
+            
+            if(object)
+            	init(object);
+            	
 			type = "Plane";
         	url = "primitive";
         }

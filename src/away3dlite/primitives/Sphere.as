@@ -36,8 +36,8 @@
          * @param segmentsW
          * @param segmentsH
          * 
-         */        
-        public function create(material:Material, radius:Number=100, segmentsW:int=8, segmentsH:int=6):Sphere
+         */
+        public function create(material:Material=null, radius:Number=100, segmentsW:int=8, segmentsH:int=6):Sphere
         {
         	this.material = material;
         	this.radius = radius;

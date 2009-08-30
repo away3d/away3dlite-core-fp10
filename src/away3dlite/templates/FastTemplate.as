@@ -3,7 +3,7 @@ package away3dlite.templates
 	import away3dlite.core.render.*;
 	
 	/**
-	 * SimpleView
+	 * Fast Template
 	 * @author katopz
 	 */
 	public class FastTemplate extends Template
