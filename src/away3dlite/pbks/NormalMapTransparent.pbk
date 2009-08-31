@@ -1,0 +1,58 @@
+<languageVersion : 1.0;>
+
+kernel NewFilter
+<   namespace : "Open3D";
+    vendor : "kris@neuroproductions.be";
+    version : 1;
+    description : "maps bitmap to normals";
+>
+{
+
+  parameter float xOffzet <
+       minValue:float(-100);
+       maxValue:float(100);
+       defaultValue:float(0.0);
+       description:"x";
+   >;
+parameter float yOffzet <
+       minValue:float(-100);
+       maxValue:float(100);
+       defaultValue:float(0.0);
+       description:"y";
+   >;
+  parameter float val <
+       minValue:float(-300);
+       maxValue:float(300);
+       defaultValue:float(1);
+       description:"value";
+   >;
+    input image4 src;
+    input image3 inputi;
+    output pixel4 result;
+
+
+    
+    
+    void
+    evaluatePixel()
+    {
+       
+     
+        pixel4 ln = sampleNearest(src, outCoord());
+        pixel4 temp = ln; 
+        
+        
+      
+        
+       float2 test;
+       test.x = ( temp.r-0.5)*temp.b *val ;
+       test.y =( temp.g-0.5) *temp.b *val ;
+          temp.xyz = sampleNearest(inputi,outCoord()+ test);
+       
+       
+       
+        result = temp ;
+       
+       
+    }
+}

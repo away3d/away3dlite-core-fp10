@@ -3,6 +3,7 @@ package away3dlite.core.base
 	import away3dlite.arcane;
 	import away3dlite.containers.*;
 	import away3dlite.materials.*;
+	import away3dlite.materials.shaders.IShader;
 	
 	import flash.display.*;
 	import flash.geom.*;
@@ -35,6 +36,7 @@ package away3dlite.core.base
 			_scene = val;
 		}
 		
+		protected var _vertexNormals:Vector.<Number>;
 		
 		private var _material:Material;
 		private var _bothsides:Boolean;
@@ -77,8 +79,9 @@ package away3dlite.core.base
 			_indices.fixed = true;
 			
 			// calculate normals for the shaders
-			//if (_material is IShader)
- 			//	IShader(_material).calculateNormals(vertices, _triangles.indices, uvtData, _vertexNormals);
+			if (_material is IShader)
+ 				IShader(_material).calculateNormals(_vertices, _indices, _uvtData, _vertexNormals);
+ 			
  			if (_scene)
  				_scene._dirtyFaces = true;
 		}
@@ -142,7 +145,11 @@ package away3dlite.core.base
 		public override function project(parentMatrix3D:Matrix3D):void
 		{
 			super.project(parentMatrix3D);
-			
+
+			// project the normals
+			if (material is IShader)
+				_triangles.uvtData = IShader(material).getUVData(transform.matrix3D.clone());
+
 			Utils3D.projectVectors(_viewTransform, vertices, _screenVertices, _uvtData);
 		}
 		        
