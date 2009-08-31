@@ -1,16 +1,15 @@
-package away3dlite.materials.shaders 
+package open3d.materials.shaders
 {
-	import open3d.view.Layer;
-	import flash.filters.ShaderFilter;
-	import flash.geom.Vector3D;
-	import open3d.materials.BitmapMaterial;
-	import open3d.objects.Light;
-
+	import away3dlite.lights.Light;
+	import away3dlite.materials.BitmapMaterial;
+	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Shader;
 	import flash.display.Sprite;
+	import flash.filters.ShaderFilter;
 	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 
 	/**

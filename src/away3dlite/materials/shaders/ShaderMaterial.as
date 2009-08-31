@@ -1,14 +1,11 @@
-package away3dlite.materials.shaders 
+package away3dlite.materials.shaders
 {
+	import away3dlite.lights.Light;
+	import away3dlite.materials.BitmapMaterial;
 	
-	import open3d.geom.Vertex;
-	import flash.geom.Vector3D;
-	import open3d.objects.Light;
-	import open3d.materials.BitmapMaterial;
-	import away3dlite.materials.shaders.IShader;
-
 	import flash.display.BitmapData;
 	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
 
 	/**
 	 * @author kris@neuroproductions.be

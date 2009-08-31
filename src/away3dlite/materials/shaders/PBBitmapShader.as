@@ -23,13 +23,11 @@ package away3dlite.materials.shaders
 
 		[Embed("../../pbks/NormalMapAbstractShader.pbj", mimeType = "application/octet-stream")]
 		private var NormalShader:Class;
-
 		protected var _uvtData:Vector.<Number>;
 		protected var _difuseBitmapData:BitmapData;
 		protected var _normalmapBitmapData:BitmapData;
 		protected var _light:Light;
 		protected var shader:Shader;
-
 
 		public var drawSprite:Sprite = new Sprite();
 		protected var difuseBitmap:Bitmap;
