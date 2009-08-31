@@ -1,7 +1,7 @@
 package away3dlite.core.base
 {
-	import away3dlite.containers.*;
 	import away3dlite.arcane;
+	import away3dlite.containers.*;
 	import away3dlite.loaders.utils.*;
 	
 	import flash.display.*;
