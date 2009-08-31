@@ -46,8 +46,10 @@ package away3dlite.materials
 		/**
 		 * 
 		 */
-		public function WireframeMaterial(color:uint = 0xFFFFFF, alpha:Number = 1)
+		public function WireframeMaterial(color:int = 0xFFFFFF, alpha:Number = 1)
 		{
+			super();
+			
 			_color = color;
 			_alpha = alpha;
 			

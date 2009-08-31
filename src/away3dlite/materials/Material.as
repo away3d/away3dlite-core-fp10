@@ -64,7 +64,6 @@ package away3dlite.materials
 		 */
 		public function Material() 
 		{
-			graphicsData = new Vector.<IGraphicsData>();
 		}
 	}
 }

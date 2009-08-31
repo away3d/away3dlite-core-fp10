@@ -42,7 +42,7 @@ package away3dlite.loaders.data
 		/**
 		 * Optional alpha of the material.
 		 */
-		public var alpha:uint;
+		public var alpha:Number;
 		
 		/**
 		 * Optional ambient color of the material.

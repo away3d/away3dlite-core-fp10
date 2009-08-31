@@ -33,7 +33,8 @@ package away3dlite.materials
 		 */
 		public function BitmapFileMaterial(url:String, color:uint = 0xFFFFFF, alpha:Number = 1)
 		{
-			super(new BitmapData(100, 100, (alpha < 1), color));
+			super(new BitmapData(2, 2, alpha < 1, int(alpha*0xFF) << 24 | color));
+			
 			loadTexture(url);
 		}
 	}

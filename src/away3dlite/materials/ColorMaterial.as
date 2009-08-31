@@ -26,7 +26,7 @@ package away3dlite.materials
 			
 			_color = val;
 			
-			_graphicsBitmapFill.bitmapData = new BitmapData(2, 2, false, val);
+			_graphicsBitmapFill.bitmapData = new BitmapData(2, 2, _alpha < 1, int(_alpha*0xFF) << 24 | _color);
 		}
 		
 		/**
@@ -42,20 +42,23 @@ package away3dlite.materials
 				return;
 			
 			_alpha = val;
+			
+			_graphicsBitmapFill.bitmapData = new BitmapData(2, 2, _alpha < 1, int(_alpha*0xFF) << 24 | _color);
 		}
 		
 		/**
 		 * 
 		 */
-		public function ColorMaterial(color:uint = 0xFFFFFF, alpha:Number = 1)
+		public function ColorMaterial(color:int = 0xFFFFFF, alpha:Number = 1)
 		{
+			super();
+			
 			_color = color;
 			_alpha = alpha;
 			
-			//_stroke = new GraphicsStroke(1, false, "normal", "none", "round", 0, new GraphicsSolidFill(_color, _alpha));
-			_graphicsBitmapFill = new GraphicsBitmapFill(new BitmapData(2, 2, (_alpha<1), _color), new Matrix(), true, true);
+			_graphicsBitmapFill = new GraphicsBitmapFill(new BitmapData(2, 2, _alpha < 1, int(_alpha*0xFF) << 24 | _color));
 			
-			graphicsData = Vector.<IGraphicsData>([_graphicsStroke, _graphicsBitmapFill, _triangles, _graphicsBitmapFill]);
+			graphicsData = Vector.<IGraphicsData>([_graphicsStroke, _graphicsBitmapFill, _triangles, _graphicsEndFill]);
 			graphicsData.fixed = true;
 			
 			trianglesIndex = 2;

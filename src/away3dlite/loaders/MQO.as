@@ -1,6 +1,5 @@
 ﻿package away3dlite.loaders
 {
-	import away3dlite.animators.data.UV;
 	import away3dlite.arcane;
 	import away3dlite.containers.*;
 	import away3dlite.core.base.*;
@@ -120,7 +119,7 @@
 			        	else
 			            	_materialData.materialType = MaterialData.COLOR_MATERIAL;
 						
-						_materialData.diffuseColor = (a*255 << 24) | (r << 16) | (g << 8) | b;
+						_materialData.diffuseColor = (r << 16) | (g << 8) | b;
 						_materialData.alpha = a;
 					} else {
 						_materialData.materialType = MaterialData.WIREFRAME_MATERIAL;
@@ -255,10 +254,10 @@
 			var c:Vector3D;
 			var d:Vector3D;
 			var _material:MaterialData;
-			var uvA:UV;
-			var uvB:UV;
-			var uvC:UV;
-			var uvD:UV;
+			var uvA:Vector3D;
+			var uvB:Vector3D;
+			var uvC:Vector3D;
+			var uvD:Vector3D;
 			var mirrorAxis:int;
 			if (v.length == 3) {
 				c = vertices[parseInt(v[0]) + vertexOffset];
@@ -269,12 +268,12 @@
 					_material = _materialNames[parseInt(mstr)];
 
 				if (uv.length != 0) {
-					uvC = new UV(parseFloat(uv[0]),  parseFloat(uv[1]));
-					uvB = new UV(parseFloat(uv[2]),  parseFloat(uv[3]));
-					uvA = new UV(parseFloat(uv[4]),  parseFloat(uv[5]));
+					uvC = new Vector3D(parseFloat(uv[0]),  parseFloat(uv[1]));
+					uvB = new Vector3D(parseFloat(uv[2]),  parseFloat(uv[3]));
+					uvA = new Vector3D(parseFloat(uv[4]),  parseFloat(uv[5]));
 					addFace(a, b, c, uvA, uvB, uvC);
 				} else {
-					addFace(a, b, c, new UV(0, 0), new UV(1, 0), new UV(0, 1));
+					addFace(a, b, c, new Vector3D(0, 0), new Vector3D(1, 0), new Vector3D(0, 1));
 				}
 
 
@@ -298,15 +297,15 @@
 					_material = _materialNames[parseInt(mstr)];
 
 				if (uv.length != 0) {
-					uvD = new UV(parseFloat(uv[0]),  parseFloat(uv[1]));
-					uvC = new UV(parseFloat(uv[2]),  parseFloat(uv[3]));
-					uvB = new UV(parseFloat(uv[4]),  parseFloat(uv[5]));
-					uvA = new UV(parseFloat(uv[6]),  parseFloat(uv[7]));
+					uvD = new Vector3D(parseFloat(uv[0]),  parseFloat(uv[1]));
+					uvC = new Vector3D(parseFloat(uv[2]),  parseFloat(uv[3]));
+					uvB = new Vector3D(parseFloat(uv[4]),  parseFloat(uv[5]));
+					uvA = new Vector3D(parseFloat(uv[6]),  parseFloat(uv[7]));
 				} else {
-					uvD = new UV(1, 1);
-					uvC = new UV(0, 1);
-					uvB = new UV(1, 0);
-					uvA = new UV(0, 0);
+					uvD = new Vector3D(1, 1);
+					uvC = new Vector3D(0, 1);
+					uvB = new Vector3D(1, 0);
+					uvA = new Vector3D(0, 0);
 				}
 				
 				addFace(a, b, c, uvA, uvB, uvC);
@@ -367,15 +366,10 @@
 		
 		private var n:int = -1;
 
-		private function addFace(v0:Vector3D, v1:Vector3D, v2:Vector3D, uv0:UV, uv1:UV, uv2:UV):void
+		private function addFace(v0:Vector3D, v1:Vector3D, v2:Vector3D, uv0:Vector3D, uv1:Vector3D, uv2:Vector3D):void
 		{
-			_geometryData.vertices.push(-v0.x, -v0.y, v0.z);
-			_geometryData.vertices.push(-v1.x, -v1.y, v1.z);
-			_geometryData.vertices.push(-v2.x, -v2.y, v2.z);
-			
-			_geometryData.uvtData.push(uv0.u, uv0.v, 1);
-			_geometryData.uvtData.push(uv1.u, uv1.v, 1);
-			_geometryData.uvtData.push(uv2.u, uv2.v, 1);
+			_geometryData.vertices.push(-v0.x, -v0.y, v0.z, -v1.x, -v1.y, v1.z, -v2.x, -v2.y, v2.z);
+			_geometryData.uvtData.push(uv0.x, uv0.y, 1, uv1.x, uv1.y, 1, uv2.x, uv2.y, 1);
 			
 			n += 3;
 			
