@@ -33,15 +33,24 @@ package away3dlite.core.clip
         		_indexZ = _index*3 + 2;
         		
         		if (_uvtData[_indexZ] < 0)
-        			_screenVerticesCull[_index] = 3;
-        		else if (_screenVertices[_indexX] < _minX || _screenVertices[_indexX] > _maxX || _screenVertices[_indexY] < _minY || _screenVertices[_indexY] > _maxY)
-	        			_screenVerticesCull[_index] = 1;
+        			_screenVerticesCull[_index] += 256;
+        		if (_screenVertices[_indexX] < _minX)
+        			_screenVerticesCull[_index] += 64;
+        		if (_screenVertices[_indexX] > _maxX)
+        			_screenVerticesCull[_index] += 16;
+        		if (_screenVertices[_indexY] < _minY)
+        			_screenVerticesCull[_index] += 4;
+        		if (_screenVertices[_indexY] > _maxY)
+        			_screenVerticesCull[_index] += 1;
         	}
         	
-        	for each(_face in _faces)
-        		if ((mesh.bothsides || _screenVertices[_face.x0]*(_screenVertices[_face.y2] - _screenVertices[_face.y1]) + _screenVertices[_face.x1]*(_screenVertices[_face.y0] - _screenVertices[_face.y2]) + _screenVertices[_face.x2]*(_screenVertices[_face.y1] - _screenVertices[_face.y0]) > 0)
-        			&& (_screenVerticesCull[_face.i0] + _screenVerticesCull[_face.i1] + _screenVerticesCull[_face.i2] < 3))
+        	for each(_face in _faces) {
+        		if (mesh.bothsides || _screenVertices[_face.x0]*(_screenVertices[_face.y2] - _screenVertices[_face.y1]) + _screenVertices[_face.x1]*(_screenVertices[_face.y0] - _screenVertices[_face.y2]) + _screenVertices[_face.x2]*(_screenVertices[_face.y1] - _screenVertices[_face.y0]) > 0) {
+        			_cullCount = _screenVerticesCull[_face.i0] + _screenVerticesCull[_face.i1] + _screenVerticesCull[_face.i2];
+        			if (!(_cullCount >> 8) && (_cullCount >> 6 & 3) < 3 && (_cullCount >> 4 & 3) < 3 && (_cullCount >> 2 & 3) < 3 && (_cullCount & 3) < 3)
 						faces[faces.length] = _face;
+        		}
+        	}
         }
         
 		public override function clone(object:Clipping = null):Clipping

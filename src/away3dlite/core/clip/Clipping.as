@@ -55,6 +55,7 @@ package away3dlite.core.clip
     	protected var _indexY:int;
     	protected var _indexZ:int;
         protected var _screenVerticesCull:Vector.<int> = new Vector.<int>();
+        protected var _cullCount:int;
 		protected var _minX:Number;
 		protected var _minY:Number;
 		protected var _minZ:Number;
