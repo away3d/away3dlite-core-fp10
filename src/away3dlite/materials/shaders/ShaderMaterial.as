@@ -1,7 +1,8 @@
 package away3dlite.materials.shaders
 {
-	import away3dlite.lights.Light;
-	import away3dlite.materials.BitmapMaterial;
+	import away3dlite.core.base.*;
+	import away3dlite.lights.*;
+	import away3dlite.materials.*;
 	
 	import flash.display.BitmapData;
 	import flash.geom.Matrix3D;

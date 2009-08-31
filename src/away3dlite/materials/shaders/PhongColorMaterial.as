@@ -1,19 +1,9 @@
 package away3dlite.materials.shaders
 {
-	import flash.geom.Utils3D;
-	import flash.display.Bitmap;
-	import open3d.geom.Vertex;
-	import open3d.materials.BitmapMaterial;
-	import open3d.objects.Light;
+	import away3dlite.lights.*;
 
-	import flash.display.BitmapData;
-	import flash.display.BlendMode;
-	import flash.display.IGraphicsData;
-	import flash.geom.ColorTransform;
-	import flash.geom.Matrix3D;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
-	import flash.geom.Vector3D;
+	import flash.display.*;
+	import flash.geom.*;
 
 	/**
 	 * @author kris

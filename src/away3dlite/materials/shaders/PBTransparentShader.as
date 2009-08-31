@@ -1,16 +1,12 @@
-package open3d.materials.shaders
+package away3dlite.materials.shaders
 {
-	import away3dlite.lights.Light;
-	import away3dlite.materials.BitmapMaterial;
+	import away3dlite.lights.*;
+	import away3dlite.materials.*;
 	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.Shader;
-	import flash.display.Sprite;
-	import flash.filters.ShaderFilter;
-	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
-	import flash.utils.ByteArray;
+	import flash.display.*;
+	import flash.filters.*;
+	import flash.geom.*;
+	import flash.utils.*;
 
 	/**
 	 * @author kris@neuroproductions
@@ -60,7 +56,7 @@ package open3d.materials.shaders
 			
 			var normalMapBuilder : NormalMapBuilder = new NormalMapBuilder();
 			
-			var targetMap : BitmapData = _normalmapBitmapData ? _normalmapBitmapData : _texture;
+			var targetMap : BitmapData = _normalmapBitmapData ? _normalmapBitmapData : bitmap;
 			// build a world map
 			var normalWorldMap : BitmapData = normalMapBuilder.getWorldNormalMap(targetMap, verticesIn, indices, uvtData, vertexNormals);
 			// blend the local and world normals
@@ -109,7 +105,7 @@ package open3d.materials.shaders
 			*/
 			normalSprite.filters =[_filter ];
 		
-			texture.draw(normalSprite);
+			bitmap.draw(normalSprite);
 			return _uvtData;
 		}
 	}
