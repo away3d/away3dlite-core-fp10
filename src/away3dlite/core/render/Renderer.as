@@ -32,11 +32,14 @@ package away3dlite.core.render
 		
 		protected function sortFaces():void
 		{
+	        // by pass
+	        var _faces_length:int = _faces.length;
+	        
 	        q0 = new Vector.<int>(256, true);
 	        q1 = new Vector.<int>(256, true);
-	        np0 = new Vector.<int>(_faces.length + 1, true);
-	        np1 = new Vector.<int>(_faces.length + 1, true);
-	        sort = new Vector.<int>(_faces.length, true);
+	        np0 = new Vector.<int>(_faces_length + 1, true);
+	        np1 = new Vector.<int>(_faces_length + 1, true);
+	        sort = new Vector.<int>(_faces_length, true);
 	        
         	i = -1;
         	j = 0;
