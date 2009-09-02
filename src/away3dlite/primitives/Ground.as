@@ -17,7 +17,7 @@
     		super.buildPrimitive();
     		
     		var m:Matrix3D = new Matrix3D();
-    		m.appendRotation(-90, Vector3D.X_AXIS);
+    		m.appendRotation(90, Vector3D.X_AXIS);
     		m.transformVectors(_vertices, _vertices);
     	}
     }

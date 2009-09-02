@@ -77,6 +77,11 @@ package away3dlite.core.base
 			return _sceneTransform;
 		}
 		
+		public function get position():Vector3D
+		{
+			return transform.matrix3D.position;
+		}
+		
 		/**
 		 * 
 		 */
