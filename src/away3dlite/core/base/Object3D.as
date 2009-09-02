@@ -17,6 +17,8 @@ package away3dlite.core.base
 		arcane var _screenZ:Number = 0;
 		arcane var _scene:Scene3D;
 		arcane var _viewTransform:Matrix3D;
+		arcane var _sceneTransform:Matrix3D;
+		
 		arcane function updateScene(val:Scene3D):void
 		{
 		}
@@ -33,6 +35,11 @@ package away3dlite.core.base
 		 * 
 		 */
 		public var geometryLibrary:GeometryLibrary = new GeometryLibrary();
+		
+		/**
+		 * 
+		 */
+		public var animationLibrary:AnimationLibrary = new AnimationLibrary();
 		
 		/**
 		 * 
@@ -60,6 +67,16 @@ package away3dlite.core.base
 			return _screenZ;
 		}
 		
+		public function get viewTransform():Matrix3D
+		{
+			return _viewTransform;
+		}
+		
+		public function get sceneTransform():Matrix3D
+		{
+			return _sceneTransform;
+		}
+		
 		/**
 		 * 
 		 */
@@ -80,10 +97,16 @@ package away3dlite.core.base
         	transform.matrix3D.pointAt(target, Vector3D.Z_AXIS, upAxis || new Vector3D(0,-1,0));
         }
         
-        public function project(parentMatrix3D:Matrix3D):void
+        public function project(viewMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
 		{
-			_viewTransform = transform.matrix3D.clone();
-			_viewTransform.append(parentMatrix3D);
+			
+			_sceneTransform = transform.matrix3D.clone();
+			
+			if (parentMatrix3D)
+				_sceneTransform.append(parentMatrix3D);
+				
+			_viewTransform = _sceneTransform.clone();
+			_viewTransform.append(viewMatrix3D);
 			
 			_screenZ = _viewTransform.position.z;
 		}

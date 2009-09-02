@@ -1,6 +1,7 @@
 package away3dlite.core.base
 {
 	import away3dlite.arcane;
+	import away3dlite.materials.*;
 	
 	use namespace arcane;
 	
@@ -14,10 +15,14 @@ package away3dlite.core.base
 		
 		private var vertices:Vector.<Number>;
 		
+		
 		// use for refer back to mesh
 		public var mesh:Mesh;
 		
+		public var material:Material;
+		
 		// index values
+		public var index:int;
 		public var i0:int;
 		public var i1:int;
 		public var i2:int;
@@ -50,17 +55,19 @@ package away3dlite.core.base
 		
 		public var normalZ:Number;
 		
-		public function Face(mesh:Mesh, i0:int, i1:int, i2:int)
+		public function Face(mesh:Mesh, i:int)
 		{
+			this.mesh = mesh;
+			
 			uvtData = mesh._uvtData;
 			
 			vertices = mesh._vertices;
 			
-			this.mesh = mesh;
+			material = mesh._faceMaterials[i] || mesh.material;
 			
-			this.i0 = i0;
-			this.i1 = i1;
-			this.i2 = i2;
+			i0 = mesh._indices[int(i*3 + 0)];
+			i1 = mesh._indices[int(i*3 + 1)];
+			i2 = mesh._indices[int(i*3 + 2)];
 			
 			x0 = 2*i0;
 			y0 = 2*i0 + 1;

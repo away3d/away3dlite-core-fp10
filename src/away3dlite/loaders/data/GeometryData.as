@@ -41,13 +41,6 @@ package away3dlite.loaders.data
 		 * Defines whether both sides of the geometry are visible
 		 */
 		public var bothsides:Boolean;
-		
-		/**
-		 * Array of skin vertex objects used in bone animations
-         * 
-         * @see away3d.animators.skin.SkinVertex
-         */
-        public var skinVertices:Array = [];
         
         /**
          * Array of skin controller objects used in bone animations

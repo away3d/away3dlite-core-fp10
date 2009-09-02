@@ -105,7 +105,7 @@ package away3dlite.core.render
 		 */
 		public override function render():void
 		{
-			_scene = _view.scene;
+			super.render();
 			
 			collectFaces(_scene);
 		}

@@ -1,9 +1,9 @@
 package away3dlite.core.render
 {
 
-	import away3dlite.containers.Scene3D;
-	import away3dlite.containers.View3D;
+	import away3dlite.containers.*;
 	import away3dlite.core.base.*;
+	import away3dlite.core.clip.*;
 	
 	/**
 	 * @author robbateman
@@ -25,14 +25,13 @@ package away3dlite.core.render
 		protected var _face:Face;
 		protected var _faces:Vector.<Face> = new Vector.<Face>();
 		protected var _faceStore:Vector.<int> = new Vector.<int>();
+		protected var _clipping:Clipping;
 		
 		// by pass
 		protected var _view_graphics_drawGraphicsData:Function;
 		
 		protected function sortFaces():void
 		{
-	        var _faces_length:int = _faces.length;
-	        
 	        q0 = new Vector.<int>(256, true);
 	        q1 = new Vector.<int>(256, true);
 	        np0 = new Vector.<int>(_faces.length + 1, true);
@@ -76,6 +75,9 @@ package away3dlite.core.render
 		 */
 		public function render():void
 		{
+			_scene = _view.scene;
+			
+			_clipping = _view.screenClipping;
 		}
 	}
 }

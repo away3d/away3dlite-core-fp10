@@ -116,12 +116,12 @@ package away3dlite.loaders.data
 		/**
 		 * Array of indexes representing the elements that use the material.
 		 */
-		public var elements:Array = [];
+		public var elements:Vector.<Face> = new Vector.<Face>();
 		
 		/**
 		 * Array of indexes representing the meshes that use the material.
 		 */
-		public var meshes:Array = [];
+		public var meshes:Vector.<Mesh> = new Vector.<Mesh>();
 		
 		public function clone(targetObj:Object3D):MaterialData
 		{

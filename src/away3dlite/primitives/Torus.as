@@ -9,7 +9,6 @@
     */ 
     public class Torus extends AbstractPrimitive
     {
-        private var grid:Array;
         private var _radius:Number = 100;
         private var _tube:Number = 40;
         private var _segmentsR:int = 8;

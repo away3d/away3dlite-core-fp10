@@ -1,7 +1,7 @@
 package away3dlite.containers
 {
-	
 	import away3dlite.arcane;
+	import away3dlite.animators.bones.*;
 	import away3dlite.core.base.*;
 	
 	import flash.geom.*;
@@ -89,13 +89,68 @@ package away3dlite.containers
 			
 			return child;
 		}
-    	
+        
+		/**
+		 * Returns a 3d object specified by name from the child array of the container
+		 * 
+		 * @param	name	The name of the 3d object to be returned
+		 * @return			The 3d object, or <code>null</code> if no such child object exists with the specified name
+		 */
+        public override function getChildByName(childName:String):DisplayObject
+        {	
+			var child:Object3D;
+            for each(var object3D:Object3D in children) {
+            	if (object3D.name)
+					if (object3D.name == childName)
+						return object3D;
+				
+            	if (object3D is ObjectContainer3D) {
+	                child = (object3D as ObjectContainer3D).getChildByName(childName) as Object3D  ;
+	                if (child)
+	                    return child;
+	            }
+            }
+			
+            return null;
+        }
+        
+		/**
+		 * Returns a bone object specified by name from the child array of the container
+		 * 
+		 * @param	name	The name of the bone object to be returned
+		 * @return			The bone object, or <code>null</code> if no such bone object exists with the specified name
+		 */
+        public function getBoneByName(boneName:String):Bone
+        {	
+			var bone:Bone;
+            for each(var object3D:Object3D in children) {
+            	if (object3D is Bone) {
+            		bone = object3D as Bone;
+            		
+	            	if (bone.name)
+						if (bone.name == boneName)
+							return bone;
+					
+					if (bone.boneId)
+						if (bone.boneId == boneName)
+							return bone;
+            	}
+            	if (object3D is ObjectContainer3D) {
+	                bone = (object3D as ObjectContainer3D).getBoneByName(boneName);
+	                if (bone)
+	                    return bone;
+	            }
+            }
+			
+            return null;
+        }
+        
 		/**
 		 * 
 		 */
-		public override function project(parentMatrix3D:Matrix3D):void
+		public override function project(viewMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
 		{
-			super.project(parentMatrix3D);
+			super.project(viewMatrix3D, parentMatrix3D);
 			
 			var i:int = numChildren;
 			

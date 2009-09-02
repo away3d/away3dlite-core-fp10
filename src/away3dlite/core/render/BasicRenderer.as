@@ -15,7 +15,6 @@ package away3dlite.core.render
 	 */
 	public class BasicRenderer extends Renderer
 	{
-		private var _clipping:Clipping;
 		private var _mesh:Mesh;
 		private var _screenVertices:Vector.<Number>;
 		private var _uvtData:Vector.<Number>;
@@ -67,7 +66,7 @@ package away3dlite.core.render
                 while (j) {
                     _face = _faces[j-1];
 					
-					if (_material != _face.mesh.material) {
+					if (_material != _face.material) {
 						if (_material) {
 							_material_graphicsData[_material.trianglesIndex] = _triangles;
 							_view_graphics_drawGraphicsData(_material_graphicsData);
@@ -80,7 +79,7 @@ package away3dlite.core.render
 						_j = -1;
 						_k = -1;
 						_mesh = _face.mesh;
-						_material = _mesh.material;
+						_material = _face.material;
 						_material_graphicsData = _material.graphicsData;
 						_screenVertices = _mesh._screenVertices;
 						_uvtData = _mesh._uvtData;
@@ -151,10 +150,6 @@ package away3dlite.core.render
 		public override function render():void
 		{
 			super.render();
-			
-			_scene = _view.scene;
-			
-			_clipping = _view.screenClipping;
 			
 			_faces.fixed = false;
 			_faces.length = 0;

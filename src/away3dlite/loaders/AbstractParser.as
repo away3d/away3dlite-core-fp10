@@ -145,7 +145,7 @@ package away3dlite.loaders
 		/**
 		 * Defines a timeout period for file parsing (in milliseconds).
 		 */
-		public var parseTimeout:int;
+		public var parseTimeout:int = 40000;
 
     	/**
     	 * Overrides all materials in the model.
@@ -241,7 +241,7 @@ package away3dlite.loaders
 		 * 
          * @return				The parsed 3d object.
          */
-        public function parse(data:*):Object3D
+        public function parseGeometry(data:*):Object3D
         {
         	_broadcaster.addEventListener(Event.ENTER_FRAME, update);
         	

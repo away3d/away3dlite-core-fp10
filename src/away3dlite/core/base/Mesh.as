@@ -28,6 +28,8 @@ package away3dlite.core.base
 		/** @private */
 		arcane var _vertices:Vector.<Number> = new Vector.<Number>();
 		/** @private */
+		arcane var _faceMaterials:Vector.<Material> = new Vector.<Material>();
+		/** @private */
 		arcane override function updateScene(val:Scene3D):void
 		{
 			if (scene == val)
@@ -65,18 +67,16 @@ package away3dlite.core.base
 		public function buildFaces():void
 		{
 			_faces.length = 0;
-			var i:int = _faces.length = _indices.length/3;
+			var i:int = _faces.length = _faceMaterials.length = _indices.length/3;
 			
-			while (i--) {
-				// 3 point of face 
-				var i3:int = int(i*3);
-				_faces[i] = new Face(this, _indices[int(i3 + 0)], _indices[int(i3 + 1)], _indices[int(i3 + 2)]);
-			}
+			while (i--)
+				_faces[i] = new Face(this, i);
 			
 			// speed up
 			_vertices.fixed = true;
 			_uvtData.fixed = true;
 			_indices.fixed = true;
+			_faceMaterials.fixed = true;
 			
 			// calculate normals for the shaders
 			if (_material is IShader)
@@ -99,6 +99,11 @@ package away3dlite.core.base
 				return;
 			
 			_material = val;
+			
+			//update property in faces
+			var i:int = _faces.length;
+			while (i--)
+				_faces[i].material = _faceMaterials[i] || _material;
 		}
 		
 		/**
@@ -142,14 +147,15 @@ package away3dlite.core.base
 		/**
 		 * 
 		 */
-		public override function project(parentMatrix3D:Matrix3D):void
+		public override function project(viewMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
 		{
-			super.project(parentMatrix3D);
-
+			super.project(viewMatrix3D, parentMatrix3D);
+			
 			// project the normals
 			if (material is IShader)
 				_triangles.uvtData = IShader(material).getUVData(transform.matrix3D.clone());
-
+			
+			//DO NOT CHANGE vertices getter!!!!!!!
 			Utils3D.projectVectors(_viewTransform, vertices, _screenVertices, _uvtData);
 		}
 		        
@@ -166,7 +172,7 @@ package away3dlite.core.base
             mesh.type = type;
             mesh.material = material;
             mesh.bothsides = bothsides;
-			mesh._uvtData = mesh._triangles.uvtData = _uvtData;
+			mesh._uvtData = mesh._triangles.uvtData = _uvtData.concat();
 			mesh._vertices = _vertices;
 			mesh._indices = _indices.concat();
 			mesh.buildFaces();

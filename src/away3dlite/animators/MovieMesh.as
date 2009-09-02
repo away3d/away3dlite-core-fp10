@@ -2,7 +2,7 @@ package away3dlite.animators
 {
 	import away3dlite.arcane;
 	import away3dlite.core.base.*;
-	import away3dlite.animators.data.*;
+	import away3dlite.animators.frames.Frame;
 	
 	import flash.events.*;
 	import flash.utils.*;

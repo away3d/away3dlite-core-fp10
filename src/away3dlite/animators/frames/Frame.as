@@ -1,4 +1,4 @@
-package away3dlite.animators.data
+package away3dlite.animators.frames
 {
 	/**
 	 * @author katopz
