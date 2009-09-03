@@ -1,8 +1,8 @@
 package away3dlite.cameras
 {
 	import away3dlite.arcane;
-	import away3dlite.core.base.*;
 	import away3dlite.containers.*;
+	import away3dlite.core.base.*;
 	
 	import flash.geom.*;
 	
@@ -60,6 +60,13 @@ package away3dlite.cameras
 			return _viewMatrix3D;
 		}
     	
+		public function unproject(mX:Number, mY:Number):Vector3D
+		{	
+			var persp:Number = (_focus*_zoom) / _focus;
+			var vector:Vector3D = new Vector3D(mX/persp, -mY/persp, _focus);
+			return transform.matrix3D.transformVector(vector);
+		}
+		
 		/**
 		 * Creates a new <code>Camera3D</code> object.
 		 */

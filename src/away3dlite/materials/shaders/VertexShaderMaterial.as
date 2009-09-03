@@ -1,5 +1,6 @@
 package away3dlite.materials.shaders
 {
+	import away3dlite.core.base.Vertex;
 	import away3dlite.lights.Light;
 
 	import flash.display.BitmapData;
@@ -29,7 +30,15 @@ package away3dlite.materials.shaders
 		{
 			for (var i:int = 0; i < vertices.length; i++)
 			{
-				vertices[i].calculateNormal();
+				//BUG:null
+				if (!vertices[i])
+				{
+					vertices[i] = new Vertex();
+				}
+				else
+				{
+					vertices[i].calculateNormal();
+				}
 			}
 		}
 
@@ -45,15 +54,17 @@ package away3dlite.materials.shaders
 			var texCoord:Point = new Point();
 			// projecting vertex normals
 			// TODO: optimize: keep normals in a Vector and use Matrix.transformVectors
-			for (var i:int = 0; i < vertices.length; i++)
-			{
+			//BUG:null
+			if (vertices)
+				for (var i:int = 0; i < vertices.length; i++)
+				{
 
-				projectedNormal = vertices[i].getProjectedNormal(projectMatrix);
+					projectedNormal = vertices[i].getProjectedNormal(projectMatrix);
 
 
-				calculateTexCoord(texCoord, projectedNormal, false);
-				uvData.push(texCoord.x, texCoord.y, 1);
-			}
+					calculateTexCoord(texCoord, projectedNormal, false);
+					uvData.push(texCoord.x, texCoord.y, 1);
+				}
 
 			return uvData;
 		}

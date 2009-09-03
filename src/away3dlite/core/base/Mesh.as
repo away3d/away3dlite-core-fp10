@@ -104,6 +104,10 @@ package away3dlite.core.base
 			var i:int = _faces.length;
 			while (i--)
 				_faces[i].material = _faceMaterials[i] || _material;
+				
+			// calculate normals for the shaders
+			if (_material is IShader)
+ 				IShader(_material).calculateNormals(_vertices, _indices, _uvtData, _vertexNormals);
 		}
 		
 		/**
