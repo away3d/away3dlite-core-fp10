@@ -1,41 +1,82 @@
 package away3dlite.materials
 {
-	import away3dlite.core.utils.Debug;
-	import away3dlite.loaders.utils.LoaderUtil;
+	import away3dlite.events.*;
 	
 	import flash.display.*;
 	import flash.events.*;
 	import flash.net.*;
-	import flash.system.*;
 
-	/**
-	 * BitmapFileMaterial : load external image as texture
-	 * @author katopz
+	 /**
+	 * Dispatched when the material completes a file load successfully.
+	 * 
+	 * @eventType away3d.events.MaterialEvent
 	 */
-	public class BitmapFileMaterial extends BitmapMaterial
-	{
-		private function loadTexture(url:String):void
-		{
-			LoaderUtil.load(url, onTextureLoaded);
-		}
+	[Event(name="loadSuccess",type="away3d.events.MaterialEvent")]
+    			
+	 /**
+	 * Dispatched when the material fails to load a file.
+	 * 
+	 * @eventType away3d.events.MaterialEvent
+	 */
+	[Event(name="loadError",type="away3d.events.MaterialEvent")]
+    			
+	 /**
+	 * Dispatched every frame the material is loading.
+	 * 
+	 * @eventType away3d.events.MaterialEvent
+	 */
+	[Event(name="loadProgress",type="away3d.events.MaterialEvent")]
+	
+    /**
+    * Bitmap material that loads it's texture from an external bitmapasset file.
+    */
+    public class BitmapFileMaterial extends BitmapMaterial
+    {
+		private var _loader:Loader;
+		private var _materialloaderror:MaterialEvent;
+		private var _materialloadprogress:MaterialEvent;
+		private var _materialloadsuccess:MaterialEvent;
 		
-		private function onTextureLoaded(event:Event):void
-		{
-			if(event.type==Event.COMPLETE)
-			{
-				event.target.removeEventListener(Event.COMPLETE, onTextureLoaded);
-				bitmap = Bitmap(event.target.content).bitmapData;
-			}
-		}
-		
-		/**
-		 * 
-		 */
-		public function BitmapFileMaterial(url:String, color:uint = 0xFFFFFF, alpha:Number = 1)
-		{
-			super(new BitmapData(2, 2, alpha < 1, int(alpha*0xFF) << 24 | color));
+		private function onError(e:IOErrorEvent):void
+		{			
+			if (!_materialloaderror)
+				_materialloaderror = new MaterialEvent(MaterialEvent.LOAD_ERROR, this);
 			
-			loadTexture(url);
+            dispatchEvent(_materialloaderror);
 		}
-	}
+		
+		private function onProgress(e:ProgressEvent):void
+		{
+			if (!_materialloadprogress)
+				_materialloadprogress = new MaterialEvent(MaterialEvent.LOAD_PROGRESS, this);
+			
+            dispatchEvent(_materialloadprogress);
+		}
+		
+		private function onComplete(e:Event):void
+		{
+			bitmap = Bitmap(_loader.content).bitmapData;
+			
+			if (!_materialloadsuccess)
+				_materialloadsuccess = new MaterialEvent(MaterialEvent.LOAD_SUCCESS, this);
+			
+            dispatchEvent(_materialloadsuccess);
+		}
+    	
+		/**
+		 * Creates a new <code>BitmapFileMaterial</code> object.
+		 *
+		 * @param	url					The location of the bitmapasset to load.
+		 */
+		public function BitmapFileMaterial(url:String="")
+        {
+            super(new BitmapData(100,100));
+			
+			_loader = new Loader();
+			_loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onError);
+            _loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, onProgress);
+			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
+			_loader.load(new URLRequest(url));
+        }
+    }
 }

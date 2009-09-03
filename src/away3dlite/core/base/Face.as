@@ -59,6 +59,8 @@ package away3dlite.core.base
 		{
 			this.mesh = mesh;
 			
+			index = i;
+			
 			uvtData = mesh._uvtData;
 			
 			vertices = mesh._vertices;

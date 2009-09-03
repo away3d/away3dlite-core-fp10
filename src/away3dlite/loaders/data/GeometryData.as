@@ -1,5 +1,6 @@
 package away3dlite.loaders.data
-{	
+{	import away3dlite.animators.bones.SkinVertex;
+	
 	/**
 	 * Data class for the geometry data used in a mesh object
 	 */
@@ -16,6 +17,13 @@ package away3dlite.loaders.data
 		 * @see away3d.core.base.Vertex
 		 */
 		public var vertices:Vector.<Number> = new Vector.<Number>();
+		
+		/**
+		 * Array of skinvertex objects.
+		 *
+		 * @see away3d.core.base.Vertex
+		 */
+		public var skinVertices:Vector.<SkinVertex> = new Vector.<SkinVertex>();
 		
 		/**
 		 * Array of uv objects.

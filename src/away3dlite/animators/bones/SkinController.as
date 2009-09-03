@@ -1,12 +1,14 @@
 ﻿package away3dlite.animators.bones
 {
+	import flash.display.DisplayObjectContainer;
+	import away3dlite.core.base.Object3D;
 	import away3dlite.containers.*;
 	
 	import flash.geom.*;
 	
     public class SkinController
     {
-    	private var _inverseSceneTransform:Matrix3D;
+    	//private var _inverseSceneTransform:Matrix3D;
         private var _sceneTransform:Matrix3D;
         
     	public var name:String;
@@ -25,7 +27,14 @@
         	if (!joint)
         		return;
         	
-        	_sceneTransform = joint.transform.getRelativeMatrix3D(parent);
+        	
+        	//_sceneTransform = parent.transform.getRelativeMatrix3D(joint);
+        	_sceneTransform = joint.transform.matrix3D.clone();
+        	var child:DisplayObjectContainer = joint;
+        	while (child.parent != parent) {
+        		child = child.parent;
+        		_sceneTransform.append(child.transform.matrix3D);
+        	}
         	//_inverseSceneTransform = parent.sceneTransform.clone();
         	//_inverseSceneTransform.invert();
         	_sceneTransform.prepend(bindMatrix);

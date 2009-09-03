@@ -1,9 +1,12 @@
 package away3dlite.loaders.data
 {
+	import away3dlite.arcane;
 	import away3dlite.core.base.*;
 	import away3dlite.materials.*;
 	
 	import flash.display.BitmapData;
+	
+	use namespace arcane;
 	
 	/**
 	 * Data class for the material data of a face.
@@ -93,19 +96,13 @@ package away3dlite.loaders.data
             	textureBitmap = (_material as BitmapMaterial).bitmap;
             
             var mesh:Mesh;
-            for each(mesh in meshes)
+            for each (mesh in meshes)
             	mesh.material = _material;
-            		
-            /*
-            var _element:Element;
             
-            if(_material is ITriangleMaterial)
-            	for each(_element in elements)
-            		(_element as Face).material = _material as ITriangleMaterial;		
-			else if(_material is ISegmentMaterial)
-            	for each(_element in elements)
-            		(_element as Segment).material = _material as ISegmentMaterial;
-            */
+            var face:Face;
+            
+            for each (face in faces)
+            	face.material = face.mesh._faceMaterials[face.index] = _material || face.mesh.material;
         }
         		
 		/**
@@ -116,7 +113,7 @@ package away3dlite.loaders.data
 		/**
 		 * Array of indexes representing the elements that use the material.
 		 */
-		public var elements:Vector.<Face> = new Vector.<Face>();
+		public var faces:Vector.<Face> = new Vector.<Face>();
 		
 		/**
 		 * Array of indexes representing the meshes that use the material.

@@ -1,5 +1,6 @@
 package away3dlite.animators.bones
 {
+	import away3dlite.primitives.Sphere;
 	import away3dlite.containers.*;
 	import away3dlite.arcane;
 	import away3dlite.core.base.*;
@@ -97,7 +98,9 @@ package away3dlite.animators.bones
 			
 			//create the joint for the bone
 			addChild(joint = new ObjectContainer3D());
-			//addChild(new Sphere({radius:3}));
+			var sphere:Sphere = new Sphere();
+			sphere.radius = 3;
+			addChild(sphere);
         }
 		
 		/**

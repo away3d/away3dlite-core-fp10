@@ -1,12 +1,13 @@
 package away3dlite.materials
 {
+	import flash.events.*;
 	import flash.display.*;
 	
 	/**
 	 * Material
 	 * @author katopz
 	 */	
-	public class Material
+	public class Material extends EventDispatcher
 	{
 		private const DEBUG_STROKE:GraphicsStroke = new GraphicsStroke(1, false, "normal", "none", "round", 0, new GraphicsSolidFill(0xFF00FF));
 		private var _debug:Boolean = false;

@@ -174,6 +174,7 @@ package away3dlite.core.base
             mesh.bothsides = bothsides;
 			mesh._uvtData = mesh._triangles.uvtData = _uvtData.concat();
 			mesh._vertices = _vertices;
+			mesh._faceMaterials = _faceMaterials;
 			mesh._indices = _indices.concat();
 			mesh.buildFaces();
 			

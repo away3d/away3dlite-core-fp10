@@ -119,46 +119,61 @@
 			//set skincontrollers parent value
 			for each (var _skinController:SkinController in _geometryData.skinControllers)
 		    	_skinController.parent = parent;
-		    
-			//set vertices
-			mesh._vertices = _geometryData.vertices;
 			
-			//set uvtData
-			var uvt:Number;
-			for each (uvt in _geometryData.uvtData)
-				mesh._uvtData.push(uvt);
-			
-			//set indices
-			var index:int;
-			for each (index in _geometryData.indices)
-				mesh._indices.push(index);
-			
-			//set face materials
 			var _materialData:MaterialData;
+			var i:int = 0;
+			var i0:int;
+			var i1:int;
+			var i2:int;
+			var vertices:Vector.<Number> = _geometryData.vertices;
+			var uvtData:Vector.<Number> = _geometryData.uvtData;
+			
 			for each(_faceData in _geometryData.faces) {
+				//set face materials
 				_materialData = _faceData.materialData;
-				if (_materialData)
-					mesh._faceMaterials.push(_materialData.material);
-				else
-					mesh._faceMaterials.push(null);
+				mesh._faceMaterials.push(_materialData.material);
 				
-				if (_faceData.materialData)
-					_faceData.materialData.elements.push(_face);
+				//set vertices
+				i0 = _faceData.v0*3;
+				i1 = _faceData.v1*3;
+				i2 = _faceData.v2*3;
+				mesh._vertices.push(vertices[i0], vertices[i0+1], vertices[i0+2]);
+				buildSkinVertices(_geometryData, _faceData.v0, mesh._vertices);
+				mesh._vertices.push(vertices[i1], vertices[i1+1], vertices[i1+2]);
+				buildSkinVertices(_geometryData, _faceData.v1, mesh._vertices);
+				mesh._vertices.push(vertices[i2], vertices[i2+1], vertices[i2+2]);
+				buildSkinVertices(_geometryData, _faceData.v2, mesh._vertices);
+				
+				//set uvData
+				i0 = _faceData.uv0*3;
+				i1 = _faceData.uv1*3;
+				i2 = _faceData.uv2*3;
+				mesh._uvtData.push(uvtData[i0], uvtData[i0+1], uvtData[i0+2], uvtData[i1], uvtData[i1+1], uvtData[i1+2], uvtData[i2], uvtData[i2+1], uvtData[i2+2]);
+				
+				//set indices
+				mesh._indices.push(i++, i++, i++);
 			}
 			
-			_materialData.meshes.push(mesh);
+			//store mesh material reference for later setting by the materialLibrary
+			if (_materialData)
+				_materialData.meshes.push(mesh);
 			
 			mesh.buildFaces();
 			
+			//store element material reference for later setting by the materialLibrary
+			for each (_face in mesh._faces)
+				if ((_materialData = _geometryData.faces[_face.index].materialData))
+					_materialData.faces.push(_face);
+					
 			if (centerMeshes) {
-				var i:int = mesh._vertices.length/3;
+				var k:int = mesh._vertices.length/3;
 				_moveVector.x = (_geometryData.maxX + _geometryData.minX)/2;
 				_moveVector.y = (_geometryData.maxY + _geometryData.minY)/2;
 				_moveVector.z = (_geometryData.maxZ + _geometryData.minZ)/2;
-                while (i--) {
-                	mesh._vertices[i*3] -= _moveVector.x;
-                	mesh._vertices[i*3+1] -= _moveVector.y;
-					mesh._vertices[i*3+2] -= _moveVector.z;
+                while (k--) {
+                	mesh._vertices[k*3] -= _moveVector.x;
+                	mesh._vertices[k*3+1] -= _moveVector.y;
+					mesh._vertices[k*3+2] -= _moveVector.z;
                 }
                 _moveVector = mesh.transform.matrix3D.transformVector(_moveVector);
 				mesh.x += _moveVector.x;
@@ -169,6 +184,17 @@
 			mesh.type = ".Collada";
 			parent.addChild(mesh);
 			return mesh;
+		}
+		
+		private function buildSkinVertices(geometryData:GeometryData, i:int, vertices:Vector.<Number>):void
+		{
+			var skinController:SkinController;
+			var skinVertex:SkinVertex = geometryData.skinVertices[i].clone();
+			
+			skinVertex.updateVertices(vertices.length - 3, vertices);
+			
+			for each (skinController in geometryData.skinControllers)
+				skinController.skinVertices.push(skinVertex);
 		}
 		
 		private function buildAnimations():void
@@ -217,7 +243,7 @@
 							if (_animationData.start > times[0])
 								_animationData.start = times[0];
 							
-							if (_animationData.end < times[times.length-1])
+							if (_animationData.end < times[times.length - 1])
 								_animationData.end = times[times.length - 1];
 							
 				            if (channel.target is Bone) {
@@ -242,29 +268,39 @@
 				                case "translationX":
 								case "transform(3)(0)":
 				                	channel.type = ["x"];
-									if (yUp)
+									if (yUp) {
 										for each (param in channel.param)
-											param[0] *= -1*scaling;
+											param[0] *= -scaling;
+									} else {
+										for each (param in channel.param)
+											param[0] *= scaling;
+									}
 				                	break;
 								case "translateY":
 								case "translationY":
 								case "transform(3)(1)":
-									if (yUp)
+									if (yUp) {
 										channel.type = ["y"];
-									else
+										for each (param in channel.param)
+											param[0] *= -scaling;
+									} else {
 										channel.type = ["z"];
-									for each (param in channel.param)
-										param[0] *= scaling;
+										for each (param in channel.param)
+											param[0] *= scaling;
+									}
 				     				break;
 								case "translateZ":
 								case "translationZ":
 								case "transform(3)(2)":
-									if (yUp)
+									if (yUp) {
 										channel.type = ["z"];
-									else
+										for each (param in channel.param)
+											param[0] *= scaling;
+									} else {
 										channel.type = ["y"];
-									for each (param in channel.param)
-										param[0] *= scaling;
+										for each (param in channel.param)
+											param[0] *= -scaling;
+									}
 				     				break;
 				     			case "jointOrientX":
 				     				channel.type = ["rotationX"];
@@ -289,13 +325,14 @@
 								case "rotateYANGLE":
 								case "rotateY":
 								case "RotY":
-									if (yUp)
+									if (yUp) {
 										channel.type = [rY];
-									else
-										channel.type = [rZ];
-									//if (yUp)
 										for each (param in channel.param)
 											param[0] *= -1;
+									} else {
+										channel.type = [rZ];
+									}
+									//if (yUp)
 				     				break;
 				     			case "jointOrientZ":
 				     				channel.type = ["rotationZ"];
@@ -306,20 +343,18 @@
 								case "rotateZANGLE":
 								case "rotateZ":
 								case "RotZ":
-									if (yUp)
+									if (yUp) {
 										channel.type = [rZ];
-									else
+									} else {
 										channel.type = [rY];
-									//if (yUp)
 										for each (param in channel.param)
 											param[0] *= -1;
+									}
+									//if (yUp)
 				            		break;
 								case "scaleX":
 								case "transform(0)(0)":
 									channel.type = [sX];
-									//if (yUp)
-									//	for each (param in channel.param)
-									//		param[0] *= -1;
 				            		break;
 								case "scaleY":
 								case "transform(1)(1)":
@@ -339,15 +374,18 @@
 								case "translation":
 									if (yUp) {
 										channel.type = ["x", "y", "z"];
-										for each (param in channel.param)
-											param[0] *= -1;
+										for each (param in channel.param) {
+											param[0] *= -scaling;
+											param[1] *= -scaling;
+											param[2] *= scaling;
+										}
 				     				} else {
 				     					channel.type = ["x", "z", "y"];
-				     				}
-				     				for each (param in channel.param) {
-										param[0] *= scaling;
-										param[1] *= scaling;
-										param[2] *= scaling;
+				     					for each (param in channel.param) {
+				     						param[0] *= scaling;
+				     						param[1] *= scaling;
+											param[2] *= -scaling;
+										}
 				     				}
 									break;
 								case "scale":
@@ -359,16 +397,10 @@
 								case "rotate":
 									if (yUp) {
 										channel.type = [rX, rY, rZ];
-										for each (param in channel.param) {
-											param[0] *= -1;
-											param[1] *= -1;
-											param[2] *= -1;
-										}
 				     				} else {
 										channel.type = [rX, rZ, rY];
 										for each (param in channel.param) {
-											param[1] *= -1;
-											param[2] *= -1;
+											param[0] *= -1;
 										}
 				     				}
 									break;
@@ -598,15 +630,15 @@
                     	sid = childNode.@sid;
                         if (_objectData is BoneData && (sid == "rotateX" || sid == "rotateY" || sid == "rotateZ" || sid == "rotX" || sid == "rotY" || sid == "rotZ")) {
 	                        if (yUp) {
-			                	boneData.jointTransform.prependRotation(arrayChild[3], new Vector3D(arrayChild[0], arrayChild[1], -arrayChild[2]));
+			                	boneData.jointTransform.prependRotation(-arrayChild[3], new Vector3D(arrayChild[0], arrayChild[1], -arrayChild[2]));
 				            } else {
-				                boneData.jointTransform.prependRotation(-arrayChild[3], new Vector3D(arrayChild[0], -arrayChild[2], arrayChild[1]));
+				                boneData.jointTransform.prependRotation(arrayChild[3], new Vector3D(arrayChild[0], -arrayChild[2], arrayChild[1]));
 				            }
                         } else {
 	                        if (yUp) {
-			                	_transform.prependRotation(arrayChild[3], new Vector3D(arrayChild[0], arrayChild[1], -arrayChild[2]));
+			                	_transform.prependRotation(-arrayChild[3], new Vector3D(arrayChild[0], arrayChild[1], -arrayChild[2]));
 				            } else {
-				                _transform.prependRotation(-arrayChild[3], new Vector3D(arrayChild[0], -arrayChild[2], arrayChild[1]));
+				                _transform.prependRotation(arrayChild[3], new Vector3D(arrayChild[0], -arrayChild[2], arrayChild[1]));
 				            }
                         }
 	                    
@@ -717,7 +749,6 @@
 		private function parseMesh(geometryData:GeometryData):void
 		{
 			Debug.trace(" + Parse Geometry : "+ geometryData.name);
-			var verticesDictionary:Dictionary = new Dictionary(true);
 			
             // Triangles
             var trianglesXMLList:XMLList = geometryData.geoXML["mesh"].triangles;
@@ -780,16 +811,13 @@
                         }
                     }
                     
-                    verticesDictionary[_faceData.v0] = geometryData.vertices[_faceData.v0];
-                    verticesDictionary[_faceData.v1] = geometryData.vertices[_faceData.v1];
-                    verticesDictionary[_faceData.v2] = geometryData.vertices[_faceData.v2];
-                    
                     _meshMaterialData.faceList.push(geometryData.faces.length);
                     geometryData.faces.push(_faceData);
                 }
             }
             
 			//center vertex points in mesh for better bounding radius calulations
+			//TODO: discount vertices that are not used in faces
 			if (centerMeshes) {
 				geometryData.maxX = -Infinity;
 				geometryData.minX = Infinity;
@@ -886,12 +914,10 @@
             i=0;
             while (i < geometryData.vertices.length/3) {
                 c = int(vcount[i]);
-                skinVertex = new SkinVertex(i, geometryData.vertices);
+                geometryData.skinVertices.push(skinVertex = new SkinVertex());
                 j=0;
                 while (j < c) {
-					skinController = geometryData.skinControllers[int(v[count])];
-					skinVertex.controllers.push(skinController);
-					skinController.skinVertices.push(skinVertex);
+					skinVertex.controllers.push(geometryData.skinControllers[int(v[count])]);
 					count++;
                     skinVertex.weights.push(Number(weights[int(v[count])]));
                     count++;
@@ -1152,15 +1178,15 @@
         	if (yUp) {
         		
                 rawData[0] = ar[0];
-                rawData[4] = -ar[1];
+                rawData[4] = ar[1];
                 rawData[8] = -ar[2];
                 rawData[12] = -ar[3]*scaling;
-                rawData[1] = -ar[4];
+                rawData[1] = ar[4];
                 rawData[5] = ar[5];
-                rawData[9] = ar[6];
-                rawData[13] = ar[7]*scaling;
+                rawData[9] = -ar[6];
+                rawData[13] = -ar[7]*scaling;
                 rawData[2] = -ar[8];
-                rawData[6] = ar[9];
+                rawData[6] = -ar[9];
                 rawData[10] = ar[10];
                 rawData[14] = ar[11]*scaling;
         	} else {
@@ -1288,7 +1314,7 @@
 		                    			value.x = float;
 		                    			break;
 		                    		case "T":
-		                    			value.y = float;
+		                    			value.y = 1 - float;
 		                    			break;
 		                    		default:
 		                    	}
