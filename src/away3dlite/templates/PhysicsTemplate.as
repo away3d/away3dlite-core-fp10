@@ -8,6 +8,10 @@ package away3dlite.templates
 	
 	/**
 	 * Physics Template
+	 * 
+ 	 * @see http://away3d.googlecode.com/svn/branches/JigLibLite/src
+ 	 * @see http://away3d.googlecode.com/svn/trunk/fp10/Examples/JigLibLite
+ 	 * 
 	 * @author katopz
 	 */
 	public class PhysicsTemplate extends FastTemplate
@@ -17,6 +21,8 @@ package away3dlite.templates
 		
 		protected override function onInit():void
 		{
+			title += " | JigLibLite Physics";
+			
 			physics = new Away3DLitePhysics(view, 10);
 			ground = physics.createGround(new WireframeMaterial(), 1000, 0);
 			ground.movable = false;
