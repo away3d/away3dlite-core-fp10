@@ -34,6 +34,7 @@
 		private var _haveClips:Boolean = false;
 		private var _containers:Dictionary = new Dictionary(true);
 		private var _skinControllers:Dictionary = new Dictionary(true);
+		private var _skinController:SkinController;
 		
 		private function buildContainers(containerData:ContainerData, parent:ObjectContainer3D):void
 		{
@@ -202,7 +203,7 @@
 			var bone:Bone;
 			
 			//hook up bones to skincontrollers
-			for each (var _skinController:SkinController in _skinControllers) {
+			for each (_skinController in _skinControllers) {
 				bone = (container as ObjectContainer3D).getBoneByName(_skinController.name);
                 if (bone) {
                     _skinController.joint = bone.joint;
@@ -219,6 +220,9 @@
 					case AnimationData.SKIN_ANIMATION:
 						var animation:BonesAnimator = new BonesAnimator();
 						
+						for each (_skinController in _skinControllers)
+							animation.addSkinController(_skinController);
+						
 						var param:Array;
 			            var rX:String;
 			            var rY:String;
@@ -232,11 +236,6 @@
 							
 							channel.target = _containers[channel.name];
 							animation.addChannel(channel);
-							
-							if (channel.target is Bone)
-								animation.addSkinController(_skinControllers[(channel.target as Bone).boneId]);
-							else
-								animation.addSkinController(_skinControllers[channel.name]);
 							
 							var times:Array = channel.times;
 							

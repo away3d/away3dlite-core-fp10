@@ -98,9 +98,9 @@ package away3dlite.animators.bones
 			
 			//create the joint for the bone
 			addChild(joint = new ObjectContainer3D());
-			var sphere:Sphere = new Sphere();
-			sphere.radius = 3;
-			addChild(sphere);
+			//var sphere:Sphere = new Sphere();
+			//sphere.radius = 3;
+			//addChild(sphere);
         }
 		
 		/**
