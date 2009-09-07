@@ -140,12 +140,22 @@
 		
 		/**
 		 * Creates a new <code>Torus</code> object.
-		 *
-		 * @param	init			[optional]	An initialisation object for specifying default instance properties.
+		 * 
+		 * @param	radius		Defines the overall radius of the torus.
+		 * @param	tube		Defines the tube radius of the torus.
+		 * @param	segmentsR	Defines the number of radial segments that make up the torus.
+		 * @param	segmentsT	Defines the number of tubular segments that make up the torus.
+		 * @param	yUp			Defines whether the coordinates of the torus points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Torus()
+        public function Torus(radius:Number = 100, tube:Number = 40, segmentsR:int = 8, segmentsT:int = 6, yUp:Boolean = true)
         {
             super();
+        	
+			_radius = radius;
+			_tube = tube;
+			_segmentsR = segmentsR;
+			_segmentsT = segmentsT;
+			_yUp = yUp;
 			
 			type = "Torus";
         	url = "primitive";

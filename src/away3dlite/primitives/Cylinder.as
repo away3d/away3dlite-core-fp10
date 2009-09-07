@@ -187,9 +187,25 @@
 		
 		/**
 		 * Creates a new <code>Cylinder</code> object.
+		 * 
+		 * @param	radius		Defines the radius of the cylinder base.
+		 * @param	height		Defines the height of the cylinder.
+		 * @param	segmentsW	Defines the number of horizontal segments that make up the cylinder.
+		 * @param	segmentsH	Defines the number of vertical segments that make up the cylinder.
+		 * @param	openEnded	Defines whether the end of the cylinder is left open (true) or closed (false).
+		 * @param	yUp			Defines whether the coordinates of the cylinder points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Cylinder()
+        public function Cylinder(radius:Number = 100, height:Number = 200, segmentsW:int = 8, segmentsH:int = 1, openEnded:Boolean = true, yUp:Boolean = true)
         {
+        	super();
+        	
+			_radius = radius;
+			_height = height;
+			_segmentsW = segmentsW;
+			_segmentsH = segmentsH;
+			_openEnded = openEnded;
+			_yUp = yUp;
+			
 			type = "Cylinder";
         	url = "primitive";
         }

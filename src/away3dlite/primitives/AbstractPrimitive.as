@@ -60,8 +60,6 @@
 		
 		/**
 		 * Creates a new <code>AbstractPrimitive</code> object.
-		 *
-		 * @param	init			[optional]	An initialisation object for specifying default instance properties
 		 */
 		public function AbstractPrimitive()
 		{

@@ -15,28 +15,6 @@
         private var _segmentsW:int = 1;
         private var _segmentsH:int = 1;
         private var _yUp:Boolean = true;
-		
-        /**
-         * @param object
-         */        
-        public function init(object:Object):Plane
-        {
-        	for(var data:* in object)
-	        	try{
-	      			this[data] = object[data];
-	        	}catch(e:*){trace(e)};
-	        return this;
-		}
-		
-		public function create( material:Material=null, width:Number=100, height:Number=100, segmentsW:Number=1, segmentsH:Number=1 ):Plane
-        {
-        	this.material = material;
-        	this.width = width;
-        	this.height = height;
-        	this.segmentsW = segmentsW;
-        	this.segmentsH = segmentsH;
-        	return this;
-        }
 
 		/**
 		 * @inheritDoc
@@ -69,7 +47,7 @@
     	}
     	
     	/**
-    	 * Defines the width of the plane. Defaults to 100, or the width of the uv material (if one is applied).
+    	 * Defines the width of the plane. Defaults to 100.
     	 */
     	public override function get width():Number
     	{
@@ -86,7 +64,7 @@
     	}
     	
     	/**
-    	 * Defines the height of the plane. Defaults to 100, or the height of the uv material (if one is applied).
+    	 * Defines the height of the plane. Defaults to 100.
     	 */
     	public override function get height():Number
     	{
@@ -155,14 +133,23 @@
     	
 		/**
 		 * Creates a new <code>Plane</code> object.
+		 * 
+		 * @param	width		Defines the width of the plane.
+		 * @param	height		Defines the height of the plane.
+		 * @param	segmentsW	Defines the number of horizontal segments that make up the plane.
+		 * @param	segmentsH	Defines the number of vertical segments that make up the plane.
+		 * @param	yUp			Defines whether the coordinates of the plane points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Plane(object:Object=null)
+        public function Plane(width:Number = 100, height:Number = 100, segmentsW:int = 1, segmentsH:int = 1, yUp:Boolean = true)
         {
             super();
-            
-            if(object)
-            	init(object);
-            	
+			
+			_width = width;
+			_height = height;
+			_segmentsW = segmentsW;
+			_segmentsH = segmentsH;
+			_yUp = yUp;
+			
 			type = "Plane";
         	url = "primitive";
         }

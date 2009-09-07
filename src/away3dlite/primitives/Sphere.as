@@ -15,37 +15,6 @@
         private var _segmentsH:int = 6;
         private var _yUp:Boolean = true;
         
-        /**
-         * for away3d user
-         * @param object
-         * 
-         */        
-        public function init(object:Object):Sphere
-        {
-        	for(var data:* in object)
-	        	try{
-	      			this[data] = object[data];
-	        	}catch(e:*){trace(e)};
-	        return this;
-		}
-        
-        /**
-         * for other engine user
-         * @param material
-         * @param radius
-         * @param segmentsW
-         * @param segmentsH
-         * 
-         */
-        public function create(material:Material=null, radius:Number=100, segmentsW:int=8, segmentsH:int=6):Sphere
-        {
-        	this.material = material;
-        	this.radius = radius;
-        	this.segmentsW = segmentsW;
-        	this.segmentsH = segmentsH;
-        	return this;
-        }
-        
 		/**
 		 * @inheritDoc
 		 */
@@ -158,14 +127,19 @@
 		/**
 		 * Creates a new <code>Sphere</code> object.
 		 *
-		 * @param	init			[optional]	An initialisation object for specifying default instance properties.
+		 * @param	radius		Defines the radius of the sphere base.
+		 * @param	segmentsW	Defines the number of horizontal segments that make up the sphere.
+		 * @param	segmentsH	Defines the number of vertical segments that make up the sphere.
+		 * @param	yUp			Defines whether the coordinates of the sphere points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Sphere(object:Object=null)
+        public function Sphere(radius:Number = 100, segmentsW:int = 8, segmentsH:int = 1, yUp:Boolean = true)
         {
             super();
-            
-            if(object)
-            	init(object);
+        	
+			_radius = radius;
+			_segmentsW = segmentsW;
+			_segmentsH = segmentsH;
+			_yUp = yUp;
 			
 			type = "Sphere";
         	url = "primitive";
