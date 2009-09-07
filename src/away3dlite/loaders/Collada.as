@@ -479,6 +479,8 @@
         {
             super();
 			
+			scaling = 1;
+			
 			//create the container
             _container = new ObjectContainer3D();
 			_container.name = "collada";
