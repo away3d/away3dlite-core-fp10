@@ -189,6 +189,9 @@
 		
 		private function buildSkinVertices(geometryData:GeometryData, i:int, vertices:Vector.<Number>):void
 		{
+			if (!geometryData.skinVertices.length)
+				return;
+			
 			var skinController:SkinController;
 			var skinVertex:SkinVertex = geometryData.skinVertices[i].clone();
 			
