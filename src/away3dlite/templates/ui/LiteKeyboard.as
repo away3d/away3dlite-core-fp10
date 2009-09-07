@@ -30,6 +30,9 @@ package away3dlite.templates.ui
 		public static var isSPACE:Boolean = false;
 
 		public static var numKeyPress:int = 0;
+		
+		public static var keyType:String = KeyboardEvent.KEY_UP;
+		public static var keyCode:uint = 0;
 
 		public static var position:Vector3D;
 
@@ -123,129 +126,133 @@ package away3dlite.templates.ui
 			isCTRL = event.ctrlKey;
 			isALT = event.altKey;
 			isSHIFT = event.shiftKey;
+			
+			keyType = event.type; 
 
 			switch (event.type)
 			{
 				case KeyboardEvent.KEY_DOWN:
+					keyCode = event.keyCode;
 					isSPACE = (event.keyCode == Keyboard.SPACE);
 					switch (event.keyCode)
-				{
-					case "W".charCodeAt():
-					case Keyboard.UP:
-						isKeyForward = true;
-						isKeyBackward = false;
-						numKeyPress++;
-						break;
-
-					case "S".charCodeAt():
-					case Keyboard.DOWN:
-						isKeyBackward = true;
-						isKeyForward = false;
-						numKeyPress++;
-						break;
-
-					case "A".charCodeAt():
-					case Keyboard.LEFT:
-						isKeyLeft = true;
-						isKeyRight = false;
-						numKeyPress++;
-						break;
-
-					case "D".charCodeAt():
-					case Keyboard.RIGHT:
-						isKeyRight = true;
-						isKeyLeft = false;
-						numKeyPress++;
-						break;
-
-					case "C".charCodeAt():
-					case Keyboard.PAGE_UP:
-						isKeyDown = true;
-						isKeyUp = false;
-						numKeyPress++;
-						break;
-
-					case "V".charCodeAt():
-					case Keyboard.PAGE_DOWN:
-						isKeyUp = true;
-						isKeyDown = false;
-						numKeyPress++;
-						break;
-
-					case "Q".charCodeAt():
-					case "[".charCodeAt():
-						isKeyPeekLeft = true;
-						isKeyPeekRight = false;
-						numKeyPress++;
-						break;
-
-					case "E".charCodeAt():
-					case "]".charCodeAt():
-						isKeyPeekRight = true;
-						isKeyPeekLeft = false;
-						numKeyPress++;
-						break;
-				}
+					{
+						case "W".charCodeAt():
+						case Keyboard.UP:
+							isKeyForward = true;
+							isKeyBackward = false;
+							numKeyPress++;
+							break;
+	
+						case "S".charCodeAt():
+						case Keyboard.DOWN:
+							isKeyBackward = true;
+							isKeyForward = false;
+							numKeyPress++;
+							break;
+	
+						case "A".charCodeAt():
+						case Keyboard.LEFT:
+							isKeyLeft = true;
+							isKeyRight = false;
+							numKeyPress++;
+							break;
+	
+						case "D".charCodeAt():
+						case Keyboard.RIGHT:
+							isKeyRight = true;
+							isKeyLeft = false;
+							numKeyPress++;
+							break;
+	
+						case "C".charCodeAt():
+						case Keyboard.PAGE_UP:
+							isKeyDown = true;
+							isKeyUp = false;
+							numKeyPress++;
+							break;
+	
+						case "V".charCodeAt():
+						case Keyboard.PAGE_DOWN:
+							isKeyUp = true;
+							isKeyDown = false;
+							numKeyPress++;
+							break;
+	
+						case "Q".charCodeAt():
+						case "[".charCodeAt():
+							isKeyPeekLeft = true;
+							isKeyPeekRight = false;
+							numKeyPress++;
+							break;
+	
+						case "E".charCodeAt():
+						case "]".charCodeAt():
+							isKeyPeekRight = true;
+							isKeyPeekLeft = false;
+							numKeyPress++;
+							break;
+					}
 					if ((numKeyPress > 0) && !container.hasEventListener(Event.ENTER_FRAME))
 						container.addEventListener(Event.ENTER_FRAME, onKey, false, 0, true);
 					break;
 				case KeyboardEvent.KEY_UP:
+					keyCode = 0;
 					if (event.keyCode == Keyboard.SPACE)
 					{
 						isSPACE = false;
 					}
 					switch (event.keyCode)
-				{
-					case "W".charCodeAt():
-					case Keyboard.UP:
-						isKeyForward = false;
-						--numKeyPress;
-						break;
-
-					case "S".charCodeAt():
-					case Keyboard.DOWN:
-						isKeyBackward = false;
-						--numKeyPress;
-						break;
-
-					case "A".charCodeAt():
-					case Keyboard.LEFT:
-						isKeyLeft = false;
-						--numKeyPress;
-						break;
-
-					case "D".charCodeAt():
-					case Keyboard.RIGHT:
-						isKeyRight = false;
-						--numKeyPress;
-						break;
-
-					case "C".charCodeAt():
-					case Keyboard.PAGE_UP:
-						isKeyDown = false;
-						--numKeyPress;
-						break;
-
-					case "V".charCodeAt():
-					case Keyboard.PAGE_DOWN:
-						isKeyUp = false;
-						--numKeyPress;
-						break;
-
-					case "Q".charCodeAt():
-					case "[".charCodeAt():
-						isKeyPeekLeft = false;
-						isKeyPeekRight = false;
-						--numKeyPress;
-						break;
-
-					case "E".charCodeAt():
-					case "]".charCodeAt():
-						isKeyPeekRight = false;
-						isKeyPeekLeft = false;
-						--numKeyPress;
-						break;
-				}
+					{
+						case "W".charCodeAt():
+						case Keyboard.UP:
+							isKeyForward = false;
+							--numKeyPress;
+							break;
+	
+						case "S".charCodeAt():
+						case Keyboard.DOWN:
+							isKeyBackward = false;
+							--numKeyPress;
+							break;
+	
+						case "A".charCodeAt():
+						case Keyboard.LEFT:
+							isKeyLeft = false;
+							--numKeyPress;
+							break;
+	
+						case "D".charCodeAt():
+						case Keyboard.RIGHT:
+							isKeyRight = false;
+							--numKeyPress;
+							break;
+	
+						case "C".charCodeAt():
+						case Keyboard.PAGE_UP:
+							isKeyDown = false;
+							--numKeyPress;
+							break;
+	
+						case "V".charCodeAt():
+						case Keyboard.PAGE_DOWN:
+							isKeyUp = false;
+							--numKeyPress;
+							break;
+	
+						case "Q".charCodeAt():
+						case "[".charCodeAt():
+							isKeyPeekLeft = false;
+							isKeyPeekRight = false;
+							--numKeyPress;
+							break;
+	
+						case "E".charCodeAt():
+						case "]".charCodeAt():
+							isKeyPeekRight = false;
+							isKeyPeekLeft = false;
+							--numKeyPress;
+							break;
+					}
 					if (numKeyPress == 0)
 						container.removeEventListener(Event.ENTER_FRAME, onKey);
 					break;
