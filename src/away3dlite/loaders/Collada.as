@@ -603,7 +603,13 @@
 				_objectData.id = node.@id;
 			
 			//ColladaMaya 3.02
-            _objectData.name = node.@id;
+			if(String(node.@name) != "")
+			{
+            	_objectData.name = String(node.@name);
+   			}else{
+   				_objectData.name = String(node.@id);
+   			}
+   
             _transform = _objectData.transform;
 			
 			Debug.trace(" + Parse Node : " + _objectData.id + " : " + _objectData.name);
@@ -952,7 +958,10 @@
 			
             Debug.trace(" ! ------------- Begin Parse Animation -------------");
             
+            var _channel_id:uint = 0;
+            
             //loop through all animation channels
+            if(anims["animation"]["animation"].length()==0)
 			for each (var channel:XML in anims["animation"])
 			{
 				if(String(channel.@id).length>0)
@@ -969,7 +978,6 @@
 			// C4D 
 			// issue#1 : animation -> animation.animation
 			// issue#2 : missing channel.@id -> use automatic id instead
-			var _channel_id:uint = 0;
 			for each (channel in anims["animation"]["animation"])
 			{
 				if(String(channel.@id).length > 0)
