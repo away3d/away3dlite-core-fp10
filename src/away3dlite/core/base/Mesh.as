@@ -188,7 +188,7 @@ package away3dlite.core.base
 			_indices = _triangles.indices = new Vector.<int>();
 			
 			bothsides = false;
-			material = new ColorMaterial();
+			material = new WireColorMaterial();
 			sortType = MeshSortType.CENTER;
 		}
 		

@@ -76,7 +76,7 @@ package away3dlite.cameras
 			
 			transform.matrix3D = new Matrix3D();
 		}
-    	        
+    	
 		/**
 		 * Updates the transformation matrix used to resolve the scene to the view.
 		 */

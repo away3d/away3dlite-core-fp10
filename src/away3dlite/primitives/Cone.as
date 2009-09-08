@@ -1,6 +1,7 @@
 ﻿package away3dlite.primitives
 {
 	import away3dlite.arcane;
+	import away3dlite.core.base.*;
     
 	use namespace arcane;
 	
@@ -206,6 +207,27 @@
 			
             type = "Cone";
         	url = "primitive";
+        }
+		        
+		/**
+		 * Duplicates the cone properties to another <code>Cone</code> object.
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Cone</code>.
+		 * @return						The new object instance with duplicated properties applied.
+		 */
+        public override function clone(object:Object3D = null):Object3D
+        {
+            var cone:Cone = (object as Cone) || new Cone();
+            super.clone(cone);
+            cone.radius = _radius;
+            cone.height = _height;
+            cone.segmentsW = _segmentsW;
+            cone.segmentsH = _segmentsH;
+            cone.openEnded = _openEnded;
+			cone.yUp = _yUp;
+			cone._primitiveDirty = false;
+			
+			return cone;
         }
     }
 }

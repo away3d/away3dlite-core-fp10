@@ -169,7 +169,7 @@
             plane.segmentsW = _segmentsW;
             plane.segmentsH = _segmentsH;
 			plane.yUp = _yUp;
-			plane._primitiveDirty  =false;
+			plane._primitiveDirty = false;
 			
 			return plane;
         }

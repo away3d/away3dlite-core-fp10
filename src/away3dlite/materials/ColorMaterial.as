@@ -1,7 +1,8 @@
 package away3dlite.materials
 {
+	import away3dlite.core.utils.*;
+	
 	import flash.display.*;
-	import flash.geom.*;
 
 	/**
 	 * ColorMaterial
@@ -49,12 +50,12 @@ package away3dlite.materials
 		/**
 		 * 
 		 */
-		public function ColorMaterial(color:int = 0xFFFFFF, alpha:Number = 1)
+		public function ColorMaterial(color:* = null, alpha:Number = 1)
 		{
 			super();
 			
-			_color = color;
-			_alpha = alpha?alpha:1;
+			_color = Cast.color(color || "random");
+			_alpha = alpha;
 			
 			_graphicsBitmapFill = new GraphicsBitmapFill(new BitmapData(2, 2, _alpha < 1, int(_alpha*0xFF) << 24 | _color));
 			

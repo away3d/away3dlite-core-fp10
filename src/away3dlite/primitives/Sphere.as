@@ -1,7 +1,7 @@
 ﻿package away3dlite.primitives
 {
 	import away3dlite.arcane;
-	import away3dlite.materials.Material;
+	import away3dlite.core.base.*;
     
 	use namespace arcane;
 	
@@ -143,6 +143,25 @@
 			
 			type = "Sphere";
         	url = "primitive";
+        }
+        
+		/**
+		 * Duplicates the sphere properties to another <code>Sphere</code> object.
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Sphere</code>.
+		 * @return						The new object instance with duplicated properties applied.
+		 */
+        public override function clone(object:Object3D = null):Object3D
+        {
+            var sphere:Sphere = (object as Sphere) || new Sphere();
+            super.clone(sphere);
+            sphere.radius = _radius;
+            sphere.segmentsW = _segmentsW;
+            sphere.segmentsH = _segmentsH;
+			sphere.yUp = _yUp;
+			sphere._primitiveDirty = false;
+			
+			return sphere;
         }
     }
 }

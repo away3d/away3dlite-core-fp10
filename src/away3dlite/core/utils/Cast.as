@@ -44,7 +44,39 @@ package away3dlite.core.utils {
 
             return XML(data);
         }
+        
+		private static var hexchars:String = "0123456789abcdefABCDEF";
 
+        private static function hexstring(string:String):Boolean
+        {
+            var _length:int = string.length;
+            for (var i:int = 0; i < _length; ++i)
+                if (hexchars.indexOf(string.charAt(i)) == -1)
+                    return false;
+
+            return true;
+        }
+
+        public static function color(data:*):uint
+        {
+            if (data is uint)
+                return data as uint;
+
+            if (data is int)
+                return data as uint;
+
+            if (data is String)
+            {
+                if (data == "random")
+                    return uint(Math.random()*0x1000000);
+            
+                if (((data as String).length == 6) && hexstring(data))
+                    return parseInt("0x"+data);
+            }
+
+            return 0xFFFFFF;                                  
+        }
+        
         public static function bitmap(data:*):BitmapData
         {
             if (data == null)

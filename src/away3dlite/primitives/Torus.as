@@ -1,6 +1,7 @@
 ﻿package away3dlite.primitives
 {
 	import away3dlite.arcane;
+	import away3dlite.core.base.*;
     
 	use namespace arcane;
 	
@@ -25,10 +26,10 @@
             var i:int;
             var j:int;
 
-            for (i = 0; i < _segmentsR; ++i) {
-                for (j = 0; j < _segmentsT; ++j) {
-                    var u:Number = i / _segmentsR * 2 * Math.PI;
-                    var v:Number = j / _segmentsT * 2 * Math.PI;
+            for (j = 0; j <= _segmentsR; ++j) {
+                for (i = 0; i <= _segmentsT; ++i) {
+                    var u:Number = i / _segmentsT * 2 * Math.PI;
+                    var v:Number = j / _segmentsR * 2 * Math.PI;
                     var x:Number = (_radius + _tube*Math.cos(v))*Math.cos(u);
                     var y:Number = (_radius + _tube*Math.cos(v))*Math.sin(u);
                     var z:Number = _tube*Math.sin(v);
@@ -159,6 +160,26 @@
 			
 			type = "Torus";
         	url = "primitive";
+        }
+        
+		/**
+		 * Duplicates the torus properties to another <code>Torus</code> object.
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Torus</code>.
+		 * @return						The new object instance with duplicated properties applied.
+		 */
+        public override function clone(object:Object3D = null):Object3D
+        {
+            var torus:Torus = (object as Torus) || new Torus();
+            super.clone(torus);
+            torus.radius = _radius;
+            torus.tube = _tube;
+            torus.segmentsR = _segmentsR;
+            torus.segmentsT = _segmentsT;
+			torus.yUp = _yUp;
+			torus._primitiveDirty = false;
+			
+			return torus;
         }
     }
 }

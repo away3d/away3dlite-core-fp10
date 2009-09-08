@@ -1,6 +1,7 @@
 ﻿package away3dlite.primitives
 {
 	import away3dlite.arcane;
+	import away3dlite.core.base.*;
     
 	use namespace arcane;
 	
@@ -208,6 +209,27 @@
 			
 			type = "Cylinder";
         	url = "primitive";
+        }
+		        
+		/**
+		 * Duplicates the cylinder properties to another <code>Cylinder</code> object.
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Cylinder</code>.
+		 * @return						The new object instance with duplicated properties applied.
+		 */
+        public override function clone(object:Object3D = null):Object3D
+        {
+            var cylinder:Cylinder = (object as Cylinder) || new Cylinder();
+            super.clone(cylinder);
+            cylinder.radius = _radius;
+            cylinder.height = _height;
+            cylinder.segmentsW = _segmentsW;
+            cylinder.segmentsH = _segmentsH;
+            cylinder.openEnded = _openEnded;
+			cylinder.yUp = _yUp;
+			cylinder._primitiveDirty = false;
+			
+			return cylinder;
         }
     }
 }

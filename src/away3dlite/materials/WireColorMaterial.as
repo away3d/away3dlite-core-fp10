@@ -1,5 +1,7 @@
 package away3dlite.materials
 {
+	import away3dlite.core.utils.*;
+	
 	import flash.display.*;
 
 	/**
@@ -66,11 +68,11 @@ package away3dlite.materials
 		/**
 		 * 
 		 */
-		public function WireColorMaterial(color:int = 0xFFFFFF, alpha:Number = 1, wireColor:int = 0xFF0000, wireAlpha:Number = 1, thickness:Number = 1)
+		public function WireColorMaterial(color:* = null, alpha:Number = 1, wireColor:* = null, wireAlpha:Number = 1, thickness:Number = 1)
 		{
 			super(color, alpha);
 			
-			_wireColor = wireColor;
+			_wireColor = Cast.color(wireColor || 0x000000);
 			_wireAlpha = wireAlpha;
 			
 			_thickness = thickness;

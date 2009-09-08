@@ -239,6 +239,31 @@ package away3dlite.containers
          */
         public var mouseZeroMove:Boolean;
         
+		/**
+		 * Scene used when rendering.
+         * 
+         * @see render()
+         */
+		public function get scene():Scene3D
+		{
+			return _scene;
+		}
+		public function set scene(val:Scene3D):void
+		{
+			if (_scene == val)
+				return;
+			
+			if (_scene) {
+				removeChild(_scene);
+			}
+			
+			_scene = val;
+			
+			if (_scene) {
+				addChild(_scene);
+			}
+		}
+		
         /**
          * Camera used when rendering.
          * 
@@ -282,31 +307,6 @@ package away3dlite.containers
 			
 			_renderer = val;
 			_renderer.setView(this);
-		}
-        
-		/**
-		 * Scene used when rendering.
-         * 
-         * @see render()
-         */
-		public function get scene():Scene3D
-		{
-			return _scene;
-		}
-		public function set scene(val:Scene3D):void
-		{
-			if (_scene == val)
-				return;
-			
-			if (_scene) {
-				removeChild(_scene);
-			}
-			
-			_scene = val;
-			
-			if (_scene) {
-				addChild(_scene);
-			}
 		}
         
 		/**
@@ -391,15 +391,20 @@ package away3dlite.containers
 		
 		/**
 		 * Creates a new <code>View3D</code> object.
+		 * 
+		 * @param	scene		Scene used when rendering.
+		 * @param	camera		Camera used when rendering.
+		 * @param	renderer	Renderer object used to traverse the scenegraph and output the drawing primitives required to render the scene to the view.
+		 * @param	clipping	Clipping used when rendering.
 		 */
-		public function View3D()
+		public function View3D(scene:Scene3D = null, camera:Camera3D = null, renderer:Renderer = null, clipping:Clipping = null)
 		{
 			super();
 			
-			renderer = new BasicRenderer();
-			camera = new Camera3D();
-			scene = new Scene3D();
-			clipping = new RectangleClipping();
+			this.scene = scene || new Scene3D();
+			this.camera = camera || new Camera3D();
+			this.renderer = renderer || new BasicRenderer();
+			this.clipping = clipping || new RectangleClipping();
 			
             //setup events on view
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
