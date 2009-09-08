@@ -132,7 +132,7 @@
 		 * @param	segmentsH	Defines the number of vertical segments that make up the sphere.
 		 * @param	yUp			Defines whether the coordinates of the sphere points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Sphere(radius:Number = 100, segmentsW:int = 8, segmentsH:int = 2, yUp:Boolean = true)
+        public function Sphere(radius:Number = 100, segmentsW:int = 8, segmentsH:int = 6, yUp:Boolean = true)
         {
             super();
         	
