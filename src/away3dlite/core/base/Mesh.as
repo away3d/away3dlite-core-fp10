@@ -16,6 +16,8 @@ package away3dlite.core.base
 	public class Mesh extends Object3D
 	{
 		/** @private */
+		arcane var _vertexId:int;
+		/** @private */
 		arcane var _screenVertices:Vector.<Number>;
 		/** @private */
 		arcane var _uvtData:Vector.<Number>;
@@ -25,6 +27,8 @@ package away3dlite.core.base
 		arcane var _triangles:GraphicsTrianglePath = new GraphicsTrianglePath();
 		/** @private */
 		arcane var _faces:Vector.<Face> = new Vector.<Face>();
+		/** @private */
+		arcane var _sort:Vector.<int> = new Vector.<int>();
 		/** @private */
 		arcane var _vertices:Vector.<Number> = new Vector.<Number>();
 		/** @private */
@@ -42,6 +46,28 @@ package away3dlite.core.base
 		
 		private var _material:Material;
 		private var _bothsides:Boolean;
+		private var _sortType:String;
+		
+		private function updateSortType():void
+		{
+			
+			var face:Face;
+			switch (_sortType) {
+				case MeshSortType.CENTER:
+					for each (face in _faces)
+						face.calculateScreenZ = face.calculateAverageZ;
+					break;
+				case MeshSortType.FRONT:
+					for each (face in _faces)
+						face.calculateScreenZ = face.calculateNearestZ;
+					break;
+				case MeshSortType.BACK:
+					for each (face in _faces)
+						face.calculateScreenZ = face.calculateFurthestZ;
+					break;
+				default:
+			}
+		}
 		
 		public var sortFaces:Boolean = true;
 		
@@ -66,7 +92,8 @@ package away3dlite.core.base
 		 */
 		public function buildFaces():void
 		{
-			_faces.length = 0;
+			_faceMaterials.fixed = false;
+			_faces.length = _sort.length = 0;
 			var i:int = _faces.length = _faceMaterials.length = _indices.length/3;
 			
 			while (i--)
@@ -84,6 +111,8 @@ package away3dlite.core.base
  			
  			if (_scene)
  				_scene._dirtyFaces = true;
+ 			
+ 			updateSortType();
 		}
 		
 		/**
@@ -128,6 +157,20 @@ package away3dlite.core.base
 			}
 		}
 		
+		public function set sortType(val:String):void
+		{
+			if (_sortType == val)
+				return;
+			
+			_sortType = val;
+			
+			updateSortType();
+		}
+		
+		public function get sortType():String
+		{
+			return _sortType;
+		}
 		
 		/**
 		 * 
@@ -146,6 +189,7 @@ package away3dlite.core.base
 			
 			bothsides = false;
 			material = new ColorMaterial();
+			sortType = MeshSortType.CENTER;
 		}
 		
 		/**
@@ -175,9 +219,10 @@ package away3dlite.core.base
             super.clone(mesh);
             mesh.type = type;
             mesh.material = material;
+            mesh.sortType = sortType;
             mesh.bothsides = bothsides;
+			mesh._vertices = vertices;
 			mesh._uvtData = mesh._triangles.uvtData = _uvtData.concat();
-			mesh._vertices = _vertices;
 			mesh._faceMaterials = _faceMaterials;
 			mesh._indices = _indices.concat();
 			mesh.buildFaces();

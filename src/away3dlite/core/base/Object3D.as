@@ -8,6 +8,55 @@ package away3dlite.core.base
 	import flash.geom.*;
 	
 	use namespace arcane;
+    
+	/**
+	 * Dispatched when a user moves the cursor while it is over the 3d object.
+	 * 
+	 * @eventType away3d.events.MouseEvent3D
+	 */
+	[Event(name="mouseMove",type="away3dlite.events.MouseEvent3D")]
+    
+	/**
+	 * Dispatched when a user presses the left hand mouse button while the cursor is over the 3d object.
+	 * 
+	 * @eventType away3dlite.events.MouseEvent3D
+	 */
+	[Event(name="mouseDown",type="away3dlite.events.MouseEvent3D")]
+    
+	/**
+	 * Dispatched when a user releases the left hand mouse button while the cursor is over the 3d object.
+	 * 
+	 * @eventType away3dlite.events.MouseEvent3D
+	 */
+	[Event(name="mouseUp",type="away3dlite.events.MouseEvent3D")]
+    
+	/**
+	 * Dispatched when a user moves the cursor over the 3d object.
+	 * 
+	 * @eventType away3dlite.events.MouseEvent3D
+	 */
+	[Event(name="mouseOver",type="away3dlite.events.MouseEvent3D")]
+    
+	/**
+	 * Dispatched when a user moves the cursor away from the 3d object.
+	 * 
+	 * @eventType away3dlite.events.MouseEvent3D
+	 */
+	[Event(name="mouseOut",type="away3dlite.events.MouseEvent3D")]
+	
+	/**
+	 * Dispatched when a user rolls over the 3d object.
+	 * 
+	 * @eventType away3dlite.events.MouseEvent3D
+	 */
+	[Event(name="rollOver",type="away3dlite.events.MouseEvent3D")]
+    
+	/**
+	 * Dispatched when a user rolls out of the 3d object.
+	 * 
+	 * @eventType away3dlite.events.MouseEvent3D
+	 */
+	[Event(name="rollOut",type="away3dlite.events.MouseEvent3D")]
 	
 	/**
 	 * @author robbateman
@@ -18,6 +67,7 @@ package away3dlite.core.base
 		arcane var _scene:Scene3D;
 		arcane var _viewTransform:Matrix3D;
 		arcane var _sceneTransform:Matrix3D;
+		arcane var _mouseEnabled:Boolean;
 		
 		arcane function updateScene(val:Scene3D):void
 		{

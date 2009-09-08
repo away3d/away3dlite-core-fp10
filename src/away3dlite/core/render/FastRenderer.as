@@ -20,6 +20,9 @@ package away3dlite.core.render
 		
 		private function collectFaces(object:Object3D):void
 		{
+			_mouseEnabledArray.push(_mouseEnabled);
+			_mouseEnabled = object._mouseEnabled = (_mouseEnabled && object.mouseEnabled);
+			
 			if (object is ObjectContainer3D) {
 				var container:ObjectContainer3D = object as ObjectContainer3D;
 				var _container_children:Array = container.children;
@@ -46,11 +49,15 @@ package away3dlite.core.render
 				_mesh_material_graphicsData[_mesh_material.trianglesIndex] = mesh._triangles;
 				
 				_faces = mesh._faces;
+				_sort = mesh._sort;
 				_indices = mesh._indices;
 				_uvtData = mesh._uvtData;
 				
 				if(!_faces.length)
 					return;
+				
+				if (_view.mouseEnabled && _mouseEnabled)
+					collectScreenVertices(mesh);
 				
 				if (mesh.sortFaces)
 					sortFaces();
@@ -67,8 +74,31 @@ package away3dlite.core.render
 				_view._renderedFaces += _faces_length;
 			}
 			
+			_mouseEnabled = _mouseEnabledArray.pop();
+			
 			++_view._totalObjects;
 			++_view._renderedObjects;
+		}
+		
+		private function collectMouseFace(object:Object3D):void
+		{
+			if (object is ObjectContainer3D) {
+				var container:ObjectContainer3D = object as ObjectContainer3D;
+				var _container_children:Array = container.children;
+				
+				var _child:Object3D;
+				
+				for each (_child in _container_children)
+					collectMouseFace(_child);
+				
+			} else if (object is Mesh) {
+				var mesh:Mesh = object as Mesh;
+				
+				_faces = mesh._faces;
+				_sort = mesh._sort;
+				
+				getMouseFace();
+			}
 		}
 		
 		protected override function sortFaces():void
@@ -108,6 +138,17 @@ package away3dlite.core.render
 			super.render();
 			
 			collectFaces(_scene);
+		}
+		
+		public override function getFaceUnderMouse():Face
+		{
+			collectMouseVertices(_view.mouseX, _view.mouseY);
+			
+			_screenZ = 0;
+			
+			collectMouseFace(_scene);
+			
+			return _mouseFace;
 		}
 	}
 }

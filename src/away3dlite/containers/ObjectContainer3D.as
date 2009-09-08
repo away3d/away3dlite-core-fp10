@@ -155,7 +155,7 @@ package away3dlite.containers
 			var i:int = numChildren;
 			
 			while (i--)
-				(getChildAt(i) as Object3D).project(_viewTransform);
+				(getChildAt(i) as Object3D).project(viewMatrix3D, transform.matrix3D);
 		}
 		
 		/**

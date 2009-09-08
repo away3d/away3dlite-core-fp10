@@ -1,7 +1,7 @@
 ﻿package away3dlite.primitives
 {
 	import away3dlite.arcane;
-	import away3dlite.materials.Material;
+	import away3dlite.core.base.*;
     
 	use namespace arcane;
 	
@@ -152,6 +152,26 @@
 			
 			type = "Plane";
         	url = "primitive";
+        }
+		        
+		/**
+		 * Duplicates the plane properties to another <code>Plane</code> object.
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Plane</code>.
+		 * @return						The new object instance with duplicated properties applied.
+		 */
+        public override function clone(object:Object3D = null):Object3D
+        {
+            var plane:Plane = (object as Plane) || new Plane();
+            super.clone(plane);
+            plane.width = _width;
+            plane.height = _height;
+            plane.segmentsW = _segmentsW;
+            plane.segmentsH = _segmentsH;
+			plane.yUp = _yUp;
+			plane._primitiveDirty  =false;
+			
+			return plane;
         }
     }
 }

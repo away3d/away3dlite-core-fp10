@@ -31,6 +31,9 @@ package away3dlite.core.render
 		
 		private function collectFaces(object:Object3D):void
 		{
+			_mouseEnabledArray.push(_mouseEnabled);
+			_mouseEnabled = object._mouseEnabled = (_mouseEnabled && object.mouseEnabled);
+			
 			if (object is ObjectContainer3D) {
 				var container:ObjectContainer3D = object as ObjectContainer3D;
 				var _container_children:Array = container.children;
@@ -45,8 +48,13 @@ package away3dlite.core.render
 				
 				_clipping.collectFaces(mesh, _faces);
 				
+				if (_view.mouseEnabled && _mouseEnabled)
+					collectScreenVertices(mesh);
+				
 				_view._totalFaces += mesh._faces.length;
 			}
+			
+			_mouseEnabled = _mouseEnabledArray.pop();
 			
 			++_view._totalObjects;
 			++_view._renderedObjects;
@@ -165,6 +173,10 @@ package away3dlite.core.render
 			if (!_faces.length)
 				return;
 			
+			_sort.fixed = false;
+			_sort.length = _faces.length;
+			_sort.fixed = true;
+			
 			sortFaces();
 			
 			if (_material) {
@@ -173,6 +185,19 @@ package away3dlite.core.render
 				_view_graphics_drawGraphicsData(_material_graphicsData);
 			}
 		}
+		
+		public override function getFaceUnderMouse():Face
+		{
+			if (!_faces.length)
+				return null;
+			
+			collectMouseVertices(_view.mouseX, _view.mouseY);
+			
+			_screenZ = 0;
+			
+			getMouseFace();
+			
+			return _mouseFace;
+		}
 	}
-	
 }

@@ -2,9 +2,11 @@ package away3dlite.containers
 {
 	import away3dlite.arcane;
 	import away3dlite.cameras.*;
+	import away3dlite.core.base.*;
 	import away3dlite.core.clip.*;
 	import away3dlite.core.render.*;
 	import away3dlite.events.*;
+	import away3dlite.materials.*;
 	
 	import flash.display.*;
 	import flash.events.*;
@@ -40,7 +42,17 @@ package away3dlite.containers
 		private var _y:Number;
 		private var _stageWidth:Number;
 		private var _stageHeight:Number;
-		
+		private var _mouseIsOverView:Boolean;
+        private var _material:Material;
+        private var _object:Object3D;
+        private var _uvt:Vector3D;
+        private var _scenePosition:Vector3D;
+        private var _mouseObject:Object3D;
+        private var _mouseMaterial:Material;
+        private var _lastmove_mouseX:Number;
+        private var _lastmove_mouseY:Number;
+		private var _face:Face;
+        
 		private function onClippingUpdated(e:ClippingEvent):void
 		{
 			_screenClippingDirty = true;
@@ -60,7 +72,173 @@ package away3dlite.containers
 		{
 			stage.addEventListener(Event.RESIZE, onStageResized);
 		}
+				
+        private function onMouseDown(e:MouseEvent):void
+        {
+            fireMouseEvent(MouseEvent3D.MOUSE_DOWN, e.ctrlKey, e.shiftKey);
+        }
+
+        private function onMouseUp(e:MouseEvent):void
+        {
+            fireMouseEvent(MouseEvent3D.MOUSE_UP, e.ctrlKey, e.shiftKey);
+        }
+
+        private function onRollOut(e:MouseEvent):void
+        {
+        	_mouseIsOverView = false;
+        	
+        	fireMouseEvent(MouseEvent3D.MOUSE_OUT, e.ctrlKey, e.shiftKey);
+        }
+        
+        private function onRollOver(e:MouseEvent):void
+        {
+        	_mouseIsOverView = true;
+        	
+            fireMouseEvent(MouseEvent3D.MOUSE_OVER, e.ctrlKey, e.shiftKey);
+        }
+        
+        private function bubbleMouseEvent(event:MouseEvent3D):Array
+        {
+            var tar:Object3D = event.object;
+            var tarArray:Array = [];
+            while (tar != null)
+            {
+            	tarArray.unshift(tar);
+            	
+                tar.dispatchEvent(event);
+                
+                tar = tar.parent as Object3D;
+            }
+            
+            return tarArray;
+        }
+        
+        private function traverseRollEvent(event:MouseEvent3D, array:Array, overFlag:Boolean):void
+        {
+        	for each (var tar:Object3D in array) {
+        		tar.dispatchEvent(event);
+        		if (overFlag)
+        			buttonMode = buttonMode || tar.useHandCursor;
+        		else if (buttonMode && tar.useHandCursor)
+        			buttonMode = false;
+        	}
+        }
+        
+        private function fireMouseEvent(type:String, ctrlKey:Boolean = false, shiftKey:Boolean = false):void
+        {
+        	if (!mouseEnabled)
+        		return;
+        	
+        	_face = renderer.getFaceUnderMouse();
+        	
+        	if (_face) {
+	        	_uvt = _face.calculateUVT(mouseX, mouseY);
+	        	_material = _face.material;
+	        	_object = _face.mesh;
+	        	var persp:Number =  _uvt.z/(camera.zoom*camera.focus);
+				_scenePosition = new Vector3D(mouseX*persp, mouseY*persp, _uvt.z - camera.focus);
+				_scenePosition = camera.transform.matrix3D.transformVector(_scenePosition);
+			} else {
+        		_uvt = null;
+        		_material = null;
+            	_object = null;
+        	}
+        	
+        	
+            var event:MouseEvent3D = getMouseEvent(type);
+            var outArray:Array = [];
+            var overArray:Array = [];
+            event.ctrlKey = ctrlKey;
+            event.shiftKey = shiftKey;
+			
+			if (type != MouseEvent3D.MOUSE_OUT && type != MouseEvent3D.MOUSE_OVER) {
+	            dispatchEvent(event);
+	            bubbleMouseEvent(event);
+			}
+            
+            //catch mouseOver/mouseOut rollOver/rollOut object3d events
+            if (_mouseObject != _object || _mouseMaterial != _material) {
+                if (_mouseObject != null) {
+                    event = getMouseEvent(MouseEvent3D.MOUSE_OUT);
+                    event.object = _mouseObject;
+                    event.material = _mouseMaterial;
+                    event.ctrlKey = ctrlKey;
+            		event.shiftKey = shiftKey;
+                    dispatchEvent(event);
+                    outArray = bubbleMouseEvent(event);
+                }
+                if (_object != null) {
+                    event = getMouseEvent(MouseEvent3D.MOUSE_OVER);
+                    event.ctrlKey = ctrlKey;
+            		event.shiftKey = shiftKey;
+                    dispatchEvent(event);
+                    overArray = bubbleMouseEvent(event);
+                }
+                
+                if (_mouseObject != _object) {
+                	
+	                var i:int = 0;
+	                
+	                while (outArray[i] && outArray[i] == overArray[i])
+	                	++i;
+	                
+	                if (_mouseObject != null) {
+	                	event = getMouseEvent(MouseEvent3D.ROLL_OUT);
+	                	event.object = _mouseObject;
+	                	event.material = _mouseMaterial;
+	                	event.ctrlKey = ctrlKey;
+	            		event.shiftKey = shiftKey;
+		                traverseRollEvent(event, outArray.slice(i), false);
+	                }
+	                
+	                if (_object != null) {
+	                	event = getMouseEvent(MouseEvent3D.ROLL_OVER);
+	                	event.ctrlKey = ctrlKey;
+	            		event.shiftKey = shiftKey;
+		                traverseRollEvent(event, overArray.slice(i), true);
+	                }
+                }
+                
+                _mouseObject = _object;
+                _mouseMaterial = _material;
+            }
+            
+        }
+        
+        private function getMouseEvent(type:String):MouseEvent3D
+        {
+            var event:MouseEvent3D = new MouseEvent3D(type);
+            event.screenX = mouseX;
+            event.screenY = mouseY;
+            event.scenePosition = _scenePosition;
+            event.view = this;
+            event.material = _material;
+            event.object = _object;
+            event.uvt = _uvt;
+
+            return event;
+        }
+        
+        private function fireMouseMoveEvent(force:Boolean = false):void
+        {
+        	if(!_mouseIsOverView)
+        		return;
+        	
+            if (!(mouseZeroMove || force))
+                if ((mouseX == _lastmove_mouseX) && (mouseY == _lastmove_mouseY))
+                    return;
+
+            fireMouseEvent(MouseEvent3D.MOUSE_MOVE);
+
+             _lastmove_mouseX = mouseX;
+             _lastmove_mouseY = mouseY;
+        }
 		
+        /**
+         * Forces mousemove events to fire even when cursor is static.
+         */
+        public var mouseZeroMove:Boolean;
+        
         /**
          * Camera used when rendering.
          * 
@@ -223,13 +401,19 @@ package away3dlite.containers
 			scene = new Scene3D();
 			clipping = new RectangleClipping();
 			
+            //setup events on view
 			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+            addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            addEventListener(MouseEvent.ROLL_OUT, onRollOut);
+            addEventListener(MouseEvent.ROLL_OVER, onRollOver);
 		}
         
         /**
          * Renders a snapshot of the view.
          */
-		public function render():void {
+		public function render():void
+		{
 			_totalFaces = 0;
 			_totalObjects = -1;
 			_renderedFaces = 0;
@@ -244,6 +428,9 @@ package away3dlite.containers
 			graphics.clear();
 			
 			renderer.render();
+			
+			if (mouseEnabled)
+				fireMouseMoveEvent();
 		}
 		
         

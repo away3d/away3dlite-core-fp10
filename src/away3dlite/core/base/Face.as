@@ -1,5 +1,6 @@
 package away3dlite.core.base
 {
+	import flash.geom.Vector3D;
 	import away3dlite.arcane;
 	import away3dlite.materials.*;
 	
@@ -15,6 +16,7 @@ package away3dlite.core.base
 		
 		private var vertices:Vector.<Number>;
 		
+		private var screenVertices:Vector.<Number>;
 		
 		// use for refer back to mesh
 		public var mesh:Mesh;
@@ -65,6 +67,8 @@ package away3dlite.core.base
 			
 			vertices = mesh._vertices;
 			
+			screenVertices = mesh._screenVertices;
+			
 			material = mesh._faceMaterials[i] || mesh.material;
 			
 			i0 = mesh._indices[int(i*3 + 0)];
@@ -111,9 +115,62 @@ package away3dlite.core.base
 	        normalZ = pc / pdd;
 		}
 		
-		public function calculateScreenZ():int
+		public function calculateAverageZ():int
 		{
 			return int((uvtData[t0] + uvtData[t1] + uvtData[t2])*100000);
+		}
+		
+		public function calculateFurthestZ():int
+		{
+			var z:Number = uvtData[t0];
+			
+			if (z > uvtData[t1])
+				z = uvtData[t1];
+			
+			if (z > uvtData[t2])
+				z = uvtData[t2];
+			
+			return int(z*100000);
+		}
+		
+		public function calculateNearestZ():int
+		{
+			var z:Number = uvtData[t0];
+			
+			if (z < uvtData[t1])
+				z = uvtData[t1];
+			
+			if (z < uvtData[t2])
+				z = uvtData[t2];
+			
+			return int(z*100000);
+		}
+		
+		public var calculateScreenZ:Function;
+		
+		public function calculateUVT(x:Number, y:Number):Vector3D
+		{
+			var azf:Number = (1/uvtData[t0] - 100)/100;
+            var bzf:Number = (1/uvtData[t1] - 100)/100;
+            var czf:Number = (1/uvtData[t2] - 100)/100;
+
+            var faz:Number = 1 + azf;
+            var fbz:Number = 1 + bzf;
+            var fcz:Number = 1 + czf;
+            
+			var axf:Number = screenVertices[x0]*faz - x*azf;
+            var bxf:Number = screenVertices[x1]*fbz - x*bzf;
+            var cxf:Number = screenVertices[x2]*fcz - x*czf;
+            var ayf:Number = screenVertices[y0]*faz - y*azf;
+            var byf:Number = screenVertices[y1]*fbz - y*bzf;
+            var cyf:Number = screenVertices[y2]*fcz - y*czf;
+
+            var det:Number = axf*(byf - cyf) + bxf*(cyf - ayf) + cxf*(ayf - byf);
+            var da:Number = x*(byf - cyf) + bxf*(cyf - y) + cxf*(y- byf);
+            var db:Number = axf*(y - cyf) + x*(cyf - ayf) + cxf*(ayf - y);
+            var dc:Number = axf*(byf - y) + bxf*(y - ayf) + x*(ayf - byf);
+
+            return new Vector3D((da*uvtData[u0] + db*uvtData[u1] + dc*uvtData[u2])/det, (da*uvtData[v0] + db*uvtData[v1] + dc*uvtData[v2])/det, (da/uvtData[t0] + db/uvtData[t1] + dc/uvtData[t2])/det);
 		}
 	}
 }

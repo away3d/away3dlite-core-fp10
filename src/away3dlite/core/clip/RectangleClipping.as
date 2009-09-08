@@ -24,24 +24,29 @@ package away3dlite.core.clip
         	_uvtData = mesh._uvtData;
 			_screenVertices = mesh._screenVertices;
 			
+			_screenVerticesCull.fixed = false;
         	_screenVerticesCull.length = 0;
         	_index = _screenVerticesCull.length = _screenVertices.length/2;
+        	_screenVerticesCull.fixed = true;
         	
         	while (_index--) {
         		_indexX = _index*2;
         		_indexY = _indexX + 1;
         		_indexZ = _index*3 + 2;
         		
-        		if (_uvtData[_indexZ] < 0)
+        		if (_uvtData[_indexZ] < 0) {
         			_screenVerticesCull[_index] += 256;
-        		if (_screenVertices[_indexX] < _minX)
-        			_screenVerticesCull[_index] += 64;
-        		if (_screenVertices[_indexX] > _maxX)
-        			_screenVerticesCull[_index] += 16;
-        		if (_screenVertices[_indexY] < _minY)
-        			_screenVerticesCull[_index] += 4;
-        		if (_screenVertices[_indexY] > _maxY)
-        			_screenVerticesCull[_index] += 1;
+        		} else {
+	        		if (_screenVertices[_indexX] < _minX)
+	        			_screenVerticesCull[_index] += 64;
+	        		else if (_screenVertices[_indexX] > _maxX)
+	        			_screenVerticesCull[_index] += 16;
+	        		
+	        		if (_screenVertices[_indexY] < _minY)
+	        			_screenVerticesCull[_index] += 4;
+	        		else if (_screenVertices[_indexY] > _maxY)
+	        			_screenVerticesCull[_index] += 1;
+        		}
         	}
         	
         	for each(_face in _faces) {
