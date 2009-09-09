@@ -1,9 +1,14 @@
 package away3dlite.animators
 {
 	import away3dlite.animators.bones.*;
-	import away3dlite.containers.ObjectContainer3D;
+	import away3dlite.containers.*;
 	import away3dlite.core.utils.*;
 	
+	/**
+	 * hold the animation information for a bones animation imported from a collada object
+	 * 
+	 * @see away3dlite.loaders.Collada
+	 */
 	public class BonesAnimator
     {
         private var _channels:Vector.<Channel>;
@@ -72,6 +77,9 @@ package away3dlite.animators
 				_skinVertex.update();
         }
 		
+		/**
+		 * Clones the animation data into a new <code>BonesAnimator</code> object.
+		 */
 		public function clone(object:ObjectContainer3D):BonesAnimator
 		{
 			var bonesAnimator:BonesAnimator = new BonesAnimator();
@@ -95,7 +103,7 @@ package away3dlite.animators
         }
 		
 		/**
-		 * Adds a SkinController to the animation.
+		 * Adds a <code>SkinController</code> and all associated <code>SkinVertex</code> objects to the animation.
 		 */
         public function addSkinController(skinController:SkinController):void
         {

@@ -10,11 +10,11 @@ package away3dlite.animators
 	use namespace arcane;
 	
 	/**
-	 * @author katopz
+	 * Animates a series of <code>Frame</code> objects in sequence in a mesh.
 	 */
 	public class MovieMesh extends Mesh
 	{
-		/**
+		/*
 		 * Three kinds of animation sequences:
 		 *  [1] Normal (sequential, just playing)
 		 *  [2] Loop   (a loop)
@@ -24,10 +24,8 @@ package away3dlite.animators
 		public static const ANIM_LOOP:int = 2;
 		public static const ANIM_STOP:int = 4;
 		private var framesLength:int = 0;
-
-		/**
-		 * Keep track of the current frame number and animation
-		 */
+		
+		//Keep track of the current frame number and animation
 		private var _currentFrame:int = 0;
 		private var _addFrame:int;
 		private var _interp:Number = 0;
@@ -39,78 +37,8 @@ package away3dlite.animators
 
 		private var labels:Dictionary = new Dictionary(true);
 		private var _currentLabel:String;
-
-		/**
-		 * Number of animation frames to display per second
-		 */
-		public var fps:int = 24;
-
-		/**
-		 * The array of frames that make up the animation sequence.
-		 */
-		public var frames:Vector.<Frame> = new Vector.<Frame>();
 		
-		/**
-		 * MovieMesh is a class used [internal] to provide a "keyframe animation"/"vertex animation"/"mesh deformation"
-		 * framework for subclass loaders. There are some subtleties to using this class, so please, I suggest you
-		 * don't (not yet). Possible file formats are MD2, MD3, 3DS, etc...
-		 */
-		public function MovieMesh()
-		{
-			super();
-		}
-
-		public function addFrame(frame:Frame):void
-		{
-			var _name:String = frame.name.slice(0, frame.name.length - 3);
-			
-			if (!labels[_name])
-				labels[_name] = {begin:framesLength, end:framesLength};
-			else
-				++labels[_name].end;
-
-			frames.push(frame);
-			
-			framesLength++;
-		}
-
-		public function loop(begin:int, end:int):void
-		{
-			if (framesLength > 0) {
-				_begin = (begin % framesLength);
-				_end = (end % framesLength);
-			} else {
-				_begin = begin;
-				_end = end;
-			}
-
-			keyframe = begin;
-			_type = ANIM_LOOP;
-			
-			addEventListener(Event.ENTER_FRAME, onEnterFrame);
-		}
-
-		public function play(label:String = ""):void
-		{
-			if (!labels)
-				return;
-
-			if (_currentLabel != label) {
-				_currentLabel = label;
-				loop(labels[label].begin, labels[label].end);
-			}
-
-			addEventListener(Event.ENTER_FRAME, onEnterFrame);
-		}
-
-		public function stop():void
-		{
-			_type = ANIM_STOP;
-			
-			removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-		}
-		
-		public function onEnterFrame(event:Event = null):void
+		private function onEnterFrame(event:Event = null):void
 		{
 			_ctime = getTimer();
 
@@ -144,7 +72,93 @@ package away3dlite.animators
 			}
 			_otime = _ctime;
 		}
+		
+		/**
+		 * Number of animation frames to display per second
+		 */
+		public var fps:int = 24;
 
+		/**
+		 * The array of frames that make up the animation sequence.
+		 */
+		public var frames:Vector.<Frame> = new Vector.<Frame>();
+		
+		/**
+		 * Creates a new <code>MovieMesh</code> object that provides a "keyframe animation"/"vertex animation"/"mesh deformation" framework for subclass loaders.
+		 */
+		public function MovieMesh()
+		{
+			super();
+		}
+		
+		/**
+		 * Adds a new frame to the animation timeline.
+		 */
+		public function addFrame(frame:Frame):void
+		{
+			var _name:String = frame.name.slice(0, frame.name.length - 3);
+			
+			if (!labels[_name])
+				labels[_name] = {begin:framesLength, end:framesLength};
+			else
+				++labels[_name].end;
+
+			frames.push(frame);
+			
+			framesLength++;
+		}
+		
+		/**
+		 * Begins a looping sequence in the animation.
+		 * 
+		 * @param begin		The starting frame position.
+		 * @param end		The ending frame position.
+		 */
+		public function loop(begin:int, end:int):void
+		{
+			if (framesLength > 0) {
+				_begin = (begin % framesLength);
+				_end = (end % framesLength);
+			} else {
+				_begin = begin;
+				_end = end;
+			}
+
+			keyframe = begin;
+			_type = ANIM_LOOP;
+			
+			addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		/**
+		 * Plays a pre-defined labelled sequence of animation frames.
+		 */
+		public function play(label:String = ""):void
+		{
+			if (!labels)
+				return;
+
+			if (_currentLabel != label) {
+				_currentLabel = label;
+				loop(labels[label].begin, labels[label].end);
+			}
+
+			addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		/**
+		 * Stops the animation.
+		 */
+		public function stop():void
+		{
+			_type = ANIM_STOP;
+			
+			removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+		}
+		
+		/**
+		 * Defines the current keyframe.
+		 */
 		public function get keyframe():int
 		{
 			return _currentFrame;
