@@ -527,9 +527,6 @@
 				//build the containers
 				buildContainers(containerData, container as ObjectContainer3D);
 				
-				//build the meshes
-				//buildMeshes(containerData, container as ObjectContainer3D);
-				
 				//build animations
 				buildAnimations();
 				
