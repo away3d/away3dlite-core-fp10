@@ -86,10 +86,10 @@ package away3dlite.templates
 			addChild(debugText);
 			
 			//set default debug
-			_debug = true;
+			debug = true;
 			
 			//set default title
-			_title = "Away3DLite";
+			title = "Away3DLite";
 			
 			//add enterframe listener
 			start();

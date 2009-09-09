@@ -172,6 +172,20 @@ package away3dlite.core.base
 			return _sortType;
 		}
 		
+		override protected function updateDirty(matrix3D:Matrix3D):void
+		{
+			super.updateDirty(matrix3D);
+			
+			if(scene.dirty)return;
+			
+			// bitmap dirty
+			if(material is BitmapMaterial)
+			{
+				scene.dirty = BitmapMaterial(material).dirty;
+				BitmapMaterial(material).dirty = false;
+			} 
+		}
+		
 		/**
 		 * 
 		 */
@@ -198,6 +212,8 @@ package away3dlite.core.base
 		public override function project(viewMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
 		{
 			super.project(viewMatrix3D, parentMatrix3D);
+			
+			if(!dirty)return;
 			
 			// project the normals
 			if (material is IShader)

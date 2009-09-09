@@ -26,6 +26,8 @@ package away3dlite.cameras
 		protected const toRADIANS:Number = Math.PI/180;
 		protected const toDEGREES:Number = 180/Math.PI;
 		
+		private var _fieldOfViewDirty:Boolean = true;
+		
 		public function get projection():PerspectiveProjection
 		{
 			return _projection;
@@ -41,6 +43,7 @@ package away3dlite.cameras
 		public function set focus(val:Number):void
 		{
 			_focus = val;
+			_fieldOfViewDirty = true;
 		}
 		
 		/**
@@ -54,6 +57,7 @@ package away3dlite.cameras
 		public function set zoom(val:Number):void
 		{
 			_zoom = val;
+			_fieldOfViewDirty = true;
 		}
 		public function get viewMatrix3D():Matrix3D
 		{
@@ -83,12 +87,19 @@ package away3dlite.cameras
 		public function update():void
 		{
 			_projection = root.transform.perspectiveProjection;
-			_projection.fieldOfView = 360*Math.atan2(stage.stageWidth, 2*_zoom*_focus)/Math.PI;
+			
+			if(_fieldOfViewDirty)
+			{
+				_projection.fieldOfView = 360*Math.atan2(stage.stageWidth, 2*_zoom*_focus)/Math.PI;
+				_fieldOfViewDirty = false;
+			}
 			
 			_viewMatrix3D = transform.matrix3D.clone();
 			_viewMatrix3D.prependTranslation(0, 0, -_focus);
 			_viewMatrix3D.invert();
 			_viewMatrix3D.append(_projection.toMatrix3D());
+			
+			updateDirty(_viewMatrix3D);
 		}
 	}
 }

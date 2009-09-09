@@ -8,6 +8,8 @@ package away3dlite.materials
 	 */
 	public class BitmapMaterial extends Material
 	{
+		public var dirty:Boolean = true;
+		
 		public function get bitmap():BitmapData
 		{
 			return _graphicsBitmapFill.bitmapData;
@@ -15,6 +17,7 @@ package away3dlite.materials
 		public function set bitmap(val:BitmapData):void
 		{
 			_graphicsBitmapFill.bitmapData = val;
+			dirty = true;
 		}
 		
 		/**
