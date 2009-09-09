@@ -98,8 +98,6 @@ package away3dlite.cameras
 			_viewMatrix3D.prependTranslation(0, 0, -_focus);
 			_viewMatrix3D.invert();
 			_viewMatrix3D.append(_projection.toMatrix3D());
-			
-			updateDirty(_viewMatrix3D);
 		}
 	}
 }

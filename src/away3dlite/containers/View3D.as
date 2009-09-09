@@ -419,20 +419,16 @@ package away3dlite.containers
          */
 		public function render():void
 		{
-			updateScreenClipping();
-			
-			camera.update();
-			
-			_scene.dirty = false;
-			_scene.project(camera.viewMatrix3D);
-			
-			// all clean
-			if(!camera.dirty && !_scene.dirty)return;
-			
 			_totalFaces = 0;
 			_totalObjects = -1;
 			_renderedFaces = 0;
 			_renderedObjects = -1;
+			
+			updateScreenClipping();
+			
+			camera.update();
+			
+			_scene.project(camera.viewMatrix3D);
 			
 			graphics.clear();
 			

@@ -73,9 +73,6 @@ package away3dlite.core.base
 		{
 		}
 		
-		private var _cacheMatrix3D:Matrix3D = new Matrix3D();
-		public var dirty:Boolean;
-		
 		// Layer
 		public var layer:Sprite;
 		
@@ -135,25 +132,6 @@ package away3dlite.core.base
 			return transform.matrix3D.position;
 		}
 		
-		protected function updateDirty(matrix3D:Matrix3D):void
-		{
-			//transform dirty
-			if(String(matrix3D.rawData) != String(_cacheMatrix3D.rawData))
-			{
-				//mark as dirty
-				dirty = true;
-				
-				//mark parent is dirty
-				if(_scene)
-					_scene.dirty = true;
-				
-				//store
-				_cacheMatrix3D = matrix3D.clone();
-			}else{
-				dirty = false;
-			}
-		}
-		
 		/**
 		 * 
 		 */
@@ -183,8 +161,6 @@ package away3dlite.core.base
 				
 			_viewTransform = _sceneTransform.clone();
 			_viewTransform.append(viewMatrix3D);
-			
-			updateDirty(_viewTransform);
 			
 			_screenZ = _viewTransform.position.z;
 		}
