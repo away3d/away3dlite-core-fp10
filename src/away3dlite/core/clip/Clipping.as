@@ -228,12 +228,12 @@ package away3dlite.core.clip
     	protected var _indexZ:int;
         protected var _screenVerticesCull:Vector.<int> = new Vector.<int>();
         protected var _cullCount:int;
-		protected var _minX:Number = -Infinity;
-		protected var _minY:Number = -Infinity;
-		protected var _minZ:Number = -Infinity;
-		protected var _maxX:Number = Infinity;
-		protected var _maxY:Number = Infinity;
-		protected var _maxZ:Number = Infinity;
+		protected var _minX:Number = -100000;
+		protected var _minY:Number = -100000;
+		protected var _minZ:Number = -100000;
+		protected var _maxX:Number = 100000;
+		protected var _maxY:Number = 100000;
+		protected var _maxZ:Number = 100000;
         
 		private function onScreenUpdate(event:ClippingEvent):void
 		{
@@ -380,7 +380,7 @@ package away3dlite.core.clip
 		 * @param minZ	Minimum allowed z value for primitives.
 		 * @param maxZ	Maximum allowed z value for primitives.
 		 */
-        public function Clipping(minX:Number = -Infinity, maxX:Number = Infinity, minY:Number = -Infinity, maxY:Number = Infinity, minZ:Number = -Infinity, maxZ:Number = Infinity)
+        public function Clipping(minX:Number = -10000, maxX:Number = 10000, minY:Number = -10000, maxY:Number = 10000, minZ:Number = -10000, maxZ:Number = 10000)
         {
         	super();
         	

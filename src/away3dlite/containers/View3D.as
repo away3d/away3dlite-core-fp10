@@ -171,7 +171,7 @@ package away3dlite.containers
         	if (!mouseEnabled)
         		return;
         	
-        	_face = renderer.getFaceUnderMouse();
+        	_face = renderer.getFaceUnderPoint(mouseX, mouseY);
         	
         	if (_face) {
 	        	_uvt = _face.calculateUVT(mouseX, mouseY);

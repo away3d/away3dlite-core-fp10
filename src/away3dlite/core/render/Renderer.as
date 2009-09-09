@@ -1,7 +1,5 @@
 package away3dlite.core.render
 {
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
 	import away3dlite.arcane;
 	import away3dlite.containers.*;
 	import away3dlite.core.base.*;
@@ -14,37 +12,60 @@ package away3dlite.core.render
 	 */
 	public class Renderer
 	{
-		private var ql:Vector.<int> = new Vector.<int>(256, true);
+		/** @private */
+		arcane function setView(view:View3D):void
+		{
+			_view = view;
+			_view_graphics_drawGraphicsData = _view.graphics.drawGraphicsData;
+		}
 		
-		protected var i:int;
-		protected var j:int;
-		protected var k:int;
-		protected var q0:Vector.<int>;
-		protected var q1:Vector.<int>;
-		protected var np0:Vector.<int>;
-		protected var np1:Vector.<int>;
-		protected var _view:View3D;
-		protected var _scene:Scene3D;
-		protected var _face:Face;
-		protected var _faces:Vector.<Face> = new Vector.<Face>();
-		protected var _sort:Vector.<int> = new Vector.<int>();
-		protected var _faceStore:Vector.<int> = new Vector.<int>();
-		protected var _clipping:Clipping;
-		protected var _screenZ:int;
-		protected var _mouseFace:Face;
+		private var ql:Vector.<int> = new Vector.<int>(256, true);
+		private var k:int;
+		private var q0:Vector.<int>;
+		private var np0:Vector.<int>;
 		private var _screenVertexArrays:Vector.<Vector.<Number>> = new Vector.<Vector.<Number>>();
         private var _screenVertices:Vector.<Number>;
-        protected var _screenMouseVertexArrays:Vector.<Vector.<int>> = new Vector.<Vector.<int>>();
-        protected var _screenMouseVertices:Vector.<int>;
-        protected var _mouseEnabled:Boolean;
-        protected var _mouseEnabledArray:Vector.<Boolean> = new Vector.<Boolean>();
+        private var _screenMouseVertexArrays:Vector.<Vector.<int>> = new Vector.<Vector.<int>>();
+        private var _screenMouseVertices:Vector.<int>;
         private var _index:int;
     	private var _indexX:int;
     	private var _indexY:int;
+        /** @private */
+		protected var i:int;
+		/** @private */
+		protected var j:int;
+		/** @private */
+		protected var q1:Vector.<int>;
+		/** @private */
+		protected var np1:Vector.<int>;
+		/** @private */
+		protected var _view:View3D;
+		/** @private */
+		protected var _scene:Scene3D;
+		/** @private */
+		protected var _face:Face;
+		/** @private */
+		protected var _faces:Vector.<Face> = new Vector.<Face>();
+		/** @private */
+		protected var _sort:Vector.<int> = new Vector.<int>();
+		/** @private */
+		protected var _faceStore:Vector.<int> = new Vector.<int>();
+		/** @private */
+		protected var _clipping:Clipping;
+		/** @private */
+		protected var _screenZ:int;
+		/** @private */
+		protected var _pointFace:Face;
+		/** @private */
+        protected var _mouseEnabled:Boolean;
+        /** @private */
+        protected var _mouseEnabledArray:Vector.<Boolean> = new Vector.<Boolean>();
+        /** @private */
     	
-		// by pass
+		/** @private */
 		protected var _view_graphics_drawGraphicsData:Function;
 		
+		/** @private */
 		protected function sortFaces():void
 		{
 	        // by pass
@@ -74,6 +95,7 @@ package away3dlite.core.render
             }
 		}
 		
+		/** @private */
 		protected function getMouseFace():void
 		{
 			var mouseCount:int;
@@ -88,19 +110,21 @@ package away3dlite.core.render
 	    			mouseCountY = (mouseCount & 3);
 	    			if (mouseCountX && mouseCountX < 3 && mouseCountY && mouseCountY < 3) {
 	    				_screenZ = _sort[i];
-						_mouseFace = _face;
+						_pointFace = _face;
 	    			}
 				}
 			}
 		}
 		
+		/** @private */
 		protected function collectScreenVertices(mesh:Mesh):void
 		{
 			mesh._vertexId = _screenVertexArrays.length;
 			_screenVertexArrays.push(mesh._screenVertices);
 		}
 		
-		protected function collectMouseVertices(x:Number, y:Number):void
+		/** @private */
+		protected function collectPointVertices(x:Number, y:Number):void
 		{
 			_screenMouseVertexArrays.fixed = false;
         	_screenMouseVertexArrays.length = _screenVertexArrays.length;
@@ -129,38 +153,43 @@ package away3dlite.core.render
         	}
 		}
 		
+		/**
+		 * Creates a new <code>Renderer</code> object.
+		 */
 		function Renderer()
 		{
 		}
 		
 		/**
+		 * Returns the face object directly under the given point.
 		 * 
+		 * @param x		The x coordinate of the point.
+		 * @param y		The y coordinate of the point.
 		 */
-		public function setView(view:View3D):void
+		public function getFaceUnderPoint(x:Number, y:Number):Face
 		{
-			_view = view;
-			_view_graphics_drawGraphicsData = _view.graphics.drawGraphicsData;
+			x;
+			y;
+			return null;
 		}
 		
 		/**
+		 * Renders the contents of the scene to the view.
 		 * 
+		 * @see awa3dlite.containers.Scene3D
+		 * @see awa3dlite.containers.View3D
 		 */
 		public function render():void
 		{
 			_scene = _view.scene;
 			
-			_mouseEnabled = _scene.mouseEnabled;
-			_mouseEnabledArray.length = 0;
-			_mouseFace = null;
-			
 			_clipping = _view.screenClipping;
 			
+			_mouseEnabled = _scene.mouseEnabled;
+			_mouseEnabledArray.length = 0;
+			_pointFace = null;
+			
 			_screenVertexArrays.length = 0;
-		}
-		
-		public function getFaceUnderMouse():Face
-		{
-			return null;
 		}
 	}
 }

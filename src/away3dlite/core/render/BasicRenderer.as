@@ -3,7 +3,6 @@ package away3dlite.core.render
 	import away3dlite.arcane;
 	import away3dlite.containers.*;
 	import away3dlite.core.base.*;
-	import away3dlite.core.clip.*;
 	import away3dlite.materials.*;
 	
 	import flash.display.*;
@@ -11,7 +10,9 @@ package away3dlite.core.render
 	use namespace arcane;
 	
 	/**
-	 * @author robbateman
+	 * Standard renderer for a view.
+	 * 
+	 * @see away3dlite.containers.View3D
 	 */
 	public class BasicRenderer extends Renderer
 	{
@@ -35,13 +36,11 @@ package away3dlite.core.render
 			_mouseEnabled = object._mouseEnabled = (_mouseEnabled && object.mouseEnabled);
 			
 			if (object is ObjectContainer3D) {
-				var container:ObjectContainer3D = object as ObjectContainer3D;
-				var _container_children:Array = container.children;
+				var children:Vector.<Object3D> = (object as ObjectContainer3D).children;
+				var child:Object3D;
 				
-				var _child:Object3D;
-				
-				for each (_child in _container_children)
-					collectFaces(_child);
+				for each (child in children)
+					collectFaces(child);
 				
 			} else if (object is Mesh) {
 				var mesh:Mesh = object as Mesh;
@@ -59,7 +58,8 @@ package away3dlite.core.render
 			++_view._totalObjects;
 			++_view._renderedObjects;
 		}
-
+		
+		/** @private */
 		protected override function sortFaces():void
 		{
 			super.sortFaces();
@@ -143,7 +143,7 @@ package away3dlite.core.render
 		}
 		
 		/**
-		 * 
+		 * Creates a new <code>BasicRenderer</code> object.
 		 */
 		public function BasicRenderer()
 		{
@@ -153,7 +153,24 @@ package away3dlite.core.render
 		}
 		
 		/**
-		 * 
+		 * @inheritDoc
+		 */
+		public override function getFaceUnderPoint(x:Number, y:Number):Face
+		{
+			if (!_faces.length)
+				return null;
+			
+			collectPointVertices(x, y);
+			
+			_screenZ = 0;
+			
+			getMouseFace();
+			
+			return _pointFace;
+		}
+		
+		/**
+		 * @inheritDoc
 		 */
 		public override function render():void
 		{
@@ -184,20 +201,6 @@ package away3dlite.core.render
 				_material_graphicsData[_material.trianglesIndex] = _triangles;
 				_view_graphics_drawGraphicsData(_material_graphicsData);
 			}
-		}
-		
-		public override function getFaceUnderMouse():Face
-		{
-			if (!_faces.length)
-				return null;
-			
-			collectMouseVertices(_view.mouseX, _view.mouseY);
-			
-			_screenZ = 0;
-			
-			getMouseFace();
-			
-			return _mouseFace;
 		}
 	}
 }

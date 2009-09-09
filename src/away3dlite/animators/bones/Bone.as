@@ -123,7 +123,7 @@ package away3dlite.animators.bones
             var bone:Bone = (object as Bone) || new Bone();
             super.clone(bone);
             
-            bone.joint = bone.children[0];
+            bone.joint = bone.children[0] as ObjectContainer3D;
             
             return bone;
         }

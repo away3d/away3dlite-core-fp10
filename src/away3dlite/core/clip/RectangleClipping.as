@@ -61,7 +61,7 @@ package away3dlite.core.clip
 		 * @param minZ	Minimum allowed z value for primitives.
 		 * @param maxZ	Maximum allowed z value for primitives.
 		 */
-        public function RectangleClipping(minX:Number = -Infinity, maxX:Number = Infinity, minY:Number = -Infinity, maxY:Number = Infinity, minZ:Number = -Infinity, maxZ:Number = Infinity)
+        public function RectangleClipping(minX:Number = -100000, maxX:Number = 100000, minY:Number = -100000, maxY:Number = 100000, minZ:Number = -100000, maxZ:Number = 100000)
         {
             super(minX, maxX, minY, maxY, minZ, maxZ);
         }
