@@ -18,7 +18,7 @@ package away3dlite.animators.frames
 		public var vertices:Vector.<Number>;
 
 		/**
-		 * Create a new <code>Frame</code> object with a name and a set of vertices
+		 * Creates a new <code>Frame</code> object with a name and a set of vertices
 		 *
 		 * @param	name		The name of the frame.
 		 * @param	vertices	An array of Vertex objects.

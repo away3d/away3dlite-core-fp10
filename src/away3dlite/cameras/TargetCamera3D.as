@@ -1,8 +1,11 @@
 package away3dlite.cameras
 {
-	import flash.geom.Matrix3D;
+	import away3dlite.arcane;
     import away3dlite.core.base.*;
 	
+	import flash.geom.*;
+	
+	use namespace arcane;
 	
     /**
     * Extended camera used to automatically look at a specified target object.
@@ -11,6 +14,15 @@ package away3dlite.cameras
     */
     public class TargetCamera3D extends Camera3D
     {
+		/** @private */
+        arcane override function update():void
+		{
+            if (target != null)
+                lookAt(target.transform.matrix3D.position);
+            
+			super.update();
+        }
+        
         /**
         * The 3d object targeted by the camera.
         */
@@ -18,26 +30,16 @@ package away3dlite.cameras
     	
 	    /**
 	    * Creates a new <code>TargetCamera3D</code> object.
-	    * 
-	    * @param	init	[optional]	An initialisation object for specifying default instance properties.
-	    */
-        public function TargetCamera3D()
-        {
-            super();
-            
-            target = new Object3D();
-            target.transform.matrix3D = new Matrix3D();
-        }
-        
-		/**
-		 * @inheritDoc
+		 * 
+		 * @param focus		Defines the distance from the focal point of the camera to the viewing plane.
+		 * @param zoom		Defines the overall scale value of the view.
+		 * @param target	The 3d object targeted by the camera.
 		 */
-        public override function update():void
-		{
-            if (target != null)
-                lookAt(target.transform.matrix3D.position);
+        public function TargetCamera3D(focus:Number = 10, zoom:Number = 100, target:Object3D = null)
+        {
+            super(focus, zoom);
             
-			super.update();
+            this.target = target || new Object3D();
         }
     }
 
