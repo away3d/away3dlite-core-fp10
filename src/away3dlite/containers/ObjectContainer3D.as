@@ -14,6 +14,7 @@ package away3dlite.containers
     */
 	public class ObjectContainer3D extends Object3D
 	{
+		/** @private */
 		arcane override function updateScene(val:Scene3D):void
 		{
 			if (scene == val)
@@ -26,26 +27,39 @@ package away3dlite.containers
 			for each (child in _children)
 				child.updateScene(_scene);
 		}
+		/** @private */
+		arcane override function project(projectionMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
+		{
+			super.project(projectionMatrix3D, parentMatrix3D);
+			
+			var i:int = numChildren;
+			
+			while (i--)
+				(getChildAt(i) as Object3D).project(projectionMatrix3D, transform.matrix3D);
+		}
 		
 		private var _index:int;
-		private var _children:Array = new Array();
+		private var _children:Vector.<Object3D> = new Vector.<Object3D>();
         
         /**
         * Returns the children of the container as an array of 3d objects.
         */
-		public function get children():Array
+		public function get children():Vector.<Object3D>
 		{
 			return _children;
 		}
 		
 	    /**
-	    * Creates a new <code>ObjectContainer3D</code> object
-	    */
-		public function ObjectContainer3D()
+	     * Creates a new <code>ObjectContainer3D</code> object.
+	     * 
+	     * @param	...childArray		An array of 3d objects to be added as children of the container on instatiation. Can contain an initialisation object
+	     */
+		public function ObjectContainer3D(...childArray)
 		{
 			super();
 			
-			transform.matrix3D = new Matrix3D();
+			for each (var child:Object3D in childArray)
+				addChild(child);
 		}
         
 		/**
@@ -57,7 +71,7 @@ package away3dlite.containers
 		{
 			child = super.addChild(child);
 			
-			_children[_children.length] = child;
+			_children[_children.length] = child as Object3D;
 			
 			(child as Object3D).updateScene(_scene);
 			
@@ -144,19 +158,6 @@ package away3dlite.containers
 			
             return null;
         }
-        
-		/**
-		 * 
-		 */
-		public override function project(viewMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
-		{
-			super.project(viewMatrix3D, parentMatrix3D);
-			
-			var i:int = numChildren;
-			
-			while (i--)
-				(getChildAt(i) as Object3D).project(viewMatrix3D, transform.matrix3D);
-		}
 		
 		/**
 		 * Duplicates the 3d object's properties to another <code>ObjectContainer3D</code> object

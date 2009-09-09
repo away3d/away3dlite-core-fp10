@@ -3,8 +3,6 @@ package away3dlite.cameras
 	import away3dlite.arcane;
     import away3dlite.core.base.*;
 	
-	import flash.geom.*;
-	
 	use namespace arcane;
 	
     /**
