@@ -45,191 +45,13 @@ package away3dlite.core.clip
     */
     public class Clipping extends EventDispatcher
     {
-    	protected var _view:View3D;
-        protected var _face:Face;
-        protected var _faces:Vector.<Face>;
-        protected var _screenVertices:Vector.<Number>;
-        protected var _uvtData:Vector.<Number>;
-        protected var _index:int;
-    	protected var _indexX:int;
-    	protected var _indexY:int;
-    	protected var _indexZ:int;
-        protected var _screenVerticesCull:Vector.<int> = new Vector.<int>();
-        protected var _cullCount:int;
-		protected var _minX:Number;
-		protected var _minY:Number;
-		protected var _minZ:Number;
-		protected var _maxX:Number;
-		protected var _maxY:Number;
-		protected var _maxZ:Number;
-        
-    	private var _clippingClone:Clipping;
-    	private var _stage:Stage;
-    	private var _stageWidth:Number;
-    	private var _stageHeight:Number;
-    	private var _localPointTL:Point = new Point(0, 0);
-    	private var _localPointBR:Point = new Point(0, 0);
-		private var _globalPointTL:Point = new Point(0, 0);
-		private var _globalPointBR:Point = new Point(0, 0);
-		private var _miX:Number;
-		private var _miY:Number;
-		private var _maX:Number;
-		private var _maY:Number;
-		private var _clippingupdated:ClippingEvent;
-		private var _screenupdated:ClippingEvent;
-		
-		private function onScreenUpdate(event:ClippingEvent):void
+    	/** @private */
+		arcane function setView(view:View3D):void
 		{
-			notifyScreenUpdate();
+			_view = view;
 		}
-		
-        private function notifyClippingUpdate():void
-        {
-            if (!hasEventListener(ClippingEvent.CLIPPING_UPDATED))
-                return;
-			
-            if (_clippingupdated == null)
-                _clippingupdated = new ClippingEvent(ClippingEvent.CLIPPING_UPDATED, this);
-                
-            dispatchEvent(_clippingupdated);
-        }
-		
-        private function notifyScreenUpdate():void
-        {
-            if (!hasEventListener(ClippingEvent.SCREEN_UPDATED))
-                return;
-			
-            if (_screenupdated == null)
-                _screenupdated = new ClippingEvent(ClippingEvent.SCREEN_UPDATED, this);
-                
-            dispatchEvent(_screenupdated);
-        }
-		
-    	/**
-    	 * Minimum allowed x value for primitives
-    	 */
-    	public function get minX():Number
-		{
-			return _minX;
-		}
-		
-		public function set minX(value:Number):void
-		{
-			if (_minX == value)
-				return;
-			
-			_minX = value;
-			
-			notifyClippingUpdate();
-		}
-    	
-    	/**
-    	 * Minimum allowed y value for primitives
-    	 */
-        public function get minY():Number
-		{
-			return _minY;
-		}
-		
-		public function set minY(value:Number):void
-		{
-			if (_minY == value)
-				return;
-			
-			_minY = value;
-			
-			notifyClippingUpdate();
-		}
-    	
-    	/**
-    	 * Minimum allowed z value for primitives
-    	 */
-        public function get minZ():Number
-		{
-			return _minZ;
-		}
-		
-		public function set minZ(value:Number):void
-		{
-			if (_minZ == value)
-				return;
-			
-			_minZ = value;
-			
-			notifyClippingUpdate();
-		}
-        
-    	/**
-    	 * Maximum allowed x value for primitives
-    	 */
-        public function get maxX():Number
-		{
-			return _maxX;
-		}
-		
-		public function set maxX(value:Number):void
-		{
-			if (_maxX == value)
-				return;
-			
-			_maxX = value;
-			
-			notifyClippingUpdate();
-		}
-    	
-    	/**
-    	 * Maximum allowed y value for primitives
-    	 */
-        public function get maxY():Number
-		{
-			return _maxY;
-		}
-		
-		public function set maxY(value:Number):void
-		{
-			if (_maxY == value)
-				return;
-			
-			_maxY = value;
-			
-			notifyClippingUpdate();
-		}
-    	
-    	/**
-    	 * Maximum allowed z value for primitives
-    	 */
-        public function get maxZ():Number
-		{
-			return _maxZ;
-		}
-		
-		public function set maxZ(value:Number):void
-		{
-			if (_maxZ == value)
-				return;
-			
-			_maxZ = value;
-			
-			notifyClippingUpdate();
-		}
-        
-		/**
-		 * Creates a new <code>Clipping</code> object.
-		 * 
-		 * @param	init	[optional]	An initialisation object for specifying default instance properties.
-		 */
-        public function Clipping()
-        {
-        	super();
-        }
-        
-		/**
-		 * Collects faces to be rendered from a mesh.
-		 * 
-		 * @param	mesh	The mesh used as a souce for faces.
-		 * @param	faces	The array storing the faces to be rendered.
-		 */
-        public function collectFaces(mesh:Mesh, faces:Vector.<Face>):void
+    	/** @private */
+		arcane function collectFaces(mesh:Mesh, faces:Vector.<Face>):void
         {
         	_faces = mesh._faces;
         	_screenVertices = mesh._screenVertices;
@@ -239,15 +61,12 @@ package away3dlite.core.clip
         	    if (mesh.bothsides || _screenVertices[_face.x0]*(_screenVertices[_face.y2] - _screenVertices[_face.y1]) + _screenVertices[_face.x1]*(_screenVertices[_face.y0] - _screenVertices[_face.y2]) + _screenVertices[_face.x2]*(_screenVertices[_face.y1] - _screenVertices[_face.y0]) > 0)
         			faces[int(++i)] = _face;
         }
-		
-		/**
-		 * Returns a clipping object initilised with the edges of the flash movie as the clipping bounds.
-		 */
-        public function screen(container:Sprite, _loaderWidth:Number, _loaderHeight:Number):Clipping
+    	/** @private */
+        arcane function screen(container:Sprite, _loaderWidth:Number, _loaderHeight:Number):Clipping
         {
         	if (!_clippingClone) {
         		_clippingClone = clone();
-        		_clippingClone.addOnClippingUpdate(onScreenUpdate);
+        		_clippingClone.addEventListener(ClippingEvent.SCREEN_UPDATED, onScreenUpdate);
         	}
         	
 			_stage = container.stage;
@@ -382,15 +201,203 @@ package away3dlite.core.clip
             
             return _clippingClone;
         }
-				
-		/**
-		 * 
-		 */
-		public function setView(view:View3D):void
+        
+    	private var _clippingClone:Clipping;
+    	private var _stage:Stage;
+    	private var _stageWidth:Number;
+    	private var _stageHeight:Number;
+    	private var _localPointTL:Point = new Point(0, 0);
+    	private var _localPointBR:Point = new Point(0, 0);
+		private var _globalPointTL:Point = new Point(0, 0);
+		private var _globalPointBR:Point = new Point(0, 0);
+		private var _miX:Number;
+		private var _miY:Number;
+		private var _maX:Number;
+		private var _maY:Number;
+		private var _clippingupdated:ClippingEvent;
+		private var _screenupdated:ClippingEvent;
+        
+    	protected var _view:View3D;
+        protected var _face:Face;
+        protected var _faces:Vector.<Face>;
+        protected var _screenVertices:Vector.<Number>;
+        protected var _uvtData:Vector.<Number>;
+        protected var _index:int;
+    	protected var _indexX:int;
+    	protected var _indexY:int;
+    	protected var _indexZ:int;
+        protected var _screenVerticesCull:Vector.<int> = new Vector.<int>();
+        protected var _cullCount:int;
+		protected var _minX:Number = -Infinity;
+		protected var _minY:Number = -Infinity;
+		protected var _minZ:Number = -Infinity;
+		protected var _maxX:Number = Infinity;
+		protected var _maxY:Number = Infinity;
+		protected var _maxZ:Number = Infinity;
+        
+		private function onScreenUpdate(event:ClippingEvent):void
 		{
-			_view = view;
+			notifyScreenUpdate();
 		}
 		
+        private function notifyClippingUpdate():void
+        {
+            if (!hasEventListener(ClippingEvent.CLIPPING_UPDATED))
+                return;
+			
+            if (_clippingupdated == null)
+                _clippingupdated = new ClippingEvent(ClippingEvent.CLIPPING_UPDATED, this);
+                
+            dispatchEvent(_clippingupdated);
+        }
+		
+        private function notifyScreenUpdate():void
+        {
+            if (!hasEventListener(ClippingEvent.SCREEN_UPDATED))
+                return;
+			
+            if (_screenupdated == null)
+                _screenupdated = new ClippingEvent(ClippingEvent.SCREEN_UPDATED, this);
+                
+            dispatchEvent(_screenupdated);
+        }
+		
+    	/**
+    	 * Minimum allowed x value for primitives.
+    	 */
+    	public function get minX():Number
+		{
+			return _minX;
+		}
+		
+		public function set minX(value:Number):void
+		{
+			if (_minX == value)
+				return;
+			
+			_minX = value;
+			
+			notifyClippingUpdate();
+		}
+        
+    	/**
+    	 * Maximum allowed x value for primitives
+    	 */
+        public function get maxX():Number
+		{
+			return _maxX;
+		}
+		
+		public function set maxX(value:Number):void
+		{
+			if (_maxX == value)
+				return;
+			
+			_maxX = value;
+			
+			notifyClippingUpdate();
+		}
+		
+    	/**
+    	 * Minimum allowed y value for primitives
+    	 */
+        public function get minY():Number
+		{
+			return _minY;
+		}
+		
+		public function set minY(value:Number):void
+		{
+			if (_minY == value)
+				return;
+			
+			_minY = value;
+			
+			notifyClippingUpdate();
+		}
+    	    	
+    	/**
+    	 * Maximum allowed y value for primitives
+    	 */
+        public function get maxY():Number
+		{
+			return _maxY;
+		}
+		
+		public function set maxY(value:Number):void
+		{
+			if (_maxY == value)
+				return;
+			
+			_maxY = value;
+			
+			notifyClippingUpdate();
+		}
+		
+    	/**
+    	 * Minimum allowed z value for primitives
+    	 */
+        public function get minZ():Number
+		{
+			return _minZ;
+		}
+		
+		public function set minZ(value:Number):void
+		{
+			if (_minZ == value)
+				return;
+			
+			_minZ = value;
+			
+			notifyClippingUpdate();
+		}
+    	
+    	/**
+    	 * Maximum allowed z value for primitives
+    	 */
+        public function get maxZ():Number
+		{
+			return _maxZ;
+		}
+		
+		public function set maxZ(value:Number):void
+		{
+			if (_maxZ == value)
+				return;
+			
+			_maxZ = value;
+			
+			notifyClippingUpdate();
+		}
+        
+		/**
+		 * Creates a new <code>Clipping</code> object.
+		 * 
+		 * @param minX	Minimum allowed x value for primitives.
+		 * @param maxX	Maximum allowed x value for primitives.
+		 * @param minY	Minimum allowed y value for primitives.
+		 * @param maxY	Maximum allowed y value for primitives.
+		 * @param minZ	Minimum allowed z value for primitives.
+		 * @param maxZ	Maximum allowed z value for primitives.
+		 */
+        public function Clipping(minX:Number = -Infinity, maxX:Number = Infinity, minY:Number = -Infinity, maxY:Number = Infinity, minZ:Number = -Infinity, maxZ:Number = Infinity)
+        {
+        	super();
+        	
+        	_minX = minX;
+        	_maxX = maxX;
+        	_minY = minY;
+        	_maxY = maxY;
+        	_minZ = minZ;
+        	_maxZ = maxZ;
+        }
+		
+		/**
+		 * Duplicates the clipping object's properties to another <code>Clipping</code> object
+		 * 
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Clipping</code>.
+		 * @return						The new object instance with duplicated properties applied.
+		 */
 		public function clone(object:Clipping = null):Clipping
         {
         	var clipping:Clipping = object || new Clipping();
@@ -401,57 +408,18 @@ package away3dlite.core.clip
         	clipping.maxX = maxX;
         	clipping.maxY = maxY;
         	clipping.maxZ = maxZ;
+        	
         	return clipping;
         }
         
         /**
-		 * Used to trace the values of a rectangle clipping object.
+		 * Used to trace the values of a clipping object.
 		 * 
-		 * @return A string representation of the rectangle clipping object.
+		 * @return		A string representation of the clipping object.
 		 */
         public override function toString():String
         {
         	return "{minX:" + minX + " maxX:" + maxX + " minY:" + minY + " maxY:" + maxY + " minZ:" + minZ + " maxZ:" + maxZ + "}";
-        }
-        
-		/**
-		 * Default method for adding a clippingUpdated event listener
-		 * 
-		 * @param	listener		The listener function
-		 */
-        public function addOnClippingUpdate(listener:Function):void
-        {
-            addEventListener(ClippingEvent.CLIPPING_UPDATED, listener, false, 0, false);
-        }
-		
-		/**
-		 * Default method for removing a clippingUpdated event listener
-		 * 
-		 * @param	listener		The listener function
-		 */
-        public function removeOnClippingUpdate(listener:Function):void
-        {
-            removeEventListener(ClippingEvent.CLIPPING_UPDATED, listener, false);
-        }
-        
-		/**
-		 * Default method for adding a screenUpdated event listener
-		 * 
-		 * @param	listener		The listener function
-		 */
-        public function addOnScreenUpdate(listener:Function):void
-        {
-            addEventListener(ClippingEvent.SCREEN_UPDATED, listener, false, 0, false);
-        }
-		
-		/**
-		 * Default method for removing a screenUpdated event listener
-		 * 
-		 * @param	listener		The listener function
-		 */
-        public function removeOnScreenUpdate(listener:Function):void
-        {
-            removeEventListener(ClippingEvent.SCREEN_UPDATED, listener, false);
         }
     }
 }

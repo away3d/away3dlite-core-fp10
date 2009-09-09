@@ -10,15 +10,8 @@ package away3dlite.core.clip
     */
     public class RectangleClipping extends Clipping
     {
-        public function RectangleClipping()
-        {
-            super();
-        }
-        
-		/**
-		 * @inheritDoc
-		 */
-        public override function collectFaces(mesh:Mesh, faces:Vector.<Face>):void
+        /** @private */
+        arcane override function collectFaces(mesh:Mesh, faces:Vector.<Face>):void
         {
         	_faces = mesh._faces;
         	_uvtData = mesh._uvtData;
@@ -56,6 +49,21 @@ package away3dlite.core.clip
 						faces[faces.length] = _face;
         		}
         	}
+        }
+        
+		/**
+		 * Creates a new <code>RectangleClipping</code> object.
+		 * 
+		 * @param minX	Minimum allowed x value for primitives.
+		 * @param maxX	Maximum allowed x value for primitives.
+		 * @param minY	Minimum allowed y value for primitives.
+		 * @param maxY	Maximum allowed y value for primitives.
+		 * @param minZ	Minimum allowed z value for primitives.
+		 * @param maxZ	Maximum allowed z value for primitives.
+		 */
+        public function RectangleClipping(minX:Number = -Infinity, maxX:Number = Infinity, minY:Number = -Infinity, maxY:Number = Infinity, minZ:Number = -Infinity, maxZ:Number = Infinity)
+        {
+            super(minX, maxX, minY, maxY, minZ, maxZ);
         }
         
 		public override function clone(object:Clipping = null):Clipping

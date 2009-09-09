@@ -369,18 +369,18 @@ package away3dlite.containers
 				return;
 			
         	if (_clipping) {
-        		_clipping.removeOnClippingUpdate(onClippingUpdated);
-        		_clipping.removeOnScreenUpdate(onScreenUpdated);
+        		_clipping.removeEventListener(ClippingEvent.CLIPPING_UPDATED, onClippingUpdated);
+        		_clipping.removeEventListener(ClippingEvent.SCREEN_UPDATED, onScreenUpdated);
         	}
         	
 			_clipping = val;
 			_clipping.setView(this);
 			
         	if (_clipping) {
-        		_clipping.addOnClippingUpdate(onClippingUpdated);
-        		_clipping.addOnScreenUpdate(onScreenUpdated);
+        		_clipping.addEventListener(ClippingEvent.CLIPPING_UPDATED, onClippingUpdated);
+        		_clipping.addEventListener(ClippingEvent.SCREEN_UPDATED, onScreenUpdated);
         	} else {
-        		throw new Error("View cannot have clip set to null");
+        		throw new Error("View cannot have clipping set to null");
         	}
         	
         	_screenClippingDirty = true;
