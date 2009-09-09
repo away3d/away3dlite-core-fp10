@@ -3,13 +3,54 @@ package away3dlite.core.utils {
     import away3dlite.materials.*;
     
     import flash.display.*;
-    import flash.geom.Matrix;
+    import flash.geom.*;
     import flash.utils.*;
-    //import mx.core.BitmapAsset;
 
-    /** Helper class for casting assets to usable objects */
+
+    /**
+     * Helper class for casting assets to usable objects
+     */
     public class Cast
     {
+		private static var hexchars:String = "0123456789abcdefABCDEF";
+        private static var notclasses:Dictionary = new Dictionary();
+        private static var classes:Dictionary = new Dictionary();
+		
+        private static function tryclass(name:String):Object
+        {
+            if (notclasses[name])
+                return name;
+
+            var result:Class = classes[name];
+
+            if (result != null)
+                return result;
+
+            try
+            {
+                result = getDefinitionByName(name) as Class;
+                classes[name] = result;
+                return result;
+            }
+            catch (error:ReferenceError) {}
+
+            notclasses[name] = true;
+            return name;
+        }
+		
+        private static function hexstring(string:String):Boolean
+        {
+            var _length:int = string.length;
+            for (var i:int = 0; i < _length; ++i)
+                if (hexchars.indexOf(string.charAt(i)) == -1)
+                    return false;
+
+            return true;
+        }
+        
+    	/**
+    	 * Casts the given data value as a string.
+    	 */
         public static function string(data:*):String
         {
             if (data is Class)
@@ -20,7 +61,10 @@ package away3dlite.core.utils {
 
             return String(data);
         }
-    
+        
+    	/**
+    	 * Casts the given data value as a bytearray.
+    	 */
         public static function bytearray(data:*):ByteArray
         {
             //throw new Error(typeof(data));
@@ -33,7 +77,10 @@ package away3dlite.core.utils {
 
             return ByteArray(data);
         }
-    
+        
+    	/**
+    	 * Casts the given data value as an xml object.
+    	 */
         public static function xml(data:*):XML
         {
             if (data is Class)
@@ -45,18 +92,9 @@ package away3dlite.core.utils {
             return XML(data);
         }
         
-		private static var hexchars:String = "0123456789abcdefABCDEF";
-
-        private static function hexstring(string:String):Boolean
-        {
-            var _length:int = string.length;
-            for (var i:int = 0; i < _length; ++i)
-                if (hexchars.indexOf(string.charAt(i)) == -1)
-                    return false;
-
-            return true;
-        }
-
+    	/**
+    	 * Casts the given data value as a color.
+    	 */
         public static function color(data:*):uint
         {
             if (data is uint)
@@ -77,6 +115,9 @@ package away3dlite.core.utils {
             return 0xFFFFFF;                                  
         }
         
+    	/**
+    	 * Casts the given data value as a bitmapdata object.
+    	 */
         public static function bitmap(data:*):BitmapData
         {
             if (data == null)
@@ -117,32 +158,10 @@ package away3dlite.core.utils {
 
             throw new Error("Can't cast to bitmap: "+data);
         }
-
-        private static var notclasses:Dictionary = new Dictionary();
-        private static var classes:Dictionary = new Dictionary();
-
-        public static function tryclass(name:String):Object
-        {
-            if (notclasses[name])
-                return name;
-
-            var result:Class = classes[name];
-
-            if (result != null)
-                return result;
-
-            try
-            {
-                result = getDefinitionByName(name) as Class;
-                classes[name] = result;
-                return result;
-            }
-            catch (error:ReferenceError) {}
-
-            notclasses[name] = true;
-            return name;
-        }
-
+        
+    	/**
+    	 * Casts the given data value as a material object.
+    	 */
         public static function material(data:*):Material
         {
             if (data == null)
