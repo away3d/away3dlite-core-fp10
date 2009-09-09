@@ -33,7 +33,7 @@
             
             _i = weights.length;
             while (_i--) {
-            	_position = controllers[_i].sceneTransform.transformVector(_baseVertex);
+            	_position = controllers[_i].transformMatrix3D.transformVector(_baseVertex);
 				_position.scaleBy(weights[_i]);
 				_output = _output.add(_position);
             }

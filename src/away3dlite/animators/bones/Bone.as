@@ -1,17 +1,26 @@
 package away3dlite.animators.bones
 {
-	import away3dlite.primitives.Sphere;
 	import away3dlite.containers.*;
 	import away3dlite.arcane;
 	import away3dlite.core.base.*;
 	
 	use namespace arcane;
 	
+	/**
+	 * ObjectContainer3D representing a bone and joint in a bones animation skeleton.
+	 * 
+	 * @see away3dlite.animators.BonesAnimator
+	 */
     public class Bone extends ObjectContainer3D
     {
+    	/**
+    	 * the joint object of the bone
+    	 */
     	public var joint:ObjectContainer3D;
     	
-		//Collada 3.05B
+		/**
+		 * Collada 3.05B id value
+		 */
 		public var boneId:String;
 		
     	/**
@@ -92,22 +101,22 @@ package away3dlite.animators.bones
 			joint.scaleZ = scale;
         }
         
+		/**
+		 * Creates a new <code>Bone</code> object.
+		 */
         public function Bone()
         {
 			super();
 			
 			//create the joint for the bone
 			addChild(joint = new ObjectContainer3D());
-			//var sphere:Sphere = new Sphere();
-			//sphere.radius = 3;
-			//addChild(sphere);
         }
 		
 		/**
 		 * Duplicates the 3d object's properties to another <code>Bone</code> object
 		 * 
-		 * @param	object	[optional]	The new object instance into which all properties are copied
-		 * @return						The new object instance with duplicated properties applied
+		 * @param	object	[optional]	The new object instance into which all properties are copied. The default is <code>Bone</code>.
+		 * @return						The new object instance with duplicated properties applied.
 		 */
         public override function clone(object:Object3D = null):Object3D
         {

@@ -3,6 +3,11 @@ package away3dlite.animators.bones
     import away3dlite.containers.*;
     import away3dlite.core.base.*;
 	
+	/**
+	 * Stores the varying transformations of a single <code>Bone</code> or <code>Object3D</code> object over the dureation of a bones animation
+	 * 
+	 * @see away3dlite.animators.BonesAnimator
+	 */
     public class Channel
     {
     	private var i:int;
