@@ -59,50 +59,70 @@ package away3dlite.core.base
 	[Event(name="rollOut",type="away3dlite.events.MouseEvent3D")]
 	
 	/**
-	 * @author robbateman
+	 * The base class for all 3d objects.
 	 */
 	public class Object3D extends Sprite
 	{
+		/** @private */
 		arcane var _screenZ:Number = 0;
+		/** @private */
 		arcane var _scene:Scene3D;
-		arcane var _viewTransform:Matrix3D;
-		arcane var _sceneTransform:Matrix3D;
+		/** @private */
+		arcane var _viewMatrix3D:Matrix3D;
+		/** @private */
+		arcane var _sceneMatrix3D:Matrix3D;
+		/** @private */
 		arcane var _mouseEnabled:Boolean;
-		
+		/** @private */
 		arcane function updateScene(val:Scene3D):void
 		{
 		}
+        /** @private */
+        arcane function project(projectionMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
+		{
+			_sceneMatrix3D = transform.matrix3D.clone();
+			
+			if (parentMatrix3D)
+				_sceneMatrix3D.append(parentMatrix3D);
+				
+			_viewMatrix3D = _sceneMatrix3D.clone();
+			_viewMatrix3D.append(projectionMatrix3D);
+			
+			_screenZ = _viewMatrix3D.position.z;
+		}
 		
-		// Layer
+		/**
+		 * An optional layer sprite used to draw into inseatd of the default view.
+		 */
 		public var layer:Sprite;
 		
 		/**
-		 * 
+		 * Used in loaders to store all parsed materials contained in the model.
 		 */
 		public var materialLibrary:MaterialLibrary = new MaterialLibrary();
 		
 		/**
-		 * 
+		 * Used in loaders to store all parsed geometry data contained in the model.
 		 */
 		public var geometryLibrary:GeometryLibrary = new GeometryLibrary();
 		
 		/**
-		 * 
+		 * Used in the loaders to store all parsed animation data contained in the model.
 		 */
 		public var animationLibrary:AnimationLibrary = new AnimationLibrary();
 		
 		/**
-		 * 
+		 * Returns the type of 3d object.
 		 */
 		public var type:String;
 		
 		/**
-		 * 
+		 * Returns the source url of the 3d object, or the name of the family of generative geometry objects if not loaded from an external source.
 		 */
 		public var url:String;
 		
 		/**
-		 * 
+		 * Returns the scene to which the 3d object belongs
 		 */
 		public function get scene():Scene3D
 		{
@@ -110,37 +130,48 @@ package away3dlite.core.base
 		}
 		
 		/**
-		 * 
+		 * Returns the z-sorting position of the 3d object.
 		 */
 		public function get screenZ():Number
 		{
 			return _screenZ;
 		}
 		
-		public function get viewTransform():Matrix3D
+		/**
+		 * Returns a 3d matrix representing the absolute transformation of the 3d object in the view.
+		 */
+		public function get viewMatrix3D():Matrix3D
 		{
-			return _viewTransform;
+			return _viewMatrix3D;
 		}
 		
-		public function get sceneTransform():Matrix3D
+		/**
+		 * Returns a 3d matrix representing the absolute transformation of the 3d object in the scene.
+		 */
+		public function get sceneMatrix3D():Matrix3D
 		{
-			return _sceneTransform;
+			return _sceneMatrix3D;
 		}
-		
+				
+		/**
+		 * Returns a 3d vector representing the local position of the 3d object.
+		 */
 		public function get position():Vector3D
 		{
 			return transform.matrix3D.position;
 		}
 		
 		/**
-		 * 
+		 * Creates a new <code>Object3D</code> object.
 		 */
 		public function Object3D()
 		{
 			super();
+			
+			//enable for 3d calculations
+			transform.matrix3D = new Matrix3D();
 		}
 		
-				
 		/**
 		 * Rotates the 3d object around to face a point defined relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
 		 * 
@@ -151,19 +182,6 @@ package away3dlite.core.base
         {
         	transform.matrix3D.pointAt(target, Vector3D.Z_AXIS, upAxis || new Vector3D(0,-1,0));
         }
-        
-        public function project(viewMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
-		{
-			_sceneTransform = transform.matrix3D.clone();
-			
-			if (parentMatrix3D)
-				_sceneTransform.append(parentMatrix3D);
-				
-			_viewTransform = _sceneTransform.clone();
-			_viewTransform.append(viewMatrix3D);
-			
-			_screenZ = _viewTransform.position.z;
-		}
 		
 		/**
 		 * Duplicates the 3d object's properties to another <code>Object3D</code> object

@@ -40,6 +40,43 @@ package away3dlite.core.base
 			
 			_scene = val;
 		}
+		/** @private */
+		arcane override function project(projectionMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
+		{
+			super.project(projectionMatrix3D, parentMatrix3D);
+			
+			// project the normals
+			//if (material is IShader)
+			//	_triangles.uvtData = IShader(material).getUVData(transform.matrix3D.clone());
+			
+			//DO NOT CHANGE vertices getter!!!!!!!
+			Utils3D.projectVectors(_viewMatrix3D, vertices, _screenVertices, _uvtData);
+		}
+		/** @private */	
+		arcane function buildFaces():void
+		{
+			_faceMaterials.fixed = false;
+			_faces.length = _sort.length = 0;
+			var i:int = _faces.length = _faceMaterials.length = _indices.length/3;
+			
+			while (i--)
+				_faces[i] = new Face(this, i);
+			
+			// speed up
+			_vertices.fixed = true;
+			_uvtData.fixed = true;
+			_indices.fixed = true;
+			_faceMaterials.fixed = true;
+			
+			// calculate normals for the shaders
+			//if (_material is IShader)
+ 			//	IShader(_material).calculateNormals(_vertices, _indices, _uvtData, _vertexNormals);
+ 			
+ 			if (_scene)
+ 				_scene._dirtyFaces = true;
+ 			
+ 			updateSortType();
+		}
 		
 		protected var _vertexNormals:Vector.<Number>;
 		
@@ -68,10 +105,15 @@ package away3dlite.core.base
 			}
 		}
 		
+		/**
+		 * Determines if the faces in the mesh are sorted. Used in the <code>FastRenderer</code> class.
+		 * 
+		 * @see away3dlite.core.render.FastRenderer
+		 */
 		public var sortFaces:Boolean = true;
 		
 		/**
-		 * 
+		 * Returns the 3d vertices used in the mesh.
 		 */
 		public function get vertices():Vector.<Number>
 		{
@@ -79,43 +121,16 @@ package away3dlite.core.base
 		}
 		
 		/**
-		 * 
+		 * Returns the faces used in the mesh.
 		 */
 		public function get faces():Vector.<Face>
 		{
 			return _faces;
 		}
+
 		
 		/**
-		 * 
-		 */
-		public function buildFaces():void
-		{
-			_faceMaterials.fixed = false;
-			_faces.length = _sort.length = 0;
-			var i:int = _faces.length = _faceMaterials.length = _indices.length/3;
-			
-			while (i--)
-				_faces[i] = new Face(this, i);
-			
-			// speed up
-			_vertices.fixed = true;
-			_uvtData.fixed = true;
-			_indices.fixed = true;
-			_faceMaterials.fixed = true;
-			
-			// calculate normals for the shaders
-			//if (_material is IShader)
- 			//	IShader(_material).calculateNormals(_vertices, _indices, _uvtData, _vertexNormals);
- 			
- 			if (_scene)
- 				_scene._dirtyFaces = true;
- 			
- 			updateSortType();
-		}
-		
-		/**
-		 * 
+		 * Determines the global material used on the faces in the mesh.
 		 */
 		public function get material():Material
 		{
@@ -139,12 +154,14 @@ package away3dlite.core.base
 		}
 		
 		/**
-		 * 
+		 * Determines whether the faces in teh mesh are visible on both sides (true) or just the front side (false).
+		 * The front side of a face is determined by the side that has it's vertices arranged in a counter-clockwise order.
 		 */
 		public function get bothsides():Boolean
 		{
 			return _bothsides;
 		}
+		
 		public function set bothsides(val:Boolean):void
 		{
 			_bothsides = val;
@@ -154,6 +171,16 @@ package away3dlite.core.base
 			} else {
 				_triangles.culling = TriangleCulling.POSITIVE;
 			}
+		}
+		
+		/**
+		 * Determines by which mechanism vertices are sorted. Uses the values given by the <code>MeshSortType</code> class. Options are CENTER, FRONT and BACK. Defaults to CENTER.
+		 * 
+		 * @see away3dlite.core.base.MeshSortType
+		 */
+		public function get sortType():String
+		{
+			return _sortType;
 		}
 		
 		public function set sortType(val:String):void
@@ -166,46 +193,26 @@ package away3dlite.core.base
 			updateSortType();
 		}
 		
-		public function get sortType():String
-		{
-			return _sortType;
-		}
-		
 		/**
+		 * Creates a new <code>Mesh</code> object.
 		 * 
+		 * @param material		Determines the global material used on the faces in the mesh.
 		 */
-		public function Mesh()
+		public function Mesh(material:Material = null)
 		{
 			super();
-			
-			//default value for matrix3d
-			transform.matrix3D = new Matrix3D();
 			
 			// private use
 			_screenVertices = _triangles.vertices = new Vector.<Number>();
 			_uvtData = _triangles.uvtData = new Vector.<Number>();
 			_indices = _triangles.indices = new Vector.<int>();
 			
-			bothsides = false;
-			material = new WireColorMaterial();
-			sortType = MeshSortType.CENTER;
+			//setup default values
+			this.material = material || new WireColorMaterial();
+			this.bothsides = false;
+			this.sortType = MeshSortType.CENTER;
 		}
 		
-		/**
-		 * 
-		 */
-		public override function project(viewMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
-		{
-			super.project(viewMatrix3D, parentMatrix3D);
-			
-			// project the normals
-			//if (material is IShader)
-			//	_triangles.uvtData = IShader(material).getUVData(transform.matrix3D.clone());
-			
-			//DO NOT CHANGE vertices getter!!!!!!!
-			Utils3D.projectVectors(_viewTransform, vertices, _screenVertices, _uvtData);
-		}
-		        
 		/**
 		 * Duplicates the mesh properties to another <code>Mesh</code> object.
 		 * 

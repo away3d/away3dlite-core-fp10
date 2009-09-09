@@ -7,8 +7,7 @@ package away3dlite.core.base
 	use namespace arcane;
 	
 	/**
-	 * Face
-	 * @author katopz
+	 * Face value object. Stores information on each face in a mesh.
 	 */
 	public class Face
 	{
@@ -18,44 +17,118 @@ package away3dlite.core.base
 		
 		private var screenVertices:Vector.<Number>;
 		
-		// use for refer back to mesh
+		/**
+		 * Mesh object to which the face belongs.
+		 */
 		public var mesh:Mesh;
 		
+		/**
+		 * Material of the face.
+		 */
 		public var material:Material;
 		
-		// index values
+		/**
+		 * Index value of the face.
+		 */
 		public var index:int;
+		
+		/**
+		 * Index value of the first vertex in the face.
+		 */
 		public var i0:int;
+		
+		/**
+		 * Index value of the second vertex in the face.
+		 */
 		public var i1:int;
+		
+		/**
+		 * Index value of the third vertex in the face.
+		 */
 		public var i2:int;
 		
-		// for faster access
+		/**
+		 * x index of the first screen vertex.
+		 */
 		public var x0:int;
+		
+		/**
+		 * y index of the first screen vertex.
+		 */
 		public var y0:int;
-		
+				
+		/**
+		 * x index of the second screen vertex.
+		 */
 		public var x1:int;
+				
+		/**
+		 * y index of the second screen vertex.
+		 */
 		public var y1:int;
-		
+				
+		/**
+		 * x index of the third screen vertex.
+		 */
 		public var x2:int;
+				
+		/**
+		 * y index of the third screen vertex.
+		 */
 		public var y2:int;
 		
+		/**
+		 * u index of the first mapping value.
+		 */
 		public var u0:int;
+		
+		/**
+		 * v index of the first mapping value.
+		 */
 		public var v0:int;
+		
+		/**
+		 * t index of the first mapping value.
+		 */
 		public var t0:int;
-		
+				
+		/**
+		 * u index of the second mapping value.
+		 */
 		public var u1:int;
+				
+		/**
+		 * v index of the second mapping value.
+		 */
 		public var v1:int;
+				
+		/**
+		 * t index of the second mapping value.
+		 */
 		public var t1:int;
-		
+						
+		/**
+		 * u index of the third mapping value.
+		 */
 		public var u2:int;
+						
+		/**
+		 * v index of the third mapping value.
+		 */
 		public var v2:int;
+						
+		/**
+		 * t index of the third mapping value.
+		 */
 		public var t2:int;
 		
+		/*
 		public var normalX:Number;
 		
 		public var normalY:Number;
 		
 		public var normalZ:Number;
+		*/
 		
 		public function Face(mesh:Mesh, i:int)
 		{
@@ -96,6 +169,7 @@ package away3dlite.core.base
 			v2 = 3*i2 + 1;
 			t2 = 3*i2 + 2;
 			
+			/*
 			var d1x:Number = vertices[u1] - vertices[u0];
 	        var d1y:Number = vertices[v1] - vertices[v0];
 	        var d1z:Number = vertices[t1] - vertices[t0];
@@ -113,13 +187,25 @@ package away3dlite.core.base
 	        normalX = pa / pdd;
 	        normalY = pb / pdd;
 	        normalZ = pc / pdd;
+	        */
 		}
 		
+		/**
+		 * selected function for calculating the screen Z coordinate of the face.
+		 */
+		public var calculateScreenZ:Function;
+		
+		/**
+		 * Returns the average screen Z coordinate of the face.
+		 */
 		public function calculateAverageZ():int
 		{
 			return int((uvtData[t0] + uvtData[t1] + uvtData[t2])*100000);
 		}
 		
+		/**
+		 * Returns the furthest screen Z coordinate of the face.
+		 */
 		public function calculateFurthestZ():int
 		{
 			var z:Number = uvtData[t0];
@@ -133,6 +219,9 @@ package away3dlite.core.base
 			return int(z*100000);
 		}
 		
+		/**
+		 * Returns the nearest screen Z coordinate of the face.
+		 */
 		public function calculateNearestZ():int
 		{
 			var z:Number = uvtData[t0];
@@ -146,8 +235,12 @@ package away3dlite.core.base
 			return int(z*100000);
 		}
 		
-		public var calculateScreenZ:Function;
-		
+		/**
+		 * Returns the uvt coordinate of the face at the given screen coordinate.
+		 * 
+		 * @param x		The x value of the screen coordinate.
+		 * @param y		The y value of the screen coordinate.
+		 */
 		public function calculateUVT(x:Number, y:Number):Vector3D
 		{
 			var azf:Number = (1/uvtData[t0] - 100)/100;
