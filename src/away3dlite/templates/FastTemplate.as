@@ -1,20 +1,26 @@
 package away3dlite.templates
 {
+	import away3dlite.arcane;
+	import away3dlite.core.clip.*;
 	import away3dlite.core.render.*;
+
+	use namespace arcane;
 	
 	/**
-	 * Fast Template
-	 * @author katopz
+	 * Template setup designed for speed.
 	 */
 	public class FastTemplate extends Template
 	{
-		protected override function init():void
+		/**
+		 * @inheritDoc
+		 */
+		arcane override function init():void
 		{
 			super.init();
 			
-			view.renderer = renderer;
+			view.renderer = new FastRenderer();
+			view.clipping = new Clipping();
+			view.mouseEnabled = false;
 		}
-		
-		public var renderer:FastRenderer = new FastRenderer();
 	}
 }

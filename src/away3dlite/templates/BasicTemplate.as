@@ -1,24 +1,25 @@
 package away3dlite.templates
 {
-	import away3dlite.core.clip.RectangleClipping;
+	import away3dlite.arcane;
+	import away3dlite.core.clip.*;
 	import away3dlite.core.render.*;
+
+	use namespace arcane;
 	
 	/**
-	 * SimpleView
-	 * @author katopz
+	 * Template setup designed for general use.
 	 */
 	public class BasicTemplate extends Template
 	{
-		protected override function init():void
+		/**
+		 * @inheritDoc
+		 */
+		arcane override function init():void
 		{
 			super.init();
 			
-			view.renderer = renderer;
-			view.clipping = clipping;
+			view.renderer = new BasicRenderer();
+			view.clipping = new RectangleClipping();
 		}
-		
-		public var renderer:BasicRenderer = new BasicRenderer();
-		
-		public var clipping:RectangleClipping = new RectangleClipping();
 	}
 }
