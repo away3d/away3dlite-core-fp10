@@ -78,12 +78,12 @@ package away3dlite.core.base
 		{
 		}
         /** @private */
-        arcane function project(projectionMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
+        arcane function project(projectionMatrix3D:Matrix3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
 			_sceneMatrix3D = transform.matrix3D.clone();
 			
-			if (parentMatrix3D)
-				_sceneMatrix3D.append(parentMatrix3D);
+			if (parentSceneMatrix3D)
+				_sceneMatrix3D.append(parentSceneMatrix3D);
 				
 			_viewMatrix3D = _sceneMatrix3D.clone();
 			_viewMatrix3D.append(projectionMatrix3D);

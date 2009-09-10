@@ -117,6 +117,8 @@ package away3dlite.loaders
 		{
 			for each (var _materialData:MaterialData in _materialLibrary)
 			{
+				Debug.trace(" + Build Material : " + _materialData.name);
+				
 				//overridden by the material property in constructor
 				if (material)
 					_materialData.material = material;

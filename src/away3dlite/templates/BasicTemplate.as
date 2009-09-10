@@ -18,8 +18,18 @@ package away3dlite.templates
 		{
 			super.init();
 			
-			view.renderer = new BasicRenderer();
-			view.clipping = new RectangleClipping();
+			view.renderer = renderer;
+			view.clipping = clipping;
 		}
+		
+		/**
+		 * The renderer object used in the template.
+		 */
+		public var renderer:BasicRenderer = new BasicRenderer();
+		
+		/**
+		 * The clipping object used in the template.
+		 */
+		public var clipping:RectangleClipping = new RectangleClipping();
 	}
 }

@@ -24,7 +24,7 @@ package away3dlite.core.render
 			_mouseEnabled = object._mouseEnabled = (_mouseEnabled && object.mouseEnabled);
 			
 			if (object is ObjectContainer3D) {
-				var children:Vector.<Object3D> = (object as ObjectContainer3D).children;
+				var children:Array = (object as ObjectContainer3D).children;
 				var child:Object3D;
 				
 				if (sortObjects)
@@ -80,7 +80,7 @@ package away3dlite.core.render
 		private function collectPointFace(object:Object3D):void
 		{
 			if (object is ObjectContainer3D) {
-				var children:Vector.<Object3D> = (object as ObjectContainer3D).children;
+				var children:Array = (object as ObjectContainer3D).children;
 				var child:Object3D;
 				
 				for each (child in children)

@@ -85,7 +85,7 @@
 		                	objectContainer.children[i].y -= _moveVector.y;
 							objectContainer.children[i].z -= _moveVector.z;
 		                }
-						_moveVector = mesh.transform.matrix3D.transformVector(_moveVector);
+						_moveVector = objectContainer.transform.matrix3D.transformVector(_moveVector);
 						objectContainer.x += _moveVector.x;
 						objectContainer.y += _moveVector.y;
 						objectContainer.z += _moveVector.z;
@@ -281,78 +281,54 @@
 								case "translateY":
 								case "translationY":
 								case "transform(3)(1)":
-									if (yUp) {
+									if (yUp)
 										channel.type = ["y"];
-										for each (param in channel.param)
-											param[0] *= -scaling;
-									} else {
+									else
 										channel.type = ["z"];
-										for each (param in channel.param)
-											param[0] *= scaling;
-									}
+									
+									for each (param in channel.param)
+										param[0] *= -scaling;
 				     				break;
 								case "translateZ":
 								case "translationZ":
 								case "transform(3)(2)":
-									if (yUp) {
+									if (yUp)
 										channel.type = ["z"];
-										for each (param in channel.param)
-											param[0] *= scaling;
-									} else {
+									else
 										channel.type = ["y"];
-										for each (param in channel.param)
-											param[0] *= -scaling;
-									}
+									
+									for each (param in channel.param)
+										param[0] *= scaling;
 				     				break;
 				     			case "jointOrientX":
-				     				channel.type = ["rotationX"];
-				     				if (yUp)
-										for each (param in channel.param)
-											param[0] *= -1;
-				     				break;
 								case "rotateXANGLE":
 								case "rotateX":
 								case "RotX":
 				     				channel.type = [rX];
-				     				if (yUp)
-										for each (param in channel.param)
+				     				
+				     				for each (param in channel.param)
 											param[0] *= -1;
 				     				break;
 				     			case "jointOrientY":
-				     				channel.type = ["rotationY"];
-				     				//if (yUp)
-										for each (param in channel.param)
-											param[0] *= -1;
-				     				break;
 								case "rotateYANGLE":
 								case "rotateY":
 								case "RotY":
-									if (yUp) {
+									if (yUp)
 										channel.type = [rY];
-										for each (param in channel.param)
-											param[0] *= -1;
-									} else {
+									else
 										channel.type = [rZ];
-									}
-									//if (yUp)
+									
+									for each (param in channel.param)
+										param[0] *= -1;
 				     				break;
 				     			case "jointOrientZ":
-				     				channel.type = ["rotationZ"];
-				     				//if (yUp)
-										for each (param in channel.param)
-											param[0] *= -1;
-				     				break;
 								case "rotateZANGLE":
 								case "rotateZ":
 								case "RotZ":
-									if (yUp) {
+									if (yUp)
 										channel.type = [rZ];
-									} else {
+									else
 										channel.type = [rY];
-										for each (param in channel.param)
-											param[0] *= -1;
-									}
-									//if (yUp)
 				            		break;
 								case "scaleX":
 								case "transform(0)(0)":
@@ -385,8 +361,8 @@
 				     					channel.type = ["x", "z", "y"];
 				     					for each (param in channel.param) {
 				     						param[0] *= scaling;
-				     						param[1] *= scaling;
-											param[2] *= -scaling;
+				     						param[1] *= -scaling;
+											param[2] *= scaling;
 										}
 				     				}
 									break;
@@ -397,14 +373,13 @@
 										channel.type = [sX, sZ, sY];
 				     				break;
 								case "rotate":
-									if (yUp) {
+									if (yUp)
 										channel.type = [rX, rY, rZ];
-				     				} else {
+				     				else
 										channel.type = [rX, rZ, rY];
-										for each (param in channel.param) {
-											param[0] *= -1;
-										}
-				     				}
+				     				
+									for each (param in channel.param)
+										param[0] *= -1;
 									break;
 								case "transform":
 									channel.type = ["transform"];
@@ -1200,17 +1175,17 @@
                 rawData[14] = ar[11]*scaling;
         	} else {
         		rawData[0] = ar[0];
-                rawData[4] = ar[1];
-                rawData[8] = ar[2];
+                rawData[4] = -ar[2];
+                rawData[8] = ar[1];
                 rawData[12] = ar[3]*scaling;
-                rawData[1] = ar[4];
-                rawData[5] = ar[5];
-                rawData[9] = ar[6];
-                rawData[13] = ar[7]*scaling;
-                rawData[2] = ar[8];
-                rawData[6] = ar[9];
-                rawData[10] = ar[10];
-                rawData[14] = ar[11]*scaling;
+                rawData[1] = -ar[8];
+                rawData[5] = ar[10];
+                rawData[9] = -ar[9];
+                rawData[13] = -ar[11]*scaling;
+                rawData[2] = ar[4];
+                rawData[6] = -ar[6];
+                rawData[10] = ar[5];
+                rawData[14] = ar[7]*scaling;
         	}
         	             
         	rawData[3] = ar[12];

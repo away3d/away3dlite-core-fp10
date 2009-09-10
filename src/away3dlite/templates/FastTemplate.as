@@ -18,9 +18,19 @@ package away3dlite.templates
 		{
 			super.init();
 			
-			view.renderer = new FastRenderer();
-			view.clipping = new Clipping();
+			view.renderer = renderer;
+			view.clipping = clipping;
 			view.mouseEnabled = false;
 		}
+		
+		/**
+		 * The renderer object used in the template.
+		 */
+		public var renderer:FastRenderer = new FastRenderer();
+		
+		/**
+		 * The clipping object used in the template.
+		 */
+		public var clipping:Clipping = new Clipping();
 	}
 }

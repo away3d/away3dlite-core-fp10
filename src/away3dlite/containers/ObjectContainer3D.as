@@ -28,23 +28,23 @@ package away3dlite.containers
 				child.updateScene(_scene);
 		}
 		/** @private */
-		arcane override function project(projectionMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
+		arcane override function project(projectionMatrix3D:Matrix3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
-			super.project(projectionMatrix3D, parentMatrix3D);
+			super.project(projectionMatrix3D, parentSceneMatrix3D);
 			
-			var i:int = numChildren;
+			var child:Object3D;
 			
-			while (i--)
-				(getChildAt(i) as Object3D).project(projectionMatrix3D, transform.matrix3D);
+			for each (child in _children)
+				child.project(projectionMatrix3D, _sceneMatrix3D);
 		}
 		
 		private var _index:int;
-		private var _children:Vector.<Object3D> = new Vector.<Object3D>();
+		private var _children:Array = new Array();
         
         /**
         * Returns the children of the container as an array of 3d objects.
         */
-		public function get children():Vector.<Object3D>
+		public function get children():Array
 		{
 			return _children;
 		}

@@ -41,9 +41,9 @@ package away3dlite.core.base
 			_scene = val;
 		}
 		/** @private */
-		arcane override function project(projectionMatrix3D:Matrix3D, parentMatrix3D:Matrix3D = null):void
+		arcane override function project(projectionMatrix3D:Matrix3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
-			super.project(projectionMatrix3D, parentMatrix3D);
+			super.project(projectionMatrix3D, parentSceneMatrix3D);
 			
 			// project the normals
 			//if (material is IShader)
