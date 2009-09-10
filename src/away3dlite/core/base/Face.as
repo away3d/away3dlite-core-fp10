@@ -200,7 +200,6 @@ package away3dlite.core.base
 		 */
 		public function calculateAverageZ():int
 		{
-			trace((uvtData[t0] + uvtData[t1] + uvtData[t2]))
 			return int((uvtData[t0] + uvtData[t1] + uvtData[t2])*10000000);
 		}
 		
