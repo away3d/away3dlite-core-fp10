@@ -2,6 +2,7 @@
 {
 	import away3dlite.arcane;
 	import away3dlite.core.base.*;
+    import away3dlite.materials.*;
     
 	use namespace arcane;
 	
@@ -126,15 +127,16 @@
 		
 		/**
 		 * Creates a new <code>Sphere</code> object.
-		 *
+		 * 
+		 * @param	material	Defines the global material used on the faces in the sphere.
 		 * @param	radius		Defines the radius of the sphere base.
 		 * @param	segmentsW	Defines the number of horizontal segments that make up the sphere.
 		 * @param	segmentsH	Defines the number of vertical segments that make up the sphere.
 		 * @param	yUp			Defines whether the coordinates of the sphere points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Sphere(radius:Number = 100, segmentsW:int = 8, segmentsH:int = 6, yUp:Boolean = true)
+        public function Sphere(material:Material = null, radius:Number = 100, segmentsW:int = 8, segmentsH:int = 6, yUp:Boolean = true)
         {
-            super();
+            super(material);
         	
 			_radius = radius;
 			_segmentsW = segmentsW;

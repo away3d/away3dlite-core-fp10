@@ -1,7 +1,8 @@
 ﻿package away3dlite.primitives
 {
-	import away3dlite.*;
+	import away3dlite.arcane;
 	import away3dlite.core.base.*;
+	import away3dlite.materials.*;
     
 	use namespace arcane;
 	
@@ -60,10 +61,12 @@
 		
 		/**
 		 * Creates a new <code>AbstractPrimitive</code> object.
+		 * 
+		 * @param material		Defines the global material used on the faces in the primitive.
 		 */
-		public function AbstractPrimitive()
+		public function AbstractPrimitive(material:Material = null)
 		{
-			super();
+			super(material);
 			
 			_primitiveDirty = true;
 		}

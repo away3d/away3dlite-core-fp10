@@ -2,7 +2,8 @@
 {
 	import away3dlite.arcane;
 	import away3dlite.core.base.*;
-    
+    import away3dlite.materials.*;
+	
 	use namespace arcane;
 	
     /**
@@ -142,15 +143,16 @@
 		/**
 		 * Creates a new <code>Torus</code> object.
 		 * 
+		 * @param	material	Defines the global material used on the faces in the torus.
 		 * @param	radius		Defines the overall radius of the torus.
 		 * @param	tube		Defines the tube radius of the torus.
 		 * @param	segmentsR	Defines the number of radial segments that make up the torus.
 		 * @param	segmentsT	Defines the number of tubular segments that make up the torus.
 		 * @param	yUp			Defines whether the coordinates of the torus points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Torus(radius:Number = 100, tube:Number = 40, segmentsR:int = 8, segmentsT:int = 6, yUp:Boolean = true)
+        public function Torus(material:Material = null, radius:Number = 100, tube:Number = 40, segmentsR:int = 8, segmentsT:int = 6, yUp:Boolean = true)
         {
-            super();
+            super(material);
         	
 			_radius = radius;
 			_tube = tube;

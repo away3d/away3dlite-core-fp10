@@ -2,6 +2,7 @@
 {
 	import away3dlite.arcane;
 	import away3dlite.core.base.*;
+    import away3dlite.materials.*;
     
 	use namespace arcane;
 	
@@ -189,6 +190,7 @@
 		/**
 		 * Creates a new <code>Cylinder</code> object.
 		 * 
+		 * @param	material	Defines the global material used on the faces in the cylinder.
 		 * @param	radius		Defines the radius of the cylinder base.
 		 * @param	height		Defines the height of the cylinder.
 		 * @param	segmentsW	Defines the number of horizontal segments that make up the cylinder.
@@ -196,9 +198,9 @@
 		 * @param	openEnded	Defines whether the end of the cylinder is left open (true) or closed (false).
 		 * @param	yUp			Defines whether the coordinates of the cylinder points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Cylinder(radius:Number = 100, height:Number = 200, segmentsW:int = 8, segmentsH:int = 1, openEnded:Boolean = true, yUp:Boolean = true)
+        public function Cylinder(material:Material = null, radius:Number = 100, height:Number = 200, segmentsW:int = 8, segmentsH:int = 1, openEnded:Boolean = true, yUp:Boolean = true)
         {
-        	super();
+        	super(material);
         	
 			_radius = radius;
 			_height = height;

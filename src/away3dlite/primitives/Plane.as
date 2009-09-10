@@ -2,6 +2,7 @@
 {
 	import away3dlite.arcane;
 	import away3dlite.core.base.*;
+    import away3dlite.materials.*;
     
 	use namespace arcane;
 	
@@ -134,15 +135,16 @@
 		/**
 		 * Creates a new <code>Plane</code> object.
 		 * 
+		 * @param	material	Defines the global material used on the faces in the plane.
 		 * @param	width		Defines the width of the plane.
 		 * @param	height		Defines the height of the plane.
 		 * @param	segmentsW	Defines the number of horizontal segments that make up the plane.
 		 * @param	segmentsH	Defines the number of vertical segments that make up the plane.
 		 * @param	yUp			Defines whether the coordinates of the plane points use a yUp orientation (true) or a zUp orientation (false).
 		 */
-        public function Plane(width:Number = 100, height:Number = 100, segmentsW:int = 1, segmentsH:int = 1, yUp:Boolean = true)
+        public function Plane(material:Material = null, width:Number = 100, height:Number = 100, segmentsW:int = 1, segmentsH:int = 1, yUp:Boolean = true)
         {
-            super();
+            super(material);
 			
 			_width = width;
 			_height = height;
