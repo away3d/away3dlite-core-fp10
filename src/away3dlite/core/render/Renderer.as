@@ -96,7 +96,7 @@ package away3dlite.core.render
 		}
 		
 		/** @private */
-		protected function getMouseFace():void
+		protected function getMouseFace(x:Number, y:Number):void
 		{
 			var mouseCount:int;
         	var mouseCountX:int;
@@ -109,6 +109,24 @@ package away3dlite.core.render
 	    			mouseCountX = (mouseCount >> 2 & 3);
 	    			mouseCountY = (mouseCount & 3);
 	    			if (mouseCountX && mouseCountX < 3 && mouseCountY && mouseCountY < 3) {
+	    				
+	    				//flagged for edge detection
+	    				var vertices:Vector.<Number> = _face.mesh._screenVertices;
+						var v0x:Number = vertices[_face.x0];
+						var v0y:Number = vertices[_face.y0];
+						var v1x:Number = vertices[_face.x1];
+						var v1y:Number = vertices[_face.y1];
+						var v2x:Number = vertices[_face.x2];
+						var v2y:Number = vertices[_face.y2];
+						if ((v0x*(y - v1y) + v1x*(v0y - y) + x*(v1y - v0y)) < -0.001)
+			                continue;
+			
+			            if ((v0x*(v2y - y) + x*(v0y - v2y) + v2x*(y - v0y)) < -0.001)
+			                continue;
+			
+			            if ((x*(v2y - v1y) + v1x*(y - v2y) + v2x*(v1y - y)) < -0.001)
+			                continue;
+			            
 	    				_screenZ = _sort[i];
 						_pointFace = _face;
 	    			}

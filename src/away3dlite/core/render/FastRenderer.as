@@ -17,6 +17,8 @@ package away3dlite.core.render
 		private var _indices:Vector.<int>;
 		private var _uvtData:Vector.<Number>;
 		private var _i:int;
+		private var _x:Number;
+		private var _y:Number;
 		
 		private function collectFaces(object:Object3D):void
 		{
@@ -92,7 +94,7 @@ package away3dlite.core.render
 				_faces = mesh._faces;
 				_sort = mesh._sort;
 				
-				getMouseFace();
+				getMouseFace(_x, _y);
 			}
 		}
 		
@@ -121,6 +123,9 @@ package away3dlite.core.render
 		 */
 		public override function getFaceUnderPoint(x:Number, y:Number):Face
 		{
+			_x = x;
+			_y = y;
+			
 			collectPointVertices(x, y);
 			
 			_screenZ = 0;
