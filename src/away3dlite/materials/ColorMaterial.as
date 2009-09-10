@@ -5,8 +5,7 @@ package away3dlite.materials
 	import flash.display.*;
 
 	/**
-	 * ColorMaterial
-	 * @author katopz
+	 * Basic color material.
 	 */
 	public class ColorMaterial extends Material
 	{
@@ -14,7 +13,7 @@ package away3dlite.materials
 		private var _alpha:Number;
 		
 		/**
-		 * 
+		 * Defines the color of the material. Default value is random.
 		 */
 		public function get color():uint
 		{
@@ -31,7 +30,7 @@ package away3dlite.materials
 		}
 		
 		/**
-		 * 
+		 * Defines the transparency of the material. Default value is 1.
 		 */
 		public function get alpha():Number
 		{
@@ -46,9 +45,12 @@ package away3dlite.materials
 			
 			_graphicsBitmapFill.bitmapData = new BitmapData(2, 2, _alpha < 1, int(_alpha*0xFF) << 24 | _color);
 		}
-		
+        
 		/**
+		 * Creates a new <code>BitmapMaterial</code> object.
 		 * 
+		 * @param	color		The color of the material.
+		 * @param	alpha		The transparency of the material.
 		 */
 		public function ColorMaterial(color:* = null, alpha:Number = 1)
 		{

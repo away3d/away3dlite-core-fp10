@@ -12,7 +12,7 @@ package away3dlite.core.base
 	/**
 	 * Dispatched when a user moves the cursor while it is over the 3d object.
 	 * 
-	 * @eventType away3d.events.MouseEvent3D
+	 * @eventType away3dlite.events.MouseEvent3D
 	 */
 	[Event(name="mouseMove",type="away3dlite.events.MouseEvent3D")]
     

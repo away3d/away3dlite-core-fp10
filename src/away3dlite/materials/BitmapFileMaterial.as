@@ -9,21 +9,21 @@ package away3dlite.materials
 	 /**
 	 * Dispatched when the material completes a file load successfully.
 	 * 
-	 * @eventType away3d.events.MaterialEvent
+	 * @eventType away3dlite.events.MaterialEvent
 	 */
 	[Event(name="loadSuccess",type="away3d.events.MaterialEvent")]
     			
 	 /**
 	 * Dispatched when the material fails to load a file.
 	 * 
-	 * @eventType away3d.events.MaterialEvent
+	 * @eventType away3dlite.events.MaterialEvent
 	 */
 	[Event(name="loadError",type="away3d.events.MaterialEvent")]
     			
 	 /**
 	 * Dispatched every frame the material is loading.
 	 * 
-	 * @eventType away3d.events.MaterialEvent
+	 * @eventType away3dlite.events.MaterialEvent
 	 */
 	[Event(name="loadProgress",type="away3d.events.MaterialEvent")]
 	

@@ -3,8 +3,7 @@ package away3dlite.materials
 	import flash.display.*;
 
 	/**
-	 * WireframeMaterial
-	 * @author katopz
+	 * Outline material.
 	 */
 	public class WireframeMaterial extends Material
 	{
@@ -12,12 +11,13 @@ package away3dlite.materials
 		private var _alpha:Number;
 		
 		/**
-		 * 
+		 * Defines the color of the outline.
 		 */
 		public function get color():uint
 		{
 			return _color;
 		}
+		
 		public function set color(val:uint):void
 		{
 			if (_color == val)
@@ -29,12 +29,13 @@ package away3dlite.materials
 		}
 		
 		/**
-		 * 
+		 * Defines the transparency of the outline.
 		 */
 		public function get alpha():Number
 		{
 			return _alpha;
 		}
+		
 		public function set alpha(val:Number):void
 		{
 			if (_alpha == val)
@@ -42,9 +43,12 @@ package away3dlite.materials
 			
 			_alpha = val;
 		}
-		
+        
 		/**
+		 * Creates a new <code>WireframeMaterial</code> object.
 		 * 
+		 * @param	color		The color of the outline.
+		 * @param	alpha		The transparency of the outline.
 		 */
 		public function WireframeMaterial(color:int = 0xFFFFFF, alpha:Number = 1)
 		{
