@@ -86,7 +86,7 @@ package away3dlite.templates.ui
 			//up, down
 			if (isKeyUp)
 			{
-				dy = 1
+				dy = 1;
 			}
 			else if (isKeyDown)
 			{
@@ -96,7 +96,7 @@ package away3dlite.templates.ui
 			//peek left, peek right
 			if (isKeyPeekLeft)
 			{
-				dw = -1
+				dw = -1;
 			}
 			else if (isKeyPeekRight)
 			{

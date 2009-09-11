@@ -1,6 +1,5 @@
 package away3dlite.core.clip
 {
-	import away3dlite.cameras.Camera3D;
 	import away3dlite.arcane;
 	import away3dlite.containers.*;
 	import away3dlite.core.base.*;

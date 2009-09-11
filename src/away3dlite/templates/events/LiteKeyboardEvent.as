@@ -1,7 +1,6 @@
 package away3dlite.templates.events
 {
-	import flash.events.Event;
-	import flash.geom.Vector3D;
+	import flash.events.*;
 
 	/**
 	 * @author katopz

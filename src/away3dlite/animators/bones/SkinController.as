@@ -1,9 +1,8 @@
 ﻿package away3dlite.animators.bones
 {
-	import flash.display.DisplayObjectContainer;
-	import away3dlite.core.base.Object3D;
 	import away3dlite.containers.*;
 	
+	import flash.display.*;
 	import flash.geom.*;
 	
 	/**
