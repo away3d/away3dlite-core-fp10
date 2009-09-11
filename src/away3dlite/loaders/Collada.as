@@ -444,11 +444,6 @@
 		
 		/**
 		 * Creates a new <code>Collada</code> object.
-		 *
-		 * @param	init	[optional]	An initialisation object for specifying default instance properties.
-		 *
-		 * @see away3dlite.loaders.Collada#parse()
-		 * @see away3dlite.loaders.Collada#load()
 		 */
         public function Collada()
         {
