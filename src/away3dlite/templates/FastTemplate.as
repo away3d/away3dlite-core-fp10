@@ -11,9 +11,7 @@ package away3dlite.templates
 	 */
 	public class FastTemplate extends Template
 	{
-		/**
-		 * @inheritDoc
-		 */
+		/** @private */
 		arcane override function init():void
 		{
 			super.init();

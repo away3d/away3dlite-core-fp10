@@ -109,10 +109,14 @@ package away3dlite.loaders
         {
         	parseNext();
         }
-		
+        
+		/** @private */
 		protected var _materialLibrary:MaterialLibrary;
+		
+		/** @private */
         protected var _geometryLibrary:GeometryLibrary;
         
+		/** @private */
 		protected function buildMaterials():void
 		{
 			for each (var _materialData:MaterialData in _materialLibrary)

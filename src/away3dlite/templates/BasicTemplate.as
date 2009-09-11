@@ -11,9 +11,7 @@ package away3dlite.templates
 	 */
 	public class BasicTemplate extends Template
 	{
-		/**
-		 * @inheritDoc
-		 */
+		/** @private */
 		arcane override function init():void
 		{
 			super.init();
