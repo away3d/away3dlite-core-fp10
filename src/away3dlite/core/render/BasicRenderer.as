@@ -164,7 +164,7 @@ package away3dlite.core.render
 			
 			_screenZ = 0;
 			
-			getMouseFace(x, y);
+			collectPointFace(x, y);
 			
 			return _pointFace;
 		}

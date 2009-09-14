@@ -79,14 +79,14 @@ package away3dlite.core.render
 			++_view._renderedObjects;
 		}
 		
-		private function collectPointFace(object:Object3D):void
+		private function collectPointFaces(object:Object3D):void
 		{
 			if (object is ObjectContainer3D) {
 				var children:Array = (object as ObjectContainer3D).children;
 				var child:Object3D;
 				
 				for each (child in children)
-					collectPointFace(child);
+					collectPointFaces(child);
 				
 			} else if (object is Mesh) {
 				var mesh:Mesh = object as Mesh;
@@ -94,7 +94,7 @@ package away3dlite.core.render
 				_faces = mesh._faces;
 				_sort = mesh._sort;
 				
-				getMouseFace(_x, _y);
+				collectPointFace(_x, _y);
 			}
 		}
 		
@@ -130,7 +130,7 @@ package away3dlite.core.render
 			
 			_screenZ = 0;
 			
-			collectPointFace(_scene);
+			collectPointFaces(_scene);
 			
 			return _pointFace;
 		}

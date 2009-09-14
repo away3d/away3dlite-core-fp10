@@ -74,6 +74,7 @@
 					
 					buildContainers(_containerData, objectContainer);
 					
+					//TODO: set bounding values (max/min) on _containerData objects
 					if (centerMeshes && objectContainer.children.length) {
 						//center children in container for better bounding radius calulations
 						var i:int = objectContainer.children.length;

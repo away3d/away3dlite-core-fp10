@@ -25,8 +25,8 @@ package away3dlite.core.render
 		private var np0:Vector.<int>;
 		private var _screenVertexArrays:Vector.<Vector.<Number>> = new Vector.<Vector.<Number>>();
         private var _screenVertices:Vector.<Number>;
-        private var _screenMouseVertexArrays:Vector.<Vector.<int>> = new Vector.<Vector.<int>>();
-        private var _screenMouseVertices:Vector.<int>;
+        private var _screenPointVertexArrays:Vector.<Vector.<int>> = new Vector.<Vector.<int>>();
+        private var _screenPointVertices:Vector.<int>;
         private var _index:int;
     	private var _indexX:int;
     	private var _indexY:int;
@@ -96,7 +96,7 @@ package away3dlite.core.render
 		}
 		
 		/** @private */
-		protected function getMouseFace(x:Number, y:Number):void
+		protected function collectPointFace(x:Number, y:Number):void
 		{
 			var mouseCount:int;
         	var mouseCountX:int;
@@ -104,8 +104,8 @@ package away3dlite.core.render
         	var i:int = _faces.length;
 			while (i--) {
 				if (_screenZ < _sort[i] && (_face = _faces[i]).mesh._mouseEnabled) {
-					_screenMouseVertices = _screenMouseVertexArrays[_face.mesh._vertexId];
-	    			mouseCount = _screenMouseVertices[_face.i0] + _screenMouseVertices[_face.i1] + _screenMouseVertices[_face.i2];
+					_screenPointVertices = _screenPointVertexArrays[_face.mesh._vertexId];
+	    			mouseCount = _screenPointVertices[_face.i0] + _screenPointVertices[_face.i1] + _screenPointVertices[_face.i2];
 	    			mouseCountX = (mouseCount >> 2 & 3);
 	    			mouseCountY = (mouseCount & 3);
 	    			if (mouseCountX && mouseCountX < 3 && mouseCountY && mouseCountY < 3) {
@@ -144,29 +144,29 @@ package away3dlite.core.render
 		/** @private */
 		protected function collectPointVertices(x:Number, y:Number):void
 		{
-			_screenMouseVertexArrays.fixed = false;
-        	_screenMouseVertexArrays.length = _screenVertexArrays.length;
-        	_screenMouseVertexArrays.fixed = true;
+			_screenPointVertexArrays.fixed = false;
+        	_screenPointVertexArrays.length = _screenVertexArrays.length;
+        	_screenPointVertexArrays.fixed = true;
         	
         	var i:int = _screenVertexArrays.length;
         	
         	while (i--) {
 				_screenVertices = _screenVertexArrays[i];
-				_screenMouseVertices = _screenMouseVertexArrays[i] = _screenMouseVertexArrays[i] || new Vector.<int>();
+				_screenPointVertices = _screenPointVertexArrays[i] = _screenPointVertexArrays[i] || new Vector.<int>();
 				
-				_screenMouseVertices.fixed = false;
-				_screenMouseVertices.length = 0;
-        		_index = _screenMouseVertices.length = _screenVertices.length/2;
-	        	_screenMouseVertices.fixed = true;
+				_screenPointVertices.fixed = false;
+				_screenPointVertices.length = 0;
+        		_index = _screenPointVertices.length = _screenVertices.length/2;
+	        	_screenPointVertices.fixed = true;
         		
 	        	while (_index--) {
 	        		_indexY = (_indexX = _index*2) + 1;
 	        		
 	        		if (_screenVertices[_indexX] < x)
-	        			_screenMouseVertices[_index] += 4;
+	        			_screenPointVertices[_index] += 4;
 	        		
 	        		if (_screenVertices[_indexY] < y)
-	        			_screenMouseVertices[_index] += 1;
+	        			_screenPointVertices[_index] += 1;
 	        	}
         	}
 		}

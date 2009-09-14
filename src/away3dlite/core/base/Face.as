@@ -243,25 +243,22 @@ package away3dlite.core.base
 		 */
 		public function calculateUVT(x:Number, y:Number):Vector3D
 		{
-			var azf:Number = (1/uvtData[t0] - 100)/100;
-            var bzf:Number = (1/uvtData[t1] - 100)/100;
-            var czf:Number = (1/uvtData[t2] - 100)/100;
-
-            var faz:Number = 1 + azf;
-            var fbz:Number = 1 + bzf;
-            var fcz:Number = 1 + czf;
+			var az:Number = uvtData[t0];
+            var bz:Number = uvtData[t1];
+            var cz:Number = uvtData[t2];
             
-			var axf:Number = screenVertices[x0]*faz - x*azf;
-            var bxf:Number = screenVertices[x1]*fbz - x*bzf;
-            var cxf:Number = screenVertices[x2]*fcz - x*czf;
-            var ayf:Number = screenVertices[y0]*faz - y*azf;
-            var byf:Number = screenVertices[y1]*fbz - y*bzf;
-            var cyf:Number = screenVertices[y2]*fcz - y*czf;
+			var ax:Number = (screenVertices[x0] - x)/az;
+            var bx:Number = (screenVertices[x1] - x)/bz;
+            var cx:Number = (screenVertices[x2] - x)/cz;
+            var ay:Number = (screenVertices[y0] - y)/az;
+            var by:Number = (screenVertices[y1] - y)/bz;
+            var cy:Number = (screenVertices[y2] - y)/cz;
 
-            var det:Number = axf*(byf - cyf) + bxf*(cyf - ayf) + cxf*(ayf - byf);
-            var da:Number = x*(byf - cyf) + bxf*(cyf - y) + cxf*(y- byf);
-            var db:Number = axf*(y - cyf) + x*(cyf - ayf) + cxf*(ayf - y);
-            var dc:Number = axf*(byf - y) + bxf*(y - ayf) + x*(ayf - byf);
+            var det:Number = ax*(by - cy) + bx*(cy - ay) + cx*(ay - by);
+            
+            var da:Number = x*(by - cy) + bx*(cy - y) + cx*(y- by);
+            var db:Number = ax*(y - cy) + x*(cy - ay) + cx*(ay - y);
+            var dc:Number = ax*(by - y) + bx*(y - ay) + x*(ay - by);
 
             return new Vector3D((da*uvtData[u0] + db*uvtData[u1] + dc*uvtData[u2])/det, (da*uvtData[v0] + db*uvtData[v1] + dc*uvtData[v2])/det, (da/uvtData[t0] + db/uvtData[t1] + dc/uvtData[t2])/det);
 		}
