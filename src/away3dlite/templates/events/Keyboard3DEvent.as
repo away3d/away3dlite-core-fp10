@@ -5,13 +5,13 @@ package away3dlite.templates.events
 	/**
 	 * @author katopz
 	 */
-	public class LiteKeyboardEvent extends Event
+	public class Keyboard3DEvent extends Event
 	{
 		public static const KEY_PRESS:String = "lite-key-press";
 
 		public var data:Object;
 
-		public function LiteKeyboardEvent(type:String, data:* = null, bubbles:Boolean = false, cancelable:Boolean = false)
+		public function Keyboard3DEvent(type:String, data:* = null, bubbles:Boolean = false, cancelable:Boolean = false)
 		{
 			super(type, bubbles, cancelable);
 			this.data = data;
@@ -19,7 +19,7 @@ package away3dlite.templates.events
 
 		override public function clone():Event
 		{
-			return new LiteKeyboardEvent(type, data, bubbles, cancelable);
+			return new Keyboard3DEvent(type, data, bubbles, cancelable);
 		}
 
 		public override function toString():String

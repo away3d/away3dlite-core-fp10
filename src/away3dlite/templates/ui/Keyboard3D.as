@@ -1,6 +1,6 @@
 package away3dlite.templates.ui
 {
-	import away3dlite.templates.events.LiteKeyboardEvent;
+	import away3dlite.templates.events.Keyboard3DEvent;
 	
 	import flash.display.Stage;
 	import flash.events.Event;
@@ -12,7 +12,7 @@ package away3dlite.templates.ui
 	/**
 	 * @author katopz
 	 */
-	public class LiteKeyboard extends EventDispatcher
+	public class Keyboard3D extends EventDispatcher
 	{
 		public static var isKeyRight:Boolean = false;
 		public static var isKeyLeft:Boolean = false;
@@ -39,7 +39,7 @@ package away3dlite.templates.ui
 		private var container:Stage;
 		private var yUp:Boolean = true;
 
-		public function LiteKeyboard(container:Stage, yUp:Boolean = true)
+		public function Keyboard3D(container:Stage, yUp:Boolean = true)
 		{
 			this.container = container;
 			this.yUp = yUp;
@@ -118,7 +118,7 @@ package away3dlite.templates.ui
 				position.w = dw;
 			}
 
-			dispatchEvent(new LiteKeyboardEvent(LiteKeyboardEvent.KEY_PRESS, {dx: dx, dy: dy, dz: dz, dw: dw}));
+			dispatchEvent(new Keyboard3DEvent(Keyboard3DEvent.KEY_PRESS, position));
 		}
 
 		private function keyHandler(event:KeyboardEvent):void
