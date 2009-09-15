@@ -254,7 +254,10 @@ package away3dlite.templates.ui
 							break;
 					}
 					if (numKeyPress == 0)
+					{
 						container.removeEventListener(Event.ENTER_FRAME, onKey);
+						position = new Vector3D();
+					}
 					break;
 			}
 		}
