@@ -105,7 +105,7 @@ package away3dlite.templates.ui
 
 			if (yUp)
 			{
-				position.x = -dx;
+				position.x = dx;
 				position.y = -dy;
 				position.z = dz;
 				position.w = dw;
