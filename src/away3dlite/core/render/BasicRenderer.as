@@ -6,6 +6,7 @@ package away3dlite.core.render
 	import away3dlite.materials.*;
 	
 	import flash.display.*;
+	import flash.utils.Dictionary;
 	
 	use namespace arcane;
 	
@@ -30,6 +31,10 @@ package away3dlite.core.render
 		
 		private var _material_graphicsData:Vector.<IGraphicsData>;
 		
+		// Layer
+		private var _layers:Dictionary = new Dictionary();
+		private var _graphicsDatas:Dictionary = new Dictionary();
+		
 		private function collectFaces(object:Object3D):void
 		{
 			_mouseEnabledArray.push(_mouseEnabled);
@@ -40,11 +45,24 @@ package away3dlite.core.render
 				var child:Object3D;
 				
 				for each (child in children)
+				{
+					if(child.layer)
+					{
+						child.layer.graphics.clear();
+						_layers[child] = child.layer;
+					}
 					collectFaces(child);
+				}
 				
 			} else if (object is Mesh) {
 				var mesh:Mesh = object as Mesh;
 				
+				if(mesh.layer)
+				{
+					mesh.layer.graphics.clear();
+					_layers[mesh] = mesh.layer;
+				}
+						
 				_clipping.collectFaces(mesh, _faces);
 				
 				if (_view.mouseEnabled && _mouseEnabled)
@@ -74,10 +92,20 @@ package away3dlite.core.render
                 while (j) {
                     _face = _faces[j-1];
 					
-					if (_material != _face.material) {
-						if (_material) {
+					if (_material != _face.material) 
+					{
+						if (_material) 
+						{
 							_material_graphicsData[_material.trianglesIndex] = _triangles;
 							_view_graphics_drawGraphicsData(_material_graphicsData);
+							
+							if(_mesh.layer)
+							{
+								_mesh.layer.graphics.drawGraphicsData(_material_graphicsData);
+								_graphicsDatas[_material_graphicsData] = _mesh.layer;
+							}else{
+								_view_graphics_drawGraphicsData(_material_graphicsData);
+							}
 						}
 						
 						_ind.length = 0;
@@ -86,6 +114,7 @@ package away3dlite.core.render
 						_i = -1;
 						_j = -1;
 						_k = -1;
+						
 						_mesh = _face.mesh;
 						_material = _face.material;
 						_material_graphicsData = _material.graphicsData;
@@ -196,11 +225,24 @@ package away3dlite.core.render
 			
 			sortFaces();
 			
-			if (_material) {
+			if (_material) 
+			{
 				_material_graphicsData = _material.graphicsData;
 				_material_graphicsData[_material.trianglesIndex] = _triangles;
-				_view_graphics_drawGraphicsData(_material_graphicsData);
+				
+				for each (var layer:Sprite in _layers)
+				{
+					if(_graphicsDatas[_material_graphicsData])
+					{
+						_graphicsDatas[_material_graphicsData].graphics.drawGraphicsData(_material_graphicsData);
+						_material_graphicsData = null;
+					}
+				}
+				
+				if(_material_graphicsData)
+					_view_graphics_drawGraphicsData(_material_graphicsData);
 			}
+			
 		}
 	}
 }
