@@ -69,26 +69,26 @@ package away3dlite.core.render
 		protected function sortFaces():void
 		{
 	        // by pass
-	        var _faces_length:int = _faces.length;
+	        var _faces_length_1:int = int(_faces.length + 1);
 	        
 	        q0 = new Vector.<int>(256, true);
 	        q1 = new Vector.<int>(256, true);
-	        np0 = new Vector.<int>(_faces_length + 1, true);
-	        np1 = new Vector.<int>(_faces_length + 1, true);
+	        np0 = new Vector.<int>(_faces_length_1, true);
+	        np1 = new Vector.<int>(_faces_length_1, true);
 	        
         	i = -1;
         	j = 0;
             for each (_face in _faces)
                 if((q0[k = (255 & (_sort[int(++i)] = _face.calculateScreenZ()))]))
-                    ql[k] = np0[ql[k]] = ++j;
+                    ql[k] = np0[ql[k]] = int(++j);
                 else
-                    ql[k] = q0[k] = ++j;
+                    ql[k] = q0[k] = int(++j);
             
             i = -1;
-            while (i++ < 255) {
+            while (int(i++) < 255) {
             	j = q0[i];
                 while (j)
-                    if((q1[k = (65280 & _sort[j-1]) >> 8]))
+                    if((q1[k = (65280 & _sort[int(j-1)]) >> 8]))
 	                    j = np0[ql[k] = np1[ql[k]] = j];
 	                else
 	                    j = np0[ql[k] = q1[k] = j];
