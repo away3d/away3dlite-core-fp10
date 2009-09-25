@@ -14,21 +14,21 @@ package away3dlite.loaders.data
 		/**
 		 * Array of vertex objects.
 		 *
-		 * @see away3d.core.base.Vertex
+		 * @see away3dlite.core.base.Vertex
 		 */
 		public var vertices:Vector.<Number> = new Vector.<Number>();
 		
 		/**
 		 * Array of skinvertex objects.
 		 *
-		 * @see away3d.core.base.Vertex
+		 * @see away3dlite.core.base.Vertex
 		 */
 		public var skinVertices:Vector.<SkinVertex> = new Vector.<SkinVertex>();
 		
 		/**
 		 * Array of uv objects.
 		 *
-		 * see@ away3d.core.base.UV
+		 * see@ away3dlite.core.base.UV
 		 */
 		public var uvtData:Vector.<Number> = new Vector.<Number>();
 		
@@ -36,7 +36,7 @@ package away3dlite.loaders.data
 		/**
 		 * Array of face data objects.
 		 *
-		 * @see away3d.loaders.data.FaceData
+		 * @see away3dlite.loaders.data.FaceData
 		 */
 		public var faces:Array = [];
 		
@@ -53,7 +53,7 @@ package away3dlite.loaders.data
         /**
          * Array of skin controller objects used in bone animations
          * 
-         * @see away3d.animators.skin.SkinController
+         * @see away3dlite.animators.skin.SkinController
          */
         public var skinControllers:Array = [];
 		

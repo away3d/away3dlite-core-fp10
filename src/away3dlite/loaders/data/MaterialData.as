@@ -11,7 +11,7 @@ package away3dlite.loaders.data
 	/**
 	 * Data class for the material data of a face.
 	 * 
-	 * @see away3d.loaders.data.FaceData
+	 * @see away3dlite.loaders.data.FaceData
 	 */
 	public class MaterialData
 	{
