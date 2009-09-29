@@ -97,7 +97,6 @@ package away3dlite.core.render
 						if (_material) 
 						{
 							_material_graphicsData[_material.trianglesIndex] = _triangles;
-							_view_graphics_drawGraphicsData(_material_graphicsData);
 							
 							if(_mesh.layer)
 							{
