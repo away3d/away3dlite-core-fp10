@@ -93,6 +93,9 @@ package away3dlite.cameras
 			
 			this.zoom = zoom;
 			this.focus = focus;
+			
+			//set default z position
+			z = -1000;
 		}
 	}
 }
