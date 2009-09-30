@@ -138,6 +138,8 @@ package away3dlite.core.base
 		}
 		public function set material(val:Material):void
 		{
+			val = val || new WireColorMaterial();
+			
 			if (_material == val)
 				return;
 			
@@ -208,7 +210,7 @@ package away3dlite.core.base
 			_indices = _triangles.indices = new Vector.<int>();
 			
 			//setup default values
-			this.material = material || new WireColorMaterial();
+			this.material = material;
 			this.bothsides = false;
 			this.sortType = MeshSortType.CENTER;
 		}
