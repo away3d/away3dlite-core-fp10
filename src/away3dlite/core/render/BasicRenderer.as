@@ -56,13 +56,6 @@ package away3dlite.core.render
 				
 			} else if (object is Mesh) {
 				var mesh:Mesh = object as Mesh;
-				
-				if(mesh.layer)
-				{
-					mesh.layer.graphics.clear();
-					_layers[mesh] = mesh.layer;
-				}
-						
 				_clipping.collectFaces(mesh, _faces);
 				
 				if (_view.mouseEnabled && _mouseEnabled)
