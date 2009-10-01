@@ -32,8 +32,7 @@ package away3dlite.core.render
 		private var _material_graphicsData:Vector.<IGraphicsData>;
 		
 		// Layer
-		private var _layers:Dictionary = new Dictionary();
-		private var _graphicsDatas:Dictionary = new Dictionary();
+		private var _graphicsDatas:Dictionary = new Dictionary(true);
 		
 		private function collectFaces(object:Object3D):void
 		{
@@ -47,10 +46,8 @@ package away3dlite.core.render
 				for each (child in children)
 				{
 					if(child.layer)
-					{
 						child.layer.graphics.clear();
-						_layers[child] = child.layer;
-					}
+					
 					collectFaces(child);
 				}
 				
@@ -217,20 +214,19 @@ package away3dlite.core.render
 			
 			sortFaces();
 			
-			if (_material) 
+			if (_material)
 			{
 				_material_graphicsData = _material.graphicsData;
 				_material_graphicsData[_material.trianglesIndex] = _triangles;
 				
-				for each (var layer:Sprite in _layers)
+				// draw to layer
+				if(_graphicsDatas[_material_graphicsData])
 				{
-					if(_graphicsDatas[_material_graphicsData])
-					{
-						_graphicsDatas[_material_graphicsData].graphics.drawGraphicsData(_material_graphicsData);
-						_material_graphicsData = null;
-					}
+					_graphicsDatas[_material_graphicsData].graphics.drawGraphicsData(_material_graphicsData);
+					_material_graphicsData = null;
 				}
 				
+				// draw to view
 				if(_material_graphicsData)
 					_view_graphics_drawGraphicsData(_material_graphicsData);
 			}
