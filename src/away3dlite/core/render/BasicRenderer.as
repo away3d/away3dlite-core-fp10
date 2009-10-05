@@ -31,6 +31,11 @@ package away3dlite.core.render
 		
 		private var _material_graphicsData:Vector.<IGraphicsData>;
 		
+		/**
+		 * Determines whether 3d objects are sorted in the view. Defaults to false.
+		 */
+		public var sortObjects:Boolean = true;
+		
 		// Layer
 		private var _graphicsDatas:Dictionary = new Dictionary(true);
 		
@@ -59,6 +64,12 @@ package away3dlite.core.render
 					collectScreenVertices(mesh);
 				
 				_view._totalFaces += mesh._faces.length;
+				
+			}else if (object is Particles) {
+				var _particles_lists:Array = (object as Particles).lists;
+				
+				if(_particles_lists.length>0)
+					_particles = _particles.concat(_particles_lists);
 			}
 			
 			_mouseEnabled = _mouseEnabledArray.pop();
@@ -87,6 +98,8 @@ package away3dlite.core.render
 						if (_material) 
 						{
 							_material_graphicsData[_material.trianglesIndex] = _triangles;
+							
+							drawParticles(_mesh.screenZ);
 							
 							if(_mesh.layer)
 							{
@@ -199,23 +212,28 @@ package away3dlite.core.render
 			
 			collectFaces(_scene);
 			
+			// sort merged particles
+			_particles.sortOn("screenZ", 18);
+			
 			_faces.fixed = true;
 			
 			_view._renderedFaces = _faces.length;
 			
 			_scene._dirtyFaces = false;
 			
-			if (!_faces.length)
-				return;
-			
-			_sort.fixed = false;
-			_sort.length = _faces.length;
-			_sort.fixed = true;
-			
-			sortFaces();
-			
-			if (_material)
+			if (_faces.length)
 			{
+				_sort.fixed = false;
+				_sort.length = _faces.length;
+				_sort.fixed = true;
+				
+				sortFaces();
+			}
+			
+			if (_material) 
+			{
+				drawParticles(_mesh.screenZ);
+				
 				_material_graphicsData = _material.graphicsData;
 				_material_graphicsData[_material.trianglesIndex] = _triangles;
 				
@@ -231,6 +249,8 @@ package away3dlite.core.render
 					_view_graphics_drawGraphicsData(_material_graphicsData);
 			}
 			
+			drawParticles();
+			//_view_graphics.endFill();
 		}
 	}
 }

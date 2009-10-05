@@ -5,6 +5,9 @@ package away3dlite.core.render
 	import away3dlite.core.base.*;
 	import away3dlite.core.clip.*;
 	
+	import flash.display.Graphics;
+	import flash.display.Sprite;
+	
 	use namespace arcane;
 	
 	/**
@@ -16,7 +19,10 @@ package away3dlite.core.render
 		arcane function setView(view:View3D):void
 		{
 			_view = view;
+			_view_graphics = _view.graphics;
 			_view_graphics_drawGraphicsData = _view.graphics.drawGraphicsData;
+			_zoom = _view.camera.zoom;
+			_focus = _view.camera.focus;
 		}
 		
 		private var ql:Vector.<int> = new Vector.<int>(256, true);
@@ -61,10 +67,15 @@ package away3dlite.core.render
         /** @private */
         protected var _mouseEnabledArray:Vector.<Boolean> = new Vector.<Boolean>();
         /** @private */
-    	
+		protected var _particles:Array;
+		/** @private */
+		protected var _view_graphics:Graphics;
 		/** @private */
 		protected var _view_graphics_drawGraphicsData:Function;
-		
+		/** @private */
+		private var _zoom:Number;
+		/** @private */
+		private var _focus:Number;
 		/** @private */
 		protected function sortFaces():void
 		{
@@ -171,6 +182,29 @@ package away3dlite.core.render
         	}
 		}
 		
+		/** @private */
+		protected function drawParticles(screenZ:Number=NaN):void
+		{
+			if(_particles.length==0)return;
+			
+			var _particle:Particle;
+			
+			if(!screenZ)
+			{
+				// just draw
+				for each (_particle in _particles)
+					_particle.drawBitmapdata(_view, _zoom, _focus);
+			}else{
+				// draw particle that behind screenZ
+				var _particleIndex:int = 0;
+				while((_particle = _particles[_particleIndex++]) && _particle.screenZ > screenZ)
+					_particle.drawBitmapdata(_view, _zoom, _focus);
+				
+				if(_particleIndex>=2)
+					_particles = _particles.slice(_particleIndex-1, _particles.length); 
+			}
+		}
+		
 		/**
 		 * Creates a new <code>Renderer</code> object.
 		 */
@@ -208,6 +242,8 @@ package away3dlite.core.render
 			_pointFace = null;
 			
 			_screenVertexArrays.length = 0;
+			
+			_particles = [];
 		}
 	}
 }
