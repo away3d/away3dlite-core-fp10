@@ -14,7 +14,6 @@ package away3dlite.materials
 		private var _totalFrames:int = 0;
 		
 		public var frames:Vector.<BitmapData>;
-		public var animated:Boolean;
 		
 		public var scales:Vector.<BitmapData>;
 		public var matrixs:Vector.<Matrix>;
@@ -25,9 +24,8 @@ package away3dlite.materials
 		/**
 		 * Creates a new <code>ParticleMaterial</code> object.
 		 */
-		public function ParticleMaterial(animated:Boolean = false, buffered:Boolean = false)
+		public function ParticleMaterial(buffered:Boolean = false)
 		{
-			this.animated = animated;
 			this.buffered = buffered;
 		}
 		

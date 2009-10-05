@@ -50,11 +50,10 @@ package away3dlite.core.base
 
 			_bitmapDatas = material.frames;
 			_bitmapLength = _bitmapDatas.length;
-
-			if (_bitmapLength > 0)
-				animated = true && material.animated;
-
-			animate();
+			_bitmapIndex = 0;
+			_bitmapData = _bitmapDatas[0];
+			_bitmapData_width = _bitmapData.width;
+			_bitmapData_height = _bitmapData.height;
 
 			_matrix = new Matrix();
 			_center = new Point(_bitmapData.width * _scale / 2, _bitmapData.height * _scale / 2);
