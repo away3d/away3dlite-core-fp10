@@ -31,11 +31,6 @@ package away3dlite.core.render
 		
 		private var _material_graphicsData:Vector.<IGraphicsData>;
 		
-		/**
-		 * Determines whether 3d objects are sorted in the view. Defaults to false.
-		 */
-		public var sortObjects:Boolean = true;
-		
 		// Layer
 		private var _graphicsDatas:Dictionary = new Dictionary(true);
 		
