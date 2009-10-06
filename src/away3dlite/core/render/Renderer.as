@@ -187,6 +187,8 @@ package away3dlite.core.render
 		{
 			if(_particles.length==0)return;
 			
+			_view_graphics.lineStyle();
+			
 			var _particle:Particle;
 			
 			if(!screenZ)

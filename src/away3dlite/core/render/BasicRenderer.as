@@ -245,7 +245,6 @@ package away3dlite.core.render
 			}
 			
 			drawParticles();
-			//_view_graphics.endFill();
 		}
 	}
 }

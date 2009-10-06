@@ -51,7 +51,7 @@ package away3dlite.core.base
 			_bitmapDatas = material.frames;
 			_bitmapLength = _bitmapDatas.length;
 			_bitmapIndex = 0;
-			_bitmapData = _bitmapDatas[0];
+			_bitmapData = material.bitmapData;
 			_bitmapData_width = _bitmapData.width;
 			_bitmapData_height = _bitmapData.height;
 
@@ -75,38 +75,33 @@ package away3dlite.core.base
 			_position = position.clone();
 		}
 
-		private function animate():void
-		{
-			// animate
-			if (++_bitmapIndex >= _bitmapLength)
-				_bitmapIndex = 0;
-
-			_bitmapData = _bitmapDatas[int(_bitmapIndex)];
-
-			// update
-			_bitmapData_width = _bitmapData.width;
-			_bitmapData_height = _bitmapData.height;
-		}
-
 		// TODO : copyPixels + bmp layer via core render for DOF
 		// TODO : collect command and render with drawPath
-		public function drawBitmapdata(_target:Sprite, _zoom:Number, _focus:Number):void
+		public function drawBitmapdata(target:Sprite, zoom:Number, focus:Number):void
 		{
 			// draw to view or layer
-			if (layer && _target != layer)
-				_target = layer;
+			if (layer && target != layer)
+				target = layer;
 
-			// clear line
-			var _graphics:Graphics = _target.graphics;
-			_graphics.lineStyle();
+			var _graphics:Graphics = target.graphics;
 
 			// animated?
 			if (animated)
-				animate();
+			{
+				if (++_bitmapIndex >= _bitmapLength)
+					_bitmapIndex = 0;
+				_bitmapData = _bitmapDatas[int(_bitmapIndex)];
+			}
+			else if(material.dirty)
+			{
+				_bitmapIndex = 0;
+				_bitmapData = material.bitmapData;
+				material.dirty = false;
+			}
 
-			_scale = _zoom / (1 + screenZ / _focus);
+			_scale = zoom / (1 + screenZ / focus);
 
-			if (!material.buffered)
+			if (!material.cacheScaleBitmap)
 			{
 				// align center
 				_matrix.a = _matrix.d = _scale;
@@ -117,7 +112,6 @@ package away3dlite.core.base
 			{
 				// OB
 				var _bufferScale:Number = _scale > material.maxScale ? material.maxScale : _scale;
-				
 				// move to bitmap sector
 				var index:Number = Math.floor(_bitmapIndex*material.maxScale* material.quality);
 				// move to scale sector
