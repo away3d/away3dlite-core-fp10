@@ -55,7 +55,15 @@ package away3dlite.core.render
 					children.sortOn("screenZ", 18);
 				
 				for each (child in children) 
+				{
+					if(child.canvas)
+					{
+						var _child_canvas:Sprite = child.canvas;
+						_child_canvas.parent.setChildIndex(_child_canvas, children.indexOf(child));
+						_child_canvas.graphics.clear();
+					}
 					collectFaces(child);
+				}
 				
 			} else if (object is Mesh) {
 				
@@ -84,6 +92,10 @@ package away3dlite.core.render
 				if(object.layer)
 				{
 					object.layer.graphics.drawGraphicsData(_mesh_material_graphicsData);
+				}
+				else if(object.canvas)
+				{
+					object.canvas.graphics.drawGraphicsData(_mesh_material_graphicsData);
 				}else{
 					_view_graphics_drawGraphicsData(_mesh_material_graphicsData);
 				}
@@ -154,18 +166,13 @@ package away3dlite.core.render
 			
 			return _pointFace;
 		}
-		
-		/**
-		 * Determines whether 3d objects are sorted in the view. Defaults to true.
-		 */
-		public var sortObjects:Boolean = true;
-		
+			
 		/**
 		 * Creates a new <code>FastRenderer</code> object.
 		 */
 		public function FastRenderer()
 		{
-			
+			sortObjects = true;
 		}
 		
 		/**
