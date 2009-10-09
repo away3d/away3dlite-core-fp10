@@ -102,7 +102,7 @@ package away3dlite.loaders.data
             var face:Face;
             
             for each (face in faces)
-            	face.material = face.mesh._faceMaterials[face.index] = _material || face.mesh.material;
+            	face.material = face.mesh._faceMaterials[face.faceIndex] = _material || face.mesh.material;
         }
         		
 		/**

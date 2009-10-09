@@ -20,11 +20,7 @@ package away3dlite.core.render
 		private var _mesh:Mesh;
 		private var _screenVertices:Vector.<Number>;
 		private var _uvtData:Vector.<Number>;
-		private var _ind:Vector.<int>;
-		private var _vert:Vector.<Number>;
-		private var _uvt:Vector.<Number>;
 		private var _material:Material;
-		private var _triangles:GraphicsTrianglePath = new GraphicsTrianglePath();
 		private var _i:int;
 		private var _j:int;
 		private var _k:int;
@@ -43,25 +39,17 @@ package away3dlite.core.render
 				var children:Array = (object as ObjectContainer3D).children;
 				var child:Object3D;
 				
-				if(sortObjects)
-					children.sortOn("screenZ", 18);
-				
 				for each (child in children)
 				{
-					if(child.canvas)
-					{
-						var _child_canvas:Sprite = child.canvas;
-						_child_canvas.parent.setChildIndex(_child_canvas, children.indexOf(child));
-						_child_canvas.graphics.clear();
-					}
-					
 					if(child.layer)
 						child.layer.graphics.clear();
 					
 					collectFaces(child);
 				}
 				
-			} else if (object is Mesh) {
+			}
+			
+			if (object is Mesh) {
 				var mesh:Mesh = object as Mesh;
 				_clipping.collectFaces(mesh, _faces);
 				
@@ -69,12 +57,6 @@ package away3dlite.core.render
 					collectScreenVertices(mesh);
 				
 				_view._totalFaces += mesh._faces.length;
-				
-			}else if (object is Particles) {
-				var _particles_lists:Array = (object as Particles).lists;
-				
-				if(_particles_lists.length>0)
-					_particles = _particles.concat(_particles_lists);
 			}
 			
 			_mouseEnabled = _mouseEnabledArray.pop();
@@ -104,17 +86,10 @@ package away3dlite.core.render
 						{
 							_material_graphicsData[_material.trianglesIndex] = _triangles;
 							
-							drawParticles(_mesh.screenZ);
-							
 							if(_mesh.layer)
 							{
 								_mesh.layer.graphics.drawGraphicsData(_material_graphicsData);
 								_graphicsDatas[_material_graphicsData] = _mesh.layer;
-							}
-							else if(_mesh.canvas)
-							{
-								_mesh.canvas.graphics.drawGraphicsData(_material_graphicsData);
-								_graphicsDatas[_material_graphicsData] = _mesh.canvas;
 							}else{
 								_view_graphics_drawGraphicsData(_material_graphicsData);
 							}
@@ -178,6 +153,23 @@ package away3dlite.core.render
 						_uvt[++_k] = _uvtData[_face.t2];
 					}
 					
+					if (_face.i3) {
+						_ind[++_i] = _faceStore[_face.i0] - 1;
+						_ind[++_i] = _faceStore[_face.i2] - 1;
+						
+						if (_faceStore[_face.i3]) {
+							_ind[++_i] = _faceStore[_face.i3] - 1;
+						} else {
+							_vert[++_j] = _screenVertices[_face.x3];
+							_faceStore[_face.i3] = (_ind[++_i] = _j*.5) + 1;
+							_vert[++_j] = _screenVertices[_face.y3];
+							
+							_uvt[++_k] = _uvtData[_face.u3];
+							_uvt[++_k] = _uvtData[_face.v3];
+							_uvt[++_k] = _uvtData[_face.t3];
+						}
+					}
+					
 					j = np1[j];
                 }
 			}
@@ -188,9 +180,7 @@ package away3dlite.core.render
 		 */
 		public function BasicRenderer()
 		{
-			_ind = _triangles.indices = new Vector.<int>();
-			_vert = _triangles.vertices = new Vector.<Number>();
-			_uvt = _triangles.uvtData = new Vector.<Number>();
+			super();
 		}
 		
 		/**
@@ -222,47 +212,38 @@ package away3dlite.core.render
 			
 			collectFaces(_scene);
 			
-			// sort merged particles
-			_particles.sortOn("screenZ", 18);
-			
 			_faces.fixed = true;
 			
 			_view._renderedFaces = _faces.length;
 			
 			_scene._dirtyFaces = false;
 			
-			if (_faces.length)
-			{
-				_sort.fixed = false;
-				_sort.length = _faces.length;
-				_sort.fixed = true;
-				
-				sortFaces();
-			}
+			if (!_faces.length)
+				return;
 			
-			if (_material) 
+			_sort.fixed = false;
+			_sort.length = _faces.length;
+			_sort.fixed = true;
+			
+			sortFaces();
+			
+			if (_material)
 			{
-				drawParticles(_mesh.screenZ);
-				
 				_material_graphicsData = _material.graphicsData;
 				_material_graphicsData[_material.trianglesIndex] = _triangles;
 				
-				if(_mesh.layer)
+				// draw to layer
+				if(_graphicsDatas[_material_graphicsData])
 				{
-					_mesh.layer.graphics.drawGraphicsData(_material_graphicsData);
-					_graphicsDatas[_material_graphicsData] = _mesh.layer;
+					_graphicsDatas[_material_graphicsData].graphics.drawGraphicsData(_material_graphicsData);
+					_material_graphicsData = null;
 				}
-				else if(_mesh.canvas)
-				{
-					_mesh.canvas.graphics.drawGraphicsData(_material_graphicsData);
-					_graphicsDatas[_material_graphicsData] = _mesh.canvas;
-				}else{				
+				
+				// draw to view
+				if(_material_graphicsData)
 					_view_graphics_drawGraphicsData(_material_graphicsData);
-				}
 			}
 			
-			// draw remain particles
-			drawParticles();
 		}
 	}
 }

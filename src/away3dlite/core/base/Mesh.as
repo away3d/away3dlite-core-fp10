@@ -1,6 +1,7 @@
 package away3dlite.core.base
 {
 	import away3dlite.arcane;
+	import away3dlite.cameras.*;
 	import away3dlite.containers.*;
 	import away3dlite.materials.*;
 	
@@ -23,9 +24,13 @@ package away3dlite.core.base
 		/** @private */
 		arcane var _indices:Vector.<int>;
 		/** @private */
-		arcane var _triangles:GraphicsTrianglePath = new GraphicsTrianglePath();
+		arcane var _indicesTotal:int;
+		/** @private */
+		arcane var _culling:String;
 		/** @private */
 		arcane var _faces:Vector.<Face> = new Vector.<Face>();
+		/** @private */
+		arcane var _faceLengths:Vector.<int> = new Vector.<int>();
 		/** @private */
 		arcane var _sort:Vector.<int> = new Vector.<int>();
 		/** @private */
@@ -41,9 +46,9 @@ package away3dlite.core.base
 			_scene = val;
 		}
 		/** @private */
-		arcane override function project(projectionMatrix3D:Matrix3D, parentSceneMatrix3D:Matrix3D = null):void
+		arcane override function project(camera:Camera3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
-			super.project(projectionMatrix3D, parentSceneMatrix3D);
+			super.project(camera, parentSceneMatrix3D);
 			
 			// project the normals
 			//if (material is IShader)
@@ -55,18 +60,25 @@ package away3dlite.core.base
 		/** @private */	
 		arcane function buildFaces():void
 		{
-			_faceMaterials.fixed = false;
-			_faces.length = _sort.length = 0;
-			var i:int = _faces.length = _faceMaterials.length = _indices.length/3;
+			_faceMaterials.fixed = _faces.fixed = _sort.fixed = false;
+			_indicesTotal = _faces.length = _sort.length = 0;
 			
-			while (i--)
-				_faces[i] = new Face(this, i);
+			var i:int = _faces.length = _sort.length = _faceMaterials.length = _faceLengths.length;
+			var index:int = _indices.length;
+			var faceLength:int;
+			
+			while (i--) {
+				faceLength = _faceLengths[i];
+				
+				if (faceLength == 3)
+					_indicesTotal += 3;
+				else if (faceLength == 4)
+					_indicesTotal += 6;
+				_faces[i] = new Face(this, i, index -= faceLength, faceLength);
+			}
 			
 			// speed up
-			_vertices.fixed = true;
-			_uvtData.fixed = true;
-			_indices.fixed = true;
-			_faceMaterials.fixed = true;
+			_vertices.fixed = _uvtData.fixed = _indices.fixed = _faceLengths.fixed = _faceMaterials.fixed = _faces.fixed = _sort.fixed = true;
 			
 			// calculate normals for the shaders
 			//if (_material is IShader)
@@ -169,9 +181,9 @@ package away3dlite.core.base
 			_bothsides = val;
 			
 			if (_bothsides) {
-				_triangles.culling = TriangleCulling.NONE;
+				_culling = TriangleCulling.NONE;
 			} else {
-				_triangles.culling = TriangleCulling.POSITIVE;
+				_culling = TriangleCulling.POSITIVE;
 			}
 		}
 		
@@ -205,9 +217,9 @@ package away3dlite.core.base
 			super();
 			
 			// private use
-			_screenVertices = _triangles.vertices = new Vector.<Number>();
-			_uvtData = _triangles.uvtData = new Vector.<Number>();
-			_indices = _triangles.indices = new Vector.<int>();
+			_screenVertices = new Vector.<Number>();
+			_uvtData = new Vector.<Number>();
+			_indices = new Vector.<int>();
 			
 			//setup default values
 			this.material = material;
@@ -230,9 +242,10 @@ package away3dlite.core.base
             mesh.sortType = sortType;
             mesh.bothsides = bothsides;
 			mesh._vertices = vertices;
-			mesh._uvtData = mesh._triangles.uvtData = _uvtData.concat();
+			mesh._uvtData = _uvtData.concat();
 			mesh._faceMaterials = _faceMaterials;
 			mesh._indices = _indices.concat();
+			mesh._faceLengths = _faceLengths;
 			mesh.buildFaces();
 			
 			return mesh;

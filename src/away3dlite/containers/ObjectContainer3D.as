@@ -2,7 +2,9 @@ package away3dlite.containers
 {
 	import away3dlite.arcane;
 	import away3dlite.animators.bones.*;
+	import away3dlite.cameras.*;
 	import away3dlite.core.base.*;
+	import away3dlite.sprites.*;
 	
 	import flash.geom.*;
 	import flash.display.*;
@@ -12,7 +14,7 @@ package away3dlite.containers
     /**
     * 3d object container node for other 3d objects in a scene.
     */
-	public class ObjectContainer3D extends Object3D
+	public class ObjectContainer3D extends Mesh
 	{
 		/** @private */
 		arcane override function updateScene(val:Scene3D):void
@@ -28,19 +30,28 @@ package away3dlite.containers
 				child.updateScene(_scene);
 		}
 		/** @private */
-		arcane override function project(projectionMatrix3D:Matrix3D, parentSceneMatrix3D:Matrix3D = null):void
+		arcane override function project(camera:Camera3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
-			super.project(projectionMatrix3D, parentSceneMatrix3D);
+			_cameraInvSceneMatrix3D = camera.invSceneMatrix3D;
+			
+			super.project(camera, parentSceneMatrix3D);
 			
 			var child:Object3D;
 			
 			for each (child in _children)
-				child.project(projectionMatrix3D, _sceneMatrix3D);
+				child.project(camera, _sceneMatrix3D);
 		}
 		
 		private var _index:int;
 		private var _children:Array = new Array();
-        
+        private var _sprites:Vector.<Sprite3D> = new Vector.<Sprite3D>();
+        private var _spriteVertices:Vector.<Number> = new Vector.<Number>();
+        private var _spriteIndices:Vector.<int> = new Vector.<int>();
+        private var _spritesDirty:Boolean;
+        private var _cameraInvSceneMatrix3D:Matrix3D = new Matrix3D();
+		private var _orientationMatrix3D:Matrix3D = new Matrix3D();
+		private var _viewDecomposed:Vector.<Vector3D>;
+		
         /**
         * Returns the children of the container as an array of 3d objects.
         */
@@ -48,11 +59,71 @@ package away3dlite.containers
 		{
 			return _children;
 		}
+        
+        /**
+        * Returns the sprites of the container as an array of 3d sprites.
+        */
+		public function get sprites():Vector.<Sprite3D>
+		{
+			return _sprites;
+		}
 		
+		/**
+		 * @inheritDoc
+		 */
+        public override function get vertices():Vector.<Number>
+        {
+        	if (_sprites.length) {
+	    		var i:int;
+	    		var index:int;
+	    		var sprite:Sprite3D;
+	    		
+	        	if (_spritesDirty) {
+	        		_spritesDirty = false;
+	        		
+	        		for each (sprite in _sprites) {
+	        			_spriteIndices = sprite.indices;
+	        			
+	        			index = sprite.index*4;
+		    			i = 4;
+		    			
+		    			while (i--)
+							_indices[int(index + i)] = _spriteIndices[int(i)] + index;
+	        		}
+	        		
+					buildFaces();
+	        	}
+	        	
+				_orientationMatrix3D.rawData = _sceneMatrix3D.rawData;
+				_orientationMatrix3D.append(_cameraInvSceneMatrix3D);
+				
+				_viewDecomposed = _orientationMatrix3D.decompose(Orientation3D.AXIS_ANGLE);
+				
+				_orientationMatrix3D.identity();
+	    		_orientationMatrix3D.appendRotation(-_viewDecomposed[1].w*180/Math.PI, _viewDecomposed[1]);
+	    		
+	    		for each (sprite in _sprites) {
+	    			_orientationMatrix3D.transformVectors(sprite.vertices, _spriteVertices);
+	    			
+					index = sprite.index*12;
+	    			i = 12;
+	    			
+	    			while ((i-=3) >= 0) {
+	    				//int casting avoids memory leak
+	    				_vertices[int(index + i)] = _spriteVertices[int(i)] + sprite.x;
+	    				_vertices[int(index + i + 1)] = _spriteVertices[int(i + 1)] + sprite.y;
+	    				_vertices[int(index + i + 2)] = _spriteVertices[int(i + 2)] + sprite.z;
+	    			}
+	    		}
+        	}
+    		
+			return _vertices;
+        }
+        
 	    /**
 	     * Creates a new <code>ObjectContainer3D</code> object.
 	     * 
-	     * @param	...childArray		An array of 3d objects to be added as children of the container on instatiation. Can contain an initialisation object
+	     * @param	...childArray		An array of 3d objects to be added as children of the container on instatiation.
 	     */
 		public function ObjectContainer3D(...childArray)
 		{
@@ -104,6 +175,52 @@ package away3dlite.containers
 			return child;
 		}
         
+		/**
+		 * Adds a 3d object to the scene as a child of the container.
+		 * 
+		 * @param	child	The 3d object to be added.
+		 */
+		public function addSprite(sprite:Sprite3D):Sprite3D
+		{
+			_sprites[sprite.index = _sprites.length] = sprite;
+			
+			_indices.length += 4;
+			_vertices.length += 12;
+			
+			_uvtData = _uvtData.concat(sprite.uvtData);
+			_faceMaterials.push(sprite.material);
+			_faceLengths.push(4);
+			
+			_spritesDirty = true;
+			
+			return sprite;
+		}
+        
+		/**
+		 * Removes a 3d sprite from the sprites array of the container.
+		 * 
+		 * @param	sprite	The 3d sprite to be removed.
+		 */
+		public function removeSprite(sprite:Sprite3D):Sprite3D
+		{
+			_index = _sprites.indexOf(sprite);
+			
+			if (_index == -1)
+				return null;
+			
+			_sprites.splice(_index, 1);
+			
+			_indices.length -= 4;
+			_vertices.length -= 12;
+			
+			_uvtData.splice(_index*12, 12);
+			_faceMaterials.splice(_index, 1);
+			_faceLengths.splice(_index, 1);
+			
+			_spritesDirty = true;
+			
+			return sprite;
+		}
 		/**
 		 * Returns a 3d object specified by name from the child array of the container
 		 * 
