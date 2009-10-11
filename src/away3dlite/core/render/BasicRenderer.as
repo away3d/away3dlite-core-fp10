@@ -95,9 +95,10 @@ package away3dlite.core.render
 							}
 						}
 						
-						_ind.length = 0;
-						_vert.length = 0;
-						_uvt.length = 0;
+						//clear vectors by overwriting with a new instance (length = 0 leaves garbage)
+						_ind = _triangles.indices = new Vector.<int>();
+						_vert = _triangles.vertices = new Vector.<Number>();
+						_uvt = _triangles.uvtData = new Vector.<Number>();
 						_i = -1;
 						_j = -1;
 						_k = -1;
@@ -107,14 +108,12 @@ package away3dlite.core.render
 						_material_graphicsData = _material.graphicsData;
 						_screenVertices = _mesh._screenVertices;
 						_uvtData = _mesh._uvtData;
-						_faceStore.length = 0;
-						_faceStore.length = _mesh._vertices.length/3;
+						_faceStore = new Vector.<int>(_mesh._vertices.length/3, true);
 					} else if (_mesh != _face.mesh) {
 						_mesh = _face.mesh;
 						_screenVertices = _mesh._screenVertices;
 						_uvtData = _mesh._uvtData;
-						_faceStore.length = 0;
-						_faceStore.length = _mesh._vertices.length/3;
+						_faceStore = new Vector.<int>(_mesh._vertices.length/3, true);
 					}
 					
 					if (_faceStore[_face.i0]) {
@@ -207,8 +206,7 @@ package away3dlite.core.render
 		{
 			super.render();
 			
-			_faces.fixed = false;
-			_faces.length = 0;
+			_faces = new Vector.<Face>();
 			
 			collectFaces(_scene);
 			

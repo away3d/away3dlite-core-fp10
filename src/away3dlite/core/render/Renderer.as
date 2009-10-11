@@ -182,10 +182,8 @@ package away3dlite.core.render
 				_screenVertices = _screenVertexArrays[i];
 				_screenPointVertices = _screenPointVertexArrays[i] = _screenPointVertexArrays[i] || new Vector.<int>();
 				
-				_screenPointVertices.fixed = false;
-				_screenPointVertices.length = 0;
-        		_index = _screenPointVertices.length = _screenVertices.length/2;
-	        	_screenPointVertices.fixed = true;
+				_screenPointVertices = new Vector.<int>(_screenVertices.length/2, true);
+        		_index = _screenPointVertices.length;
         		
 	        	while (_index--) {
 	        		_indexY = (_indexX = _index*2) + 1;

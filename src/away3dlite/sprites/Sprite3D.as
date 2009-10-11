@@ -18,8 +18,9 @@ package away3dlite.sprites
 		/** @private */
 		arcane var uvtData:Vector.<Number> = new Vector.<Number>();
 		
-		private var _width:Number = 100;
-    	private var _height:Number = 100;
+		private var _scale:Number = 1;
+		private var _width:Number;
+    	private var _height:Number;
 		private var _vertices:Vector.<Number> = new Vector.<Number>();
 		private var _verticesDirty:Boolean;
 		private var _material:Material;
@@ -36,12 +37,7 @@ package away3dlite.sprites
 			_vertices.push(width*scale/2, -height*scale/2, 0);
 			_vertices.fixed = true;
 		}
-		
-    	/**
-    	 * Defines the overall scale of the Sprite3D object. Defaults to 1.
-    	 */
-    	public var scale:Number = 1;
-		
+
     	/**
     	 * Defines the x position of the Sprite3D object. Defaults to 0.
     	 */
@@ -56,12 +52,32 @@ package away3dlite.sprites
     	 * Defines the z position of the Sprite3D object. Defaults to 0.
     	 */
     	public var z:Number = 0;
+    	
+    	/**
+    	 * Defines the overall scale of the Sprite3D object. Defaults to 1.
+    	 */
+    	public function get scale():Number
+    	{
+    		return _scale;
+    	}
+    	
+    	public function set scale(val:Number):void
+    	{
+    		if (_scale == val)
+    			return;
+    		
+    		scale = val;
+    		_verticesDirty = true;
+    	}
 		
     	/**
     	 * Defines the width of the Sprite3D object. Defaults to the material width if BitmapMaterial, otherwise 100.
     	 */
     	public function get width():Number
     	{
+    		if (isNaN(_width))
+    			return 100;
+    		
     		return _width;
     	}
     	
@@ -79,6 +95,9 @@ package away3dlite.sprites
     	 */
     	public function get height():Number
     	{
+    		if (isNaN(_height))
+    			return 100;
+    		
     		return _height;
     	}
     	
@@ -117,6 +136,15 @@ package away3dlite.sprites
 				return;
 			
 			_material = val;
+			
+			if (_material is BitmapMaterial) {
+				var bitmapMaterial:BitmapMaterial = _material as BitmapMaterial;
+				
+				if (isNaN(_width))
+					width = bitmapMaterial.width;
+				if (isNaN(_height))
+					height = bitmapMaterial.height;
+			}
 		}
 		/**
 		 * Creates a new <code>Sprite3D</code> object.
@@ -132,10 +160,6 @@ package away3dlite.sprites
 			
 			//create indices for sprite
 			indices.push(0, 1, 2, 3);
-			//indices.push(0, 2, 3);
-			
-			//create vertices for sprite
-			vertices.length = 12;
 			
 			//create uvtData for sprite
 			uvtData.push(0, 0, 0);
@@ -157,8 +181,12 @@ package away3dlite.sprites
         public function clone(object:Sprite3D = null):Sprite3D
         {
             var sprite3D:Sprite3D = (object as Sprite3D) || new Sprite3D();
-            super.clone(sprite3D);
+            sprite3D.x = x;
+            sprite3D.y = y;
+            sprite3D.z = z;
             sprite3D.scale = scale;
+            sprite3D.width = _width;
+            sprite3D.height = _height;
             sprite3D.material = material;
             
             return sprite3D;

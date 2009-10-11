@@ -238,7 +238,7 @@ package away3dlite.core.base
 		 */
 		public function calculateAverageZ():int
 		{
-			return i3? int((uvtData[t0] + uvtData[t1] + uvtData[t2] + uvtData[t3])*1000000) : int((uvtData[t0] + uvtData[t1] + uvtData[t2])*1000000);
+			return i3? int((uvtData[t0] + uvtData[t1] + uvtData[t2] + uvtData[t3])*750000) : int((uvtData[t0] + uvtData[t1] + uvtData[t2])*1000000);
 		}
 		
 		/**
@@ -257,7 +257,7 @@ package away3dlite.core.base
 			if (i3 && z > uvtData[t3])
 				z = uvtData[t3];
 			
-			return int(z*1000000);
+			return int(z*3000000);
 		}
 		
 		/**
@@ -276,7 +276,7 @@ package away3dlite.core.base
 			if (i3 && z < uvtData[t3])
 				z = uvtData[t3];
 			
-			return int(z*1000000);
+			return int(z*3000000);
 		}
 		
 		/**

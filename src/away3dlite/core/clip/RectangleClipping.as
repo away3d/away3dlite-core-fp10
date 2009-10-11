@@ -17,8 +17,7 @@ package away3dlite.core.clip
         	_uvtData = mesh._uvtData;
 			_screenVertices = mesh._screenVertices;
 			
-			_screenVerticesCull.fixed = false;
-        	_screenVerticesCull.length = 0;
+			_screenVerticesCull = new Vector.<int>();
         	_index = _screenVerticesCull.length = _screenVertices.length/2;
         	_screenVerticesCull.fixed = true;
         	
