@@ -180,10 +180,7 @@ package away3dlite.core.render
         	
         	while (i--) {
 				_screenVertices = _screenVertexArrays[i];
-				_screenPointVertices = _screenPointVertexArrays[i] = _screenPointVertexArrays[i] || new Vector.<int>();
-				
-				_screenPointVertices = new Vector.<int>(_screenVertices.length/2, true);
-        		_index = _screenPointVertices.length;
+				_screenPointVertices = _screenPointVertexArrays[i] = new Vector.<int>(_index = _screenVertices.length/2, true);
         		
 	        	while (_index--) {
 	        		_indexY = (_indexX = _index*2) + 1;
