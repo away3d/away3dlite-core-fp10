@@ -69,6 +69,8 @@ package away3dlite.materials
 		 */
 		public function BitmapMaterial(bitmap:BitmapData = null)
 		{
+			super();
+			
 			_graphicsBitmapFill.bitmapData = bitmap || new BitmapData(100, 100, false, 0x000000);
 			
 			graphicsData = Vector.<IGraphicsData>([_graphicsStroke, _graphicsBitmapFill, _triangles, _graphicsEndFill]);

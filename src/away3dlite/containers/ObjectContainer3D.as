@@ -22,7 +22,7 @@ package away3dlite.containers
 			if (scene == val)
 				return;
 			
-			_scene = val;
+			super.updateScene(val);
 			
 			var child:Object3D;
 			
@@ -146,9 +146,6 @@ package away3dlite.containers
 			
 			(child as Object3D).updateScene(_scene);
 			
-			if (_scene)
-				_scene._dirtyFaces = true;
-			
 			return child;
 		}
         
@@ -168,9 +165,7 @@ package away3dlite.containers
 			
 			_children.splice(_index, 1);
 			
-			(child as Object3D)._scene = null;
-			
-			_scene._dirtyFaces = true;
+			(child as Object3D).updateScene(null);
 			
 			return child;
 		}

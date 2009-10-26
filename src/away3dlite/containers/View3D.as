@@ -42,7 +42,7 @@ package away3dlite.containers {
         }
         
         private const VERSION:String = "1";
-        private const REVISION:String = "0.1";
+        private const REVISION:String = "0.2";
         private const APPLICATION_NAME:String = "Away3D.com";
         
         private var _customContextMenu:ContextMenu;
@@ -518,7 +518,7 @@ package away3dlite.containers {
 			
 			updateScreenClipping();
 			
-			camera.update();
+			_camera.update();
 			
 			_scene.project(camera);
 			

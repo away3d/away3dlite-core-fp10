@@ -214,8 +214,6 @@ package away3dlite.core.render
 			
 			_view._renderedFaces = _faces.length;
 			
-			_scene._dirtyFaces = false;
-			
 			if (!_faces.length)
 				return;
 			

@@ -11,11 +11,9 @@ package away3dlite.core.base
 	 */
 	public class Face
 	{
-		private var uvtData:Vector.<Number>;
-		
-		private var vertices:Vector.<Number>;
-		
-		private var screenVertices:Vector.<Number>;
+		private var _uvtData:Vector.<Number>;
+		private var _vertices:Vector.<Number>;
+		private var _screenVertices:Vector.<Number>;
 		
 		/**
 		 * Mesh object to which the face belongs.
@@ -152,27 +150,26 @@ package away3dlite.core.base
 		 */
 		public var t3:int;
 		
-		/*
-		public var normalX:Number;
 		
-		public var normalY:Number;
-		
-		public var normalZ:Number;
-		*/
-		
-		public function Face(mesh:Mesh, i:int, index:int, faceLength:int)
+		/**
+		 * Creates a new <code>Face</code> object.
+		 * 
+		 * @param mesh			The <code>Mesh</code> object to which the face belongs.
+		 * @param faceIndex		The index of the face.
+		 * @param index			The start index of the indices.
+		 * @param length		The number of indices.
+		 */
+		public function Face(mesh:Mesh, faceIndex:int, index:int, length:int)
 		{
 			this.mesh = mesh;
 			
-			faceIndex = i;
+			this.faceIndex = faceIndex;
 			
-			uvtData = mesh._uvtData;
+			_uvtData = mesh._uvtData;
 			
-			vertices = mesh._vertices;
+			_vertices = mesh._vertices;
 			
-			screenVertices = mesh._screenVertices;
-			
-			material = mesh._faceMaterials[i] || mesh.material;
+			_screenVertices = mesh._screenVertices;
 			
 			i0 = mesh._indices[int(index)];
 			i1 = mesh._indices[int(index + 1)];
@@ -199,7 +196,7 @@ package away3dlite.core.base
 			v2 = 3*i2 + 1;
 			t2 = 3*i2 + 2;
 			
-			if (faceLength > 3) {
+			if (length > 3) {
 				i3 = mesh._indices[int(index + 3)];
 				x3 = 2*i3;
 				y3 = 2*i3 + 1;
@@ -238,7 +235,7 @@ package away3dlite.core.base
 		 */
 		public function calculateAverageZ():int
 		{
-			return i3? int((uvtData[t0] + uvtData[t1] + uvtData[t2] + uvtData[t3])*750000) : int((uvtData[t0] + uvtData[t1] + uvtData[t2])*1000000);
+			return i3? int((_uvtData[t0] + _uvtData[t1] + _uvtData[t2] + _uvtData[t3])*750000) : int((_uvtData[t0] + _uvtData[t1] + _uvtData[t2])*1000000);
 		}
 		
 		/**
@@ -246,16 +243,16 @@ package away3dlite.core.base
 		 */
 		public function calculateFurthestZ():int
 		{
-			var z:Number = uvtData[t0];
+			var z:Number = _uvtData[t0];
 			
-			if (z > uvtData[t1])
-				z = uvtData[t1];
+			if (z > _uvtData[t1])
+				z = _uvtData[t1];
 			
-			if (z > uvtData[t2])
-				z = uvtData[t2];
+			if (z > _uvtData[t2])
+				z = _uvtData[t2];
 			
-			if (i3 && z > uvtData[t3])
-				z = uvtData[t3];
+			if (i3 && z > _uvtData[t3])
+				z = _uvtData[t3];
 			
 			return int(z*3000000);
 		}
@@ -265,16 +262,16 @@ package away3dlite.core.base
 		 */
 		public function calculateNearestZ():int
 		{
-			var z:Number = uvtData[t0];
+			var z:Number = _uvtData[t0];
 			
-			if (z < uvtData[t1])
-				z = uvtData[t1];
+			if (z < _uvtData[t1])
+				z = _uvtData[t1];
 			
-			if (z < uvtData[t2])
-				z = uvtData[t2];
+			if (z < _uvtData[t2])
+				z = _uvtData[t2];
 			
-			if (i3 && z < uvtData[t3])
-				z = uvtData[t3];
+			if (i3 && z < _uvtData[t3])
+				z = _uvtData[t3];
 			
 			return int(z*3000000);
 		}
@@ -287,10 +284,10 @@ package away3dlite.core.base
 		 */
 		public function calculateUVT(x:Number, y:Number):Vector3D
 		{
-			var v0x:Number = vertices[x0];
-			var v0y:Number = vertices[y0];
-			var v2x:Number = vertices[x2];
-			var v2y:Number = vertices[y2];
+			var v0x:Number = _vertices[x0];
+			var v0y:Number = _vertices[y0];
+			var v2x:Number = _vertices[x2];
+			var v2y:Number = _vertices[y2];
 			
 			var ax:Number;
 			var ay:Number;
@@ -311,41 +308,41 @@ package away3dlite.core.base
 			var cv:Number;
 			
 			if (i3 && (v0x*(v2y - y) + x*(v0y - v2y) + v2x*(y - v0y)) < 0) {
-				az = uvtData[t0];
-	            bz = uvtData[t2];
-	            cz = uvtData[t3];
+				az = _uvtData[t0];
+	            bz = _uvtData[t2];
+	            cz = _uvtData[t3];
 	            
-				ax = (screenVertices[x0] - x)/az;
-	            bx = (screenVertices[x2] - x)/bz;
-	            cx = (screenVertices[x3] - x)/cz;
-	            ay = (screenVertices[y0] - y)/az;
-	            by = (screenVertices[y2] - y)/bz;
-	            cy = (screenVertices[y3] - y)/cz;
+				ax = (_screenVertices[x0] - x)/az;
+	            bx = (_screenVertices[x2] - x)/bz;
+	            cx = (_screenVertices[x3] - x)/cz;
+	            ay = (_screenVertices[y0] - y)/az;
+	            by = (_screenVertices[y2] - y)/bz;
+	            cy = (_screenVertices[y3] - y)/cz;
 	            
-	            au = uvtData[u0];
-	            av = uvtData[v0];
-	            bu = uvtData[u2];
-	            bv = uvtData[v2];
-	            cu = uvtData[u3];
-	            cv = uvtData[v3];
+	            au = _uvtData[u0];
+	            av = _uvtData[v0];
+	            bu = _uvtData[u2];
+	            bv = _uvtData[v2];
+	            cu = _uvtData[u3];
+	            cv = _uvtData[v3];
 			} else {
-				az = uvtData[t0];
-	            bz = uvtData[t1];
-	            cz = uvtData[t2];
+				az = _uvtData[t0];
+	            bz = _uvtData[t1];
+	            cz = _uvtData[t2];
 	            
-				ax = (screenVertices[x0] - x)/az;
-	            bx = (screenVertices[x1] - x)/bz;
-	            cx = (screenVertices[x2] - x)/cz;
-	            ay = (screenVertices[y0] - y)/az;
-	            by = (screenVertices[y1] - y)/bz;
-	            cy = (screenVertices[y2] - y)/cz;
+				ax = (_screenVertices[x0] - x)/az;
+	            bx = (_screenVertices[x1] - x)/bz;
+	            cx = (_screenVertices[x2] - x)/cz;
+	            ay = (_screenVertices[y0] - y)/az;
+	            by = (_screenVertices[y1] - y)/bz;
+	            cy = (_screenVertices[y2] - y)/cz;
 	            
-	            au = uvtData[u0];
-	            av = uvtData[v0];
-	            bu = uvtData[u1];
-	            bv = uvtData[v1];
-	            cu = uvtData[u2];
-	            cv = uvtData[v2];
+	            au = _uvtData[u0];
+	            av = _uvtData[v0];
+	            bu = _uvtData[u1];
+	            bv = _uvtData[v1];
+	            cu = _uvtData[u2];
+	            cv = _uvtData[v2];
 			}
             
             var det:Number = ax*(by - cy) + bx*(cy - ay) + cx*(ay - by);
