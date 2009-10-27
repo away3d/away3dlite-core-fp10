@@ -6,7 +6,7 @@ package away3dlite.core.base
 	 * 
 	 * @see away3dlite.core.base.Mesh
 	 */
-	public class MeshSortType
+	public class SortType
 	{
 		/**
 		 * Sorts the faces in the mesh using their center z-depth ie. the average between all vertices.

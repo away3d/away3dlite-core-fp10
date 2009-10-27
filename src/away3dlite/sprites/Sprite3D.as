@@ -3,6 +3,8 @@ package away3dlite.sprites
 	import away3dlite.arcane;
 	import away3dlite.materials.*;
 	
+	import flash.geom.*;
+	
 	use namespace arcane;
 	
 	/**
@@ -24,17 +26,18 @@ package away3dlite.sprites
 		private var _vertices:Vector.<Number> = new Vector.<Number>();
 		private var _verticesDirty:Boolean;
 		private var _material:Material;
-
+		private var _position:Vector3D = new Vector3D();
+		
 		protected function updateVertices():void
      	{
 			_verticesDirty = false;
 			
 			_vertices.fixed = false;
 			_vertices.length = 0;
-			_vertices.push(-width*scale/2, -height*scale/2, 0);
-			_vertices.push(-width*scale/2, height*scale/2, 0);
-			_vertices.push(width*scale/2, height*scale/2, 0);
-			_vertices.push(width*scale/2, -height*scale/2, 0);
+			_vertices.push(-_width*_scale/2, -_height*_scale/2, 0);
+			_vertices.push(-_width*_scale/2, _height*_scale/2, 0);
+			_vertices.push(_width*_scale/2, _height*_scale/2, 0);
+			_vertices.push(_width*_scale/2, -_height*_scale/2, 0);
 			_vertices.fixed = true;
 		}
 
@@ -54,6 +57,13 @@ package away3dlite.sprites
     	public var z:Number = 0;
     	
     	/**
+    	 * Defines the way the sprite aligns its plane to face the viewer. Allowed values are "viewplane" or "viewpoint". Defaults to "viewplane".
+    	 * 
+    	 * @see away3dlite.sprites.AlignmentType
+    	 */
+    	public var alignmentType:String;
+    	
+    	/**
     	 * Defines the overall scale of the Sprite3D object. Defaults to 1.
     	 */
     	public function get scale():Number
@@ -66,7 +76,7 @@ package away3dlite.sprites
     		if (_scale == val)
     			return;
     		
-    		scale = val;
+    		_scale = val;
     		_verticesDirty = true;
     	}
 		
@@ -146,6 +156,19 @@ package away3dlite.sprites
 					height = bitmapMaterial.height;
 			}
 		}
+		
+		/**
+		 * Returns a 3d vector representing the local position of the 3d sprite.
+		 */
+		public function get position():Vector3D
+		{
+			_position.x = x;
+			_position.y = y;
+			_position.z = z;
+			
+			return _position;
+		}
+		
 		/**
 		 * Creates a new <code>Sprite3D</code> object.
 		 * 
@@ -157,6 +180,7 @@ package away3dlite.sprites
 			
 			this.material = material;
 			this.scale = scale;
+			this.alignmentType = AlignmentType.VIEWPLANE;
 			
 			//create indices for sprite
 			indices.push(0, 1, 2, 3);

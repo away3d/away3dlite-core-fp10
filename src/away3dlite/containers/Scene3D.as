@@ -23,7 +23,7 @@ package away3dlite.containers
     	/** @private */
     	arcane var _materialsPreviousList:Vector.<Material> = new Vector.<Material>();
     	/** @private */
-    	arcane var _materialsNextList:Vector.<Material>;
+    	arcane var _materialsNextList:Vector.<Material> = new Vector.<Material>();
     	/** @private */
     	arcane function removeSceneMaterial(mat:Material):void
     	{
@@ -33,8 +33,10 @@ package away3dlite.containers
     			_materialsSceneList[mat._id[_id]] == null;
     			
     			//reduce the length of the material list if the removed material is at the end
-    			if (mat._id[_id] == _materialsSceneList.length - 1)
+    			if (mat._id[_id] == _materialsSceneList.length - 1) {
     				_materialsSceneList.length--;
+    				_materialsNextList.length--;
+    			}
     		}
     	}
     	/** @private */
@@ -43,9 +45,7 @@ package away3dlite.containers
     		if (mat._faceCount.length <= _id)
     			mat._id.length = mat._faceCount.length = _id + 1;
     		
-    		if (!(mat._faceCount[_id])) {
-    			//this in above line causes flex java error
-    			mat._faceCount[_id]++;
+    		if (!mat._faceCount[_id]) {
     			
 				var i:uint = 0;
 				var length:uint = _materialsSceneList.length;
@@ -54,20 +54,24 @@ package away3dlite.containers
     				if (!_materialsSceneList[i]) {
     					_materialsSceneList[mat._id[_id] = i] = mat;
     					break;
+    				} else {
+	    				i++;
     				}
-    				i++;
     			}
     			//increase the length of the material list if the added material is at the end
     			if (i == length) {
     				_materialsSceneList.length++;
+    				_materialsNextList.length++;
     				_materialsSceneList[mat._id[_id] = i] = mat;
     			}
     		}
+			//this in above conditional causes flex java error
+			mat._faceCount[_id]++;
     	}
     	/** @private */
 		arcane override function project(camera:Camera3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
-			_materialsNextList = new Vector.<Material>();
+			_materialsNextList = new Vector.<Material>(_materialsNextList.length);
 			
 			super.project(camera, parentSceneMatrix3D);
 			

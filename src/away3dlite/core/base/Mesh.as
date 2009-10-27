@@ -182,15 +182,15 @@ package away3dlite.core.base
 			
 			var face:Face;
 			switch (_sortType) {
-				case MeshSortType.CENTER:
+				case SortType.CENTER:
 					for each (face in _faces)
 						face.calculateScreenZ = face.calculateAverageZ;
 					break;
-				case MeshSortType.FRONT:
+				case SortType.FRONT:
 					for each (face in _faces)
 						face.calculateScreenZ = face.calculateNearestZ;
 					break;
-				case MeshSortType.BACK:
+				case SortType.BACK:
 					for each (face in _faces)
 						face.calculateScreenZ = face.calculateFurthestZ;
 					break;
@@ -298,7 +298,7 @@ package away3dlite.core.base
 			//setup default values
 			this.material = material;
 			this.bothsides = false;
-			this.sortType = MeshSortType.CENTER;
+			this.sortType = SortType.CENTER;
 		}
 		
 		/**

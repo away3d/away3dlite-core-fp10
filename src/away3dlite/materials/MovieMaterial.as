@@ -85,8 +85,8 @@ package away3dlite.materials
         	if (_movie == val)
         		return;
         	
-        	if (val && val.parent)
-        		val.parent.removeChild(val);
+        	//if (val && val.parent)
+        	//	val.parent.removeChild(val);
         	
         	_movie = val;
         	
