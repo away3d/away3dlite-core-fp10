@@ -1,13 +1,13 @@
 package away3dlite.containers
 {
-	import away3dlite.arcane;
 	import away3dlite.animators.bones.*;
+	import away3dlite.arcane;
 	import away3dlite.cameras.*;
 	import away3dlite.core.base.*;
 	import away3dlite.sprites.*;
 	
-	import flash.geom.*;
 	import flash.display.*;
+	import flash.geom.*;
 	
 	use namespace arcane;
     
@@ -32,10 +32,13 @@ package away3dlite.containers
 		/** @private */
 		arcane override function project(camera:Camera3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
-			_cameraInvSceneMatrix3D = camera.invSceneMatrix3D;
-			_cameraSceneMatrix3D.rawData = _cameraInvSceneMatrix3D.rawData;
-			_cameraSceneMatrix3D.invert();
-			_cameraPosition = _cameraSceneMatrix3D.position;
+			if (_sprites.length) {
+				_cameraInvSceneMatrix3D = camera.invSceneMatrix3D;
+				_cameraSceneMatrix3D.rawData = _cameraInvSceneMatrix3D.rawData;
+				_cameraSceneMatrix3D.invert();
+				_cameraPosition = _cameraSceneMatrix3D.position;
+				_cameraForwardVector = new Vector3D(_cameraSceneMatrix3D.rawData[8], _cameraSceneMatrix3D.rawData[9], _cameraSceneMatrix3D.rawData[10]);
+			}
 			
 			super.project(camera, parentSceneMatrix3D);
 			
@@ -45,6 +48,7 @@ package away3dlite.containers
 				child.project(camera, _sceneMatrix3D);
 		}
 		
+		private const _toDegrees:Number = 180/Math.PI;
 		private var _index:int;
 		private var _children:Array = new Array();
         private var _sprites:Vector.<Sprite3D> = new Vector.<Sprite3D>();
@@ -52,8 +56,9 @@ package away3dlite.containers
         private var _spriteIndices:Vector.<int> = new Vector.<int>();
         private var _spritesDirty:Boolean;
         private var _cameraPosition:Vector3D;
+		private var _cameraForwardVector:Vector3D;
         private var _spritePosition:Vector3D;
-        private var _NEGATIVE_Y_AXIS:Vector3D = new Vector3D(0,-1,0);
+		private var _spriteRotationVector:Vector3D;
         private var _cameraSceneMatrix3D:Matrix3D = new Matrix3D();
         private var _cameraInvSceneMatrix3D:Matrix3D = new Matrix3D();
 		private var _orientationMatrix3D:Matrix3D = new Matrix3D();
@@ -116,7 +121,12 @@ package away3dlite.containers
 	    				_orientationMatrix3D.transformVectors(sprite.vertices, _spriteVertices);
 	    			} else {
 	    				_spritePosition = sprite.position.subtract(_cameraPosition);
-						_cameraMatrix3D.pointAt(_spritePosition, Vector3D.Z_AXIS, _NEGATIVE_Y_AXIS);
+						
+						_spriteRotationVector = _cameraForwardVector.crossProduct(_spritePosition);
+						_spriteRotationVector.normalize();
+						
+						_cameraMatrix3D.rawData = _orientationMatrix3D.rawData;
+						_cameraMatrix3D.appendRotation(Math.acos(_cameraForwardVector.dotProduct(_spritePosition)/(_cameraForwardVector.length*_spritePosition.length))*_toDegrees, _spriteRotationVector);
 	    				_cameraMatrix3D.transformVectors(sprite.vertices, _spriteVertices);
 	    			}
 	    			

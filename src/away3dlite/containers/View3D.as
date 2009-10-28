@@ -83,7 +83,17 @@ package away3dlite.containers {
 		{
 			
 		}
-        
+		
+		private function onViewSource(e:ContextMenuEvent):void 
+		{
+			var request:URLRequest = new URLRequest(_sourceURL);
+			try {
+				navigateToURL(request, "_blank");
+			} catch (error:Error) {
+				
+			}
+		}
+		
         private function onVisitWebsite(event:ContextMenuEvent):void
         {
 			var url:String = "http://www.away3d.com";
@@ -488,6 +498,7 @@ package away3dlite.containers {
 			_customContextMenu = new ContextMenu();
 			_customContextMenu.hideBuiltInItems();
             _menu0 = new ContextMenuItem("View Source", true, true, true); 
+			_menu0.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, onViewSource);
             _menu1 = new ContextMenuItem(APPLICATION_NAME + "\tv" + VERSION + "." + REVISION, true, true, true);
             _menu1.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, onVisitWebsite);
             updateContextMenu();
