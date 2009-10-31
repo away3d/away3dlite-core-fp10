@@ -24,7 +24,8 @@ package away3dlite.cameras
 			
 			if(_fieldOfViewDirty) {
 				_fieldOfViewDirty = false;
-				_projection.fieldOfView = 360*Math.atan2(stage.stageWidth, 2*_zoom*_focus)/Math.PI;
+				//_projection.fieldOfView = 360*Math.atan2(loaderInfo.width, 2*_zoom*_focus)/Math.PI;
+				_projection.focalLength = _zoom*_focus;
 			}
 			
 			_projectionMatrix3D = _projection.toMatrix3D();
