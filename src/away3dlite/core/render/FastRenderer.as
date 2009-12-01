@@ -20,6 +20,9 @@ package away3dlite.core.render
 		
 		private function collectFaces(object:Object3D):void
 		{
+			if (!object.visible)
+				return;
+			
 			_mouseEnabledArray.push(_mouseEnabled);
 			_mouseEnabled = object._mouseEnabled = (_mouseEnabled && object.mouseEnabled);
 			
