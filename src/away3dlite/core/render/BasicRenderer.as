@@ -32,7 +32,7 @@ package away3dlite.core.render
 		
 		private function collectFaces(object:Object3D):void
 		{
-			if (!object.visible)
+			if (!object.visible || object._perspCulling)
 				return;
 			
 			_mouseEnabledArray.push(_mouseEnabled);

@@ -65,6 +65,8 @@ package away3dlite.core.base
 	public class Object3D extends Sprite
 	{
 		/** @private */
+		arcane var _perspCulling:Boolean;
+		/** @private */
 		arcane var _screenZ:Number = 0;
 		/** @private */
 		arcane var _scene:Scene3D;
@@ -90,6 +92,14 @@ package away3dlite.core.base
 			_viewMatrix3D.append(camera.screenMatrix3D);
 			
 			_screenZ = _viewMatrix3D.position.z;
+			
+			//perspective culling
+			var persp:Number = camera.zoom / (1 + _screenZ / camera.focus);
+			
+			if (minPersp != maxPersp && (persp < minPersp || persp >= maxPersp))
+				_perspCulling = true;
+			else
+				_perspCulling = false;
 		}
 		
 		protected function copyMatrix3D(m1:Matrix3D, m2:Matrix3D):void
@@ -127,7 +137,17 @@ package away3dlite.core.base
 		 * Returns the source url of the 3d object, or the name of the family of generative geometry objects if not loaded from an external source.
 		 */
 		public var url:String;
-		
+			
+    	/**
+    	 * The maximum perspective value from which the 3d object can be viewed.
+    	 */
+        public var maxPersp:Number = 0;
+        
+    	/**
+    	 * The minimum perspective value from which the 3d object can be viewed.
+    	 */
+        public var minPersp:Number = 0;
+        
 		/**
 		 * Returns the scene to which the 3d object belongs
 		 */

@@ -59,24 +59,27 @@ package away3dlite.core.base
 		arcane override function project(camera:Camera3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
 			super.project(camera, parentSceneMatrix3D);
+			
 			// project the normals
 			//if (material is IShader)
 			//	_triangles.uvtData = IShader(material).getUVData(transform.matrix3D.clone());
 			
-			//DO NOT CHANGE vertices getter!!!!!!!
-			Utils3D.projectVectors(_viewMatrix3D, vertices, _screenVertices, _uvtData);
-			
-			if (_materialsDirty)
-				buildMaterials();
-			
-			var i:int = _materialsCacheList.length;
-			var mat:Material;
-			while (i--) {
-				if ((mat = _materialsCacheList[i])) {
-					//update rendering faces in the scene
-					_scene._materialsNextList[i] = mat;
-					
-					//update material if material is a shader
+			if (!_perspCulling) {
+				//DO NOT CHANGE vertices getter!!!!!!!
+				Utils3D.projectVectors(_viewMatrix3D, vertices, _screenVertices, _uvtData);
+				
+				if (_materialsDirty)
+					buildMaterials();
+				
+				var i:int = _materialsCacheList.length;
+				var mat:Material;
+				while (i--) {
+					if ((mat = _materialsCacheList[i])) {
+						//update rendering faces in the scene
+						_scene._materialsNextList[i] = mat;
+						
+						//update material if material is a shader
+					}
 				}
 			}
 		}
@@ -204,7 +207,7 @@ package away3dlite.core.base
 		 * @see away3dlite.core.render.FastRenderer
 		 */
 		public var sortFaces:Boolean = true;
-		
+        
 		/**
 		 * Returns the 3d vertices used in the mesh.
 		 */

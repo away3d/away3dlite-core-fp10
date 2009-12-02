@@ -42,10 +42,12 @@ package away3dlite.containers
 			
 			super.project(camera, parentSceneMatrix3D);
 			
-			var child:Object3D;
-			
-			for each (child in _children)
-				child.project(camera, _sceneMatrix3D);
+			if (!_perspCulling) {
+				var child:Object3D;
+				
+				for each (child in _children)
+					child.project(camera, _sceneMatrix3D);
+			}
 		}
 		
 		private const _toDegrees:Number = 180/Math.PI;
