@@ -573,13 +573,16 @@
 			else
 				_objectData.id = node.@id;
 			
-			//ColladaMaya 3.02
+			/* Deprecated for ColladaMaya 3.02
 			if(String(node.@name) != "")
 			{
             	_objectData.name = String(node.@name);
    			}else{
    				_objectData.name = String(node.@id);
    			}
+   			*/
+   			
+   			_objectData.name = String(node.@id);
    
             _transform = _objectData.transform;
 			
