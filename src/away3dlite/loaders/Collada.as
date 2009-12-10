@@ -33,7 +33,7 @@
 		private var _defaultAnimationClip:AnimationData;
 		private var _haveClips:Boolean = false;
 		private var _containers:Dictionary = new Dictionary(true);
-		private var _skinControllers:Dictionary = new Dictionary(true);
+		private var _skinControllers:Vector.<SkinController> = new Vector.<SkinController>();
 		private var _skinController:SkinController;
 		
 		private function buildContainers(containerData:ContainerData, parent:ObjectContainer3D):void
@@ -870,7 +870,7 @@
                 geometryData.skinControllers.push(skinController = new SkinController());
                 skinController.name = name;
                 skinController.bindMatrix = matrix;
-                _skinControllers[name] = skinController;
+                _skinControllers.push(skinController);
                 i = i + 16;
             }
 			
