@@ -557,7 +557,7 @@
 				if (String(node.@type) == "JOINT")
 					_objectData = new BoneData();
 				else {
-					if (String(node["instance_node"].@url) == "" && (String(node["node"]) == "" || parent is BoneData))
+					if (String(node["instance_node"].@url) == "" && (String(node["node"]) == ""))
 						return;
 					_objectData = new ContainerData();
 				}
