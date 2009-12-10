@@ -55,10 +55,9 @@ package away3dlite.core.clip
         	_faces = mesh._faces;
         	_screenVertices = mesh._screenVertices;
         	
-        	var i:int = -1;
         	for each(_face in _faces)
         	    if (mesh.bothsides || _screenVertices[_face.x0]*(_screenVertices[_face.y2] - _screenVertices[_face.y1]) + _screenVertices[_face.x1]*(_screenVertices[_face.y0] - _screenVertices[_face.y2]) + _screenVertices[_face.x2]*(_screenVertices[_face.y1] - _screenVertices[_face.y0]) > 0)
-        			faces[int(++i)] = _face;
+        			faces[faces.length] = _face;
         }
     	/** @private */
         arcane function screen(container:Sprite, _loaderWidth:Number, _loaderHeight:Number):Clipping
