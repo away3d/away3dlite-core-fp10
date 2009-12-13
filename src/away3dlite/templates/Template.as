@@ -3,13 +3,12 @@ package away3dlite.templates
 	import away3dlite.arcane;
 	import away3dlite.cameras.*;
 	import away3dlite.containers.*;
+	import away3dlite.debug.*;
 	
 	import flash.display.*;
 	import flash.events.*;
 	import flash.filters.*;
 	import flash.text.*;
-	
-	import net.hires.debug.Stats;
 
 	use namespace arcane;
 	
@@ -44,7 +43,7 @@ package away3dlite.templates
 			addChild(view);
 			
 			//init stats panel
-			stats = new Stats();
+			stats = new AwayStats(view);
 			
 			//add stats to the displaylist
 			addChild(stats);
@@ -56,7 +55,7 @@ package away3dlite.templates
 			debugText.mouseWheelEnabled = false;
 			debugText.defaultTextFormat = new TextFormat("Tahoma", 12, 0x000000);
 			debugText.autoSize = "left";
-			debugText.x = 80;
+			debugText.x = 140;
 			debugText.textColor = 0xFFFFFF;
 			debugText.filters = [new GlowFilter(0x000000, 1, 4, 4, 2, 1)];
 			
@@ -76,7 +75,7 @@ package away3dlite.templates
 			onInit();
 		}
 		
-		private var stats:Stats;
+		private var stats:AwayStats;
 		private var debugText:TextField;
 		private var _title:String;
 		private var _debug:Boolean;

@@ -1,6 +1,7 @@
 package away3dlite.cameras
 {
 	import away3dlite.arcane;
+	import away3dlite.cameras.lenses.*;
 	import away3dlite.containers.*;
 	import away3dlite.core.base.*;
 	
@@ -17,21 +18,22 @@ package away3dlite.cameras
 	{
 		/** @private */
 		arcane var _view:View3D;
+		arcane var _lens:AbstractLens;
+		/** @private */
+		arcane var _invSceneMatrix3D:Matrix3D = new Matrix3D();
+		arcane var _projectionMatrix3D:Matrix3D;
+		arcane var _screenMatrix3D:Matrix3D = new Matrix3D();
+		
 		/** @private */
 		arcane function update():void
 		{
-			_projection = root.transform.perspectiveProjection;
-			
-			if(_fieldOfViewDirty) {
-				_fieldOfViewDirty = false;
-				//_projection.fieldOfView = 360*Math.atan2(loaderInfo.width, 2*_zoom*_focus)/Math.PI;
-				_projection.focalLength = _zoom*_focus;
+			if (_lensDirty) {
+				_lensDirty = false;
+				_lens._update();
+				_projectionMatrix3D = _lens._projectionMatrix3D;
 			}
 			
-			_projectionMatrix3D = _projection.toMatrix3D();
-			
-			_invSceneMatrix3D.rawData = transform.matrix3D.rawData;
-			_invSceneMatrix3D.prependTranslation(0, 0, -_focus);
+			_invSceneMatrix3D.rawData = _sceneMatrix3D.rawData = transform.matrix3D.rawData;
 			_invSceneMatrix3D.invert();
 			
 			_screenMatrix3D.rawData = _invSceneMatrix3D.rawData;
@@ -40,11 +42,7 @@ package away3dlite.cameras
 		
 		private var _focus:Number = 100;
 		private var _zoom:Number = 10;
-		private var _projection:PerspectiveProjection;
-		private var _projectionMatrix3D:Matrix3D;
-		private var _screenMatrix3D:Matrix3D = new Matrix3D();
-		private var _invSceneMatrix3D:Matrix3D = new Matrix3D();
-		private var _fieldOfViewDirty:Boolean = true;
+		private var _lensDirty:Boolean;
 		
 		protected const toRADIANS:Number = Math.PI/180;
 		protected const toDEGREES:Number = 180/Math.PI;
@@ -60,7 +58,7 @@ package away3dlite.cameras
 		{
 			_focus = val;
 			
-			_fieldOfViewDirty = true;
+			_lensDirty = true;
 		}
 		
 		/**
@@ -75,7 +73,7 @@ package away3dlite.cameras
 		{
 			_zoom = val;
 			
-			_fieldOfViewDirty = true;
+			_lensDirty = true;
 		}
 		
 		/**
@@ -105,15 +103,42 @@ package away3dlite.cameras
 		}
 		
 		/**
+		 * Defines the lens used for calculating the <code>projectionMatrix3D/code> of the camera.
+		 */
+		public function get lens():AbstractLens
+		{
+			return _lens;
+		}
+		
+		public function set lens(val:AbstractLens):void
+		{
+			if (_lens == val)
+				return;
+			
+			if (_lens)
+				_lens._camera = null;
+			
+			_lens = val;
+			
+			if (_lens)
+				_lens._camera = this;
+			else
+				throw new Error("Camera cannot have lens set to null");
+			
+			_lensDirty = true;
+		}
+		/**
 		 * Creates a new <code>Camera3D</code> object.
 		 * 
 		 * @param focus		Defines the distance from the focal point of the camera to the viewing plane.
 		 * @param zoom		Defines the overall scale value of the view.
+		 * @param lens		Defines the lens used for calculating the <code>projectionMatrix3D/code> of the camera.
 		 */
-		public function Camera3D(zoom:Number = 10, focus:Number = 100)
+		public function Camera3D(zoom:Number = 10, focus:Number = 100, lens:AbstractLens = null)
 		{
 			super();
 			
+			this.lens = lens || new ZoomFocusLens();			
 			this.zoom = zoom;
 			this.focus = focus;
 			

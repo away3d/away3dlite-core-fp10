@@ -84,23 +84,22 @@ package away3dlite.core.render
 	        np0 = new Vector.<int>(_faces_length_1, true);
 	        np1 = new Vector.<int>(_faces_length_1, true);
 	        
-        	i = -1;
+            i = 0;
         	j = 0;
-            for each (_face in _faces)
-                if((q0[k = (255 & (_sort[int(++i)] = _face.calculateScreenZ()))]))
-                    ql[k] = np0[ql[k]] = int(++j);
-                else
-                    ql[k] = q0[k] = int(++j);
-            
-            i = -1;
-            while (int(i++) < 255) {
-            	j = q0[i];
-                while (j)
-                    if((q1[k = (65280 & _sort[int(j-1)]) >> 8]))
-	                    j = np0[ql[k] = np1[ql[k]] = j];
-	                else
-	                    j = np0[ql[k] = q1[k] = j];
+        	
+            for each (_face in _faces) {
+				np0[int(i+1)] = q0[k = (255 & (_sort[i] = _face.calculateScreenZ()))];
+				q0[k] = int(++i);
             }
+			
+			i = 256;
+			while (i--) {
+				j = q0[i];
+				while (j) {
+					np1[j] = q1[k = (65280 & _sort[int(j-1)]) >> 8];
+					j = np0[q1[k] = j];
+				}
+			}
 		}
 		
 		/** @private */

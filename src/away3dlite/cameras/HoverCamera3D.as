@@ -1,5 +1,6 @@
 package away3dlite.cameras
 {
+	import away3dlite.cameras.lenses.*;
 	import away3dlite.core.base.*;
 	
     /**
@@ -70,9 +71,9 @@ package away3dlite.cameras
 		 * @param zoom		Defines the overall scale value of the view.
 		 * @param target	The 3d object targeted by the camera.
 		 */
-        public function HoverCamera3D(zoom:Number = 10, focus:Number = 100, target:Object3D = null, panAngle:Number = 0, tiltAngle:Number = 0, distance:Number = 800)
+        public function HoverCamera3D(zoom:Number = 10, focus:Number = 100, target:Object3D = null, panAngle:Number = 0, tiltAngle:Number = 0, distance:Number = 800, lens:AbstractLens = null)
         {
-            super(zoom, focus, target);
+            super(zoom, focus, target, lens);
 			
 			this.panAngle = panAngle;
 			this.tiltAngle = tiltAngle;

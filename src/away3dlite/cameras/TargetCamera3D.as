@@ -1,7 +1,8 @@
 package away3dlite.cameras
 {
 	import away3dlite.arcane;
-    import away3dlite.core.base.*;
+	import away3dlite.cameras.lenses.*;
+	import away3dlite.core.base.*;
 	
 	use namespace arcane;
 	
@@ -33,9 +34,9 @@ package away3dlite.cameras
 		 * @param zoom		Defines the overall scale value of the view.
 		 * @param target	The 3d object targeted by the camera.
 		 */
-        public function TargetCamera3D(focus:Number = 10, zoom:Number = 100, target:Object3D = null)
+        public function TargetCamera3D(focus:Number = 10, zoom:Number = 100, target:Object3D = null, lens:AbstractLens = null)
         {
-            super(focus, zoom);
+            super(focus, zoom, lens);
             
             this.target = target || new Object3D();
         }

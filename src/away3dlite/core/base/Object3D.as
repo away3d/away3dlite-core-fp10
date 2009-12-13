@@ -89,7 +89,7 @@ package away3dlite.core.base
 				_sceneMatrix3D.append(parentSceneMatrix3D);
 				
 			_viewMatrix3D.rawData = _sceneMatrix3D.rawData;
-			_viewMatrix3D.append(camera.screenMatrix3D);
+			_viewMatrix3D.append(camera._screenMatrix3D);
 			
 			_screenZ = _viewMatrix3D.position.z;
 			

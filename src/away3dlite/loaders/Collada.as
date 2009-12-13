@@ -86,10 +86,11 @@
 		                	objectContainer.children[i].y -= _moveVector.y;
 							objectContainer.children[i].z -= _moveVector.z;
 		                }
-						_moveVector = objectContainer.transform.matrix3D.transformVector(_moveVector);
-						objectContainer.x += _moveVector.x;
-						objectContainer.y += _moveVector.y;
-						objectContainer.z += _moveVector.z;
+		                //objectContainer.transform.matrix3D.appendTranslation(_moveVector.x, _moveVector.y, _moveVector.z);
+						//_moveVector = objectContainer.transform.matrix3D.transformVector(_moveVector);
+						//objectContainer.x += _moveVector.x;
+						//objectContainer.y += _moveVector.y;
+						//objectContainer.z += _moveVector.z;
 					}
 					
 					parent.addChild(objectContainer);
@@ -180,10 +181,7 @@
                 	mesh._vertices[k*3+1] -= _moveVector.y;
 					mesh._vertices[k*3+2] -= _moveVector.z;
                 }
-                _moveVector = mesh.transform.matrix3D.transformVector(_moveVector);
-				mesh.x += _moveVector.x;
-				mesh.y += _moveVector.y;
-				mesh.z += _moveVector.z;
+                mesh.transform.matrix3D.appendTranslation(_moveVector.x, _moveVector.y, _moveVector.z);
 			}
 			
 			mesh.type = ".Collada";

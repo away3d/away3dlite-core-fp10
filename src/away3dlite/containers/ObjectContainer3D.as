@@ -33,7 +33,7 @@ package away3dlite.containers
 		arcane override function project(camera:Camera3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
 			if (_sprites.length) {
-				_cameraInvSceneMatrix3D = camera.invSceneMatrix3D;
+				_cameraInvSceneMatrix3D = camera._invSceneMatrix3D;
 				_cameraSceneMatrix3D.rawData = _cameraInvSceneMatrix3D.rawData;
 				_cameraSceneMatrix3D.invert();
 				_cameraPosition = _cameraSceneMatrix3D.position;
