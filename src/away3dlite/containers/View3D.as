@@ -196,7 +196,7 @@ package away3dlite.containers {
         	for each (var tar:Object3D in array) {
         		tar.dispatchEvent(event);
         		if (overFlag)
-        			buttonMode = buttonMode || tar.useHandCursor;
+        			buttonMode = tar.useHandCursor;
         		else if (buttonMode && tar.useHandCursor)
         			buttonMode = false;
         	}
