@@ -55,11 +55,25 @@ package away3dlite.animators.bones
 			i = type.length;
 				
             if (time < times[0]) {
-            	while (i--)
-	                target[type[i]] = param[0][i];
+            	while (i--) {
+            		if (type[i] == "transform") {
+            			target.transform.matrix3D = param[0][i];
+            		} else if (type[i] == "visibility") {
+						target.visible = param[0][i] > 0;
+            		} else {
+            			target[type[i]] = param[0][i];
+            		}
+            	}
             } else if (time > times[int(times.length-1)]) {
-            	while (i--)
-	                target[type[i]] = param[int(times.length-1)][i];
+            	while (i--) {
+            		if (type[i] == "transform") {
+            			target.transform.matrix3D = param[int(times.length-1)][i];
+            		} else if (type[i] == "visibility") {
+						target.visible = param[int(times.length-1)][i] > 0;
+            		} else {
+	                	target[type[i]] = param[int(times.length-1)][i];
+	                }
+	           }
             } else {
 				_index = _length = _oldlength = times.length - 1;
 				
