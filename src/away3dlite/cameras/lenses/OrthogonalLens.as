@@ -1,6 +1,9 @@
 package away3dlite.cameras.lenses
 {
 	import away3dlite.arcane;
+	
+	import flash.geom.*;
+	
 	use namespace arcane;
 	
 	public class OrthogonalLens extends AbstractLens
@@ -19,6 +22,12 @@ package away3dlite.cameras.lenses
 		public function OrthogonalLens()
 		{
 			super();
+		}
+		
+		public override function unProject(x:Number, y:Number, z:Number):Vector3D
+		{
+			var scale:Number = _camera.focus/_camera.zoom;
+			return new Vector3D(x*scale, y*scale, z*scale);
 		}
 	}
 }

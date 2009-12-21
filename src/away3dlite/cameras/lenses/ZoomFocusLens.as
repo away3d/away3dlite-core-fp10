@@ -32,5 +32,11 @@ package away3dlite.cameras.lenses
 		{
 			super();
 		}
+		
+		public override function unProject(x:Number, y:Number, z:Number):Vector3D
+		{
+			var persp:Number = z/(_camera.zoom*_camera.focus);
+			return new Vector3D(x*persp, y*persp, z - _camera.focus);
+		}
 	}
 }

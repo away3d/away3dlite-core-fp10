@@ -213,8 +213,7 @@ package away3dlite.containers {
 	        	_uvt = _face.calculateUVT(mouseX, mouseY);
 	        	_material = _face.material;
 	        	_object = _face.mesh;
-	        	var persp:Number =  _uvt.z/(camera.zoom*camera.focus);
-				_scenePosition = new Vector3D(mouseX*persp, mouseY*persp, _uvt.z - camera.focus);
+				_scenePosition = camera.lens.unProject(mouseX, mouseY, _uvt.z);
 				_scenePosition = camera.transform.matrix3D.transformVector(_scenePosition);
 			} else {
         		_uvt = null;

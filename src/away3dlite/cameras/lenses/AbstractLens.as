@@ -28,5 +28,10 @@ package away3dlite.cameras.lenses
 		public function AbstractLens()
 		{
 		}
+		
+		public function unProject(x:Number, y:Number, z:Number):Vector3D
+		{
+			return new Vector3D(x, y, z);
+		}
 	}
 }
