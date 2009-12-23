@@ -12,6 +12,7 @@
     public class Sphere extends AbstractPrimitive
     {
         private var _radius:Number = 100;
+        private var _arcLength:Number = 1;
         private var _segmentsW:int = 8;
         private var _segmentsH:int = 6;
         private var _yUp:Boolean = true;
@@ -25,8 +26,9 @@
     		
             var i:int;
             var j:int;
-
-            for (j = 0; j <= _segmentsH; ++j) { 
+			var minJ:int = int(_segmentsH*(1-_arcLength));
+			
+			for (j = minJ; j <= _segmentsH; ++j) { 
                 var horangle:Number = Math.PI*j/_segmentsH;
                 var z:Number = -_radius*Math.cos(horangle);
                 var ringradius:Number = _radius*Math.sin(horangle);
@@ -38,21 +40,21 @@
                     
                     _yUp? _vertices.push(x, -z, y) : _vertices.push(x, y, z);
                     
-                    _uvtData.push(i/_segmentsW, 1 - j/_segmentsH, 1);
+                    _uvtData.push(i/_segmentsW, 1 - (j - minJ)/(_segmentsH - minJ), 1);
                 }
             }
             
-            for (j = 1; j <= _segmentsH; ++j) {
+            for (j = 1; j <= _segmentsH - minJ; ++j) {
                 for (i = 1; i <= _segmentsW; ++i) {
                     var a:int = (_segmentsW + 1)*j + i;
                     var b:int = (_segmentsW + 1)*j + i - 1;
                     var c:int = (_segmentsW + 1)*(j - 1) + i - 1;
                     var d:int = (_segmentsW + 1)*(j - 1) + i;
                     
-                    if (j == _segmentsH) {
+                    if (j == _segmentsH - minJ) {
 						_indices.push(a,c,d);
                     	_faceLengths.push(3);
-                    } else if (j == 1) {
+                    } else if (j == 1 - minJ) {
                     	_indices.push(a,b,c);
 						_faceLengths.push(3);
                     } else {
@@ -62,6 +64,23 @@
 						
                 }
             }
+    	}
+    	
+    	/**
+    	 * Defines the fractional arc of the sphere rendered from the top.
+    	 */
+    	public function get arcLength():Number
+    	{
+    		return _arcLength;
+    	}
+    	
+    	public function set arcLength(val:Number):void
+    	{
+    		if (_arcLength == val)
+    			return;
+    		
+    		_arcLength = val;
+    		_primitiveDirty = true;
     	}
     	
     	/**
@@ -165,6 +184,7 @@
             var sphere:Sphere = (object as Sphere) || new Sphere();
             super.clone(sphere);
             sphere.radius = _radius;
+            sphere.arcLength = _arcLength;
             sphere.segmentsW = _segmentsW;
             sphere.segmentsH = _segmentsH;
 			sphere.yUp = _yUp;
