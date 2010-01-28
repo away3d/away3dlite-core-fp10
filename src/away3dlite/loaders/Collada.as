@@ -36,6 +36,9 @@
 		private var _skinControllers:Vector.<SkinController> = new Vector.<SkinController>();
 		private var _skinController:SkinController;
 		
+		public var bothsides:Boolean = true;
+		public var useIDAsName:Boolean = false;
+		
 		private function buildContainers(containerData:ContainerData, parent:ObjectContainer3D):void
 		{
 			Debug.trace(" + Build Container : " + containerData.name);
@@ -571,16 +574,19 @@
 			else
 				_objectData.id = node.@id;
 			
-			/* Deprecated for ColladaMaya 3.02
-			if(String(node.@name) != "")
+			if(String(node.@name) != "" && !useIDAsName)
 			{
+				//#case 1 : 3dsMax 8 - Feeling ColladaMax v3.05B.
+				//@example <node id="WheelFL-node_PIVOT" name="WheelFL_PIVOT" type="NODE">
+				
+				//#case 2 : Maya8.5 | ColladaMaya v3.05B
+				//@example <node id="skeleton" name="skeleton" type="NODE">
             	_objectData.name = String(node.@name);
    			}else{
-   				_objectData.name = String(node.@id);
+   				//#case 3 : Maya8.5 | ColladaMaya v3.02
+				//@example <node id="skeleton" type="NODE">
+   				_objectData.name = _objectData.id;
    			}
-   			*/
-   			
-   			_objectData.name = String(node.@id);
    
             _transform = _objectData.transform;
 			
@@ -835,6 +841,9 @@
             	geometryData.bothsides = (geometryData.geoXML["extra"].technique.double_sided[0].toString() == "1");
             else
             	geometryData.bothsides = false;
+			
+			// force bothsides by script
+			geometryData.bothsides = geometryData.bothsides && bothsides;
 			
 			//parse controller
 			if (!geometryData.ctrlXML)
