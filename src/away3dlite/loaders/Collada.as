@@ -35,9 +35,9 @@
 		private var _containers:Dictionary = new Dictionary(true);
 		private var _skinControllers:Vector.<SkinController> = new Vector.<SkinController>();
 		private var _skinController:SkinController;
-		
+
 		public var bothsides:Boolean = true;
-		public var useIDAsName:Boolean = false;
+		public var useIDAsName:Boolean = true;
 		
 		private function buildContainers(containerData:ContainerData, parent:ObjectContainer3D):void
 		{
@@ -473,7 +473,14 @@
         /** @private */
         arcane override function prepareData(data:*):void
         {
-        	collada = Cast.xml(data);
+			// void junk byte, flash player bug
+			try{
+            	collada = Cast.xml(data);
+   			}catch(e:*){
+   				Debug.warning("Junk byte!?");
+   				var _pos:int = String(data).indexOf("</COLLADA>"); 
+  				collada = new XML(String(data).substring(0, _pos+String("</COLLADA>").length));
+   			}
         	
 			default xml namespace = collada.namespace();
 			Debug.trace(" ! ------------- Begin Parse Collada -------------");
@@ -585,9 +592,9 @@
    			}else{
    				//#case 3 : Maya8.5 | ColladaMaya v3.02
 				//@example <node id="skeleton" type="NODE">
-   				_objectData.name = _objectData.id;
+   				_objectData.name = String(node.@id);
    			}
-   
+   			
             _transform = _objectData.transform;
 			
 			Debug.trace(" + Parse Node : " + _objectData.id + " : " + _objectData.name);
@@ -1031,8 +1038,6 @@
 			var j:int;
 			
 			_defaultAnimationClip.channels[channelData.name] = channelData;
-			
-			Debug.trace(" ! channelType : " + type);
 			
             for each (var input:XML in sampler["input"])
             {
