@@ -265,9 +265,9 @@ package away3dlite.core.base
 		}
 		
 		/**
-		 * Determines by which mechanism vertices are sorted. Uses the values given by the <code>MeshSortType</code> class. Options are CENTER, FRONT and BACK. Defaults to CENTER.
+		 * Determines by which mechanism vertices are sorted. Uses the values given by the <code>SortType</code> class. Options are CENTER, FRONT and BACK. Defaults to CENTER.
 		 * 
-		 * @see away3dlite.core.base.MeshSortType
+		 * @see away3dlite.core.base.SortType
 		 */
 		public function get sortType():String
 		{
