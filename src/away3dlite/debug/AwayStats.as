@@ -646,8 +646,10 @@ package away3dlite.debug
 				_num_frames = 0;
 				_fps_sum = 0;
 				
-				for (i=0; i<_mean_data.length; i++) {
-					_mean_data[i] = 0.0;
+				if (_mean_data) {
+					for (i=0; i<_mean_data.length; i++) {
+						_mean_data[i] = 0.0;
+					}
 				}
 			}
 		}
