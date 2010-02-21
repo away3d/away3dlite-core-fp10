@@ -21,7 +21,6 @@ package away3dlite.core.render
 			_view_graphics_drawGraphicsData = _view.graphics.drawGraphicsData;
 		}
 		
-		private var ql:Vector.<int> = new Vector.<int>(256, true);
 		private var k:int;
 		private var q0:Vector.<int>;
 		private var np0:Vector.<int>;

@@ -4,6 +4,7 @@ package away3dlite.containers
 	import away3dlite.arcane;
 	import away3dlite.cameras.*;
 	import away3dlite.core.base.*;
+	import away3dlite.lights.*;
 	import away3dlite.sprites.*;
 	
 	import flash.display.*;
@@ -19,8 +20,18 @@ package away3dlite.containers
 		/** @private */
 		arcane override function updateScene(val:Scene3D):void
 		{
-			if (scene == val)
+			if (_scene == val)
 				return;
+			
+			var light:AbstractLight3D;
+			
+			if (_scene)
+				for each (light in _lights)
+					_scene.removeSceneLight(light);
+			
+			if (val)
+				for each (light in _lights)
+					val.addSceneLight(light);
 			
 			super.updateScene(val);
 			
@@ -40,6 +51,11 @@ package away3dlite.containers
 				_cameraForwardVector = new Vector3D(_cameraSceneMatrix3D.rawData[8], _cameraSceneMatrix3D.rawData[9], _cameraSceneMatrix3D.rawData[10]);
 			}
 			
+			var light:AbstractLight3D;
+			
+			for each (light in _lights)
+				light._camera = camera;
+			 
 			super.project(camera, parentSceneMatrix3D);
 			
 			if (!_perspCulling) {
@@ -54,6 +70,7 @@ package away3dlite.containers
 		private var _index:int;
 		private var _children:Array = new Array();
         private var _sprites:Vector.<Sprite3D> = new Vector.<Sprite3D>();
+        private var _lights:Vector.<AbstractLight3D> = new Vector.<AbstractLight3D>();
         private var _spriteVertices:Vector.<Number> = new Vector.<Number>();
         private var _spriteIndices:Vector.<int> = new Vector.<int>();
         private var _spritesDirty:Boolean;
@@ -82,6 +99,14 @@ package away3dlite.containers
 		public function get sprites():Vector.<Sprite3D>
 		{
 			return _sprites;
+		}
+        
+        /**
+        * Returns the lights of the container as an array of 3d lights.
+        */
+		public function get lights():Vector.<AbstractLight3D>
+		{
+			return _lights;
 		}
 		
 		/**
@@ -198,9 +223,9 @@ package away3dlite.containers
 		}
         
 		/**
-		 * Adds a 3d object to the scene as a child of the container.
+		 * Adds a 3d sprite to the scene as a child of the container.
 		 * 
-		 * @param	child	The 3d object to be added.
+		 * @param	sprite	The 3d sprite to be added.
 		 */
 		public function addSprite(sprite:Sprite3D):Sprite3D
 		{
@@ -243,6 +268,42 @@ package away3dlite.containers
 			
 			return sprite;
 		}
+		        
+		/**
+		 * Adds a 3d light to the lights array of the container.
+		 * 
+		 * @param	light	The 3d light to be added.
+		 */
+		public function addLight(light:AbstractLight3D):AbstractLight3D
+		{
+			_lights[_lights.length] = light;
+			
+			if (_scene)
+				_scene.addSceneLight(light);
+			
+			return light;
+		}
+        
+		/**
+		 * Removes a 3d light from the lights array of the container.
+		 * 
+		 * @param	light	The 3d light to be removed.
+		 */
+		public function removeLight(light:AbstractLight3D):AbstractLight3D
+		{
+			_index = _lights.indexOf(light);
+			
+			if (_index == -1)
+				return null;
+			
+			_sprites.splice(_index, 1);
+			
+			if (_scene)
+				_scene.removeSceneLight(light);
+			
+			return light;
+		}
+		
 		/**
 		 * Returns a 3d object specified by name from the child array of the container
 		 * 

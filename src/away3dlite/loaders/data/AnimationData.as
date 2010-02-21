@@ -53,6 +53,12 @@ package away3dlite.loaders.data
 		 */
 		public var channels:Dictionary = new Dictionary(true);
 		
+		/**
+		 * Duplicates the animation data's properties to another <code>AnimationData</code> object
+		 * 
+		 * @param	object	The new object instance into which all properties are copied
+		 * @return			The new object instance with duplicated properties applied
+		 */
 		public function clone(object:Object3D):AnimationData
 		{
 			var animationData:AnimationData = object.animationLibrary.addAnimation(name);

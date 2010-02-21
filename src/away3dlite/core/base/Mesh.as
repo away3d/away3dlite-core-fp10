@@ -78,7 +78,8 @@ package away3dlite.core.base
 						//update rendering faces in the scene
 						_scene._materialsNextList[i] = mat;
 						
-						//update material if material is a shader
+						//update material for this object
+						mat.updateMaterial(this, camera);
 					}
 				}
 			}
@@ -302,6 +303,23 @@ package away3dlite.core.base
 			this.material = material;
 			this.bothsides = false;
 			this.sortType = SortType.CENTER;
+		}
+		
+		public function addFace(vs:Vector.<Vector3D>,uvs:Vector.<Point>):void
+		{
+		 var q:int=Math.min(vs.length,uvs.length);
+		 for(var i:int=0;i<q;i++)
+		 {
+		   pushV3D(vs[i],uvs[i]);
+		 }
+		 _faceLengths.push(q);
+		}
+		
+		public function pushV3D(v:Vector3D,uv:Point):void
+		{
+		 _vertices.push(v.x,v.y,v.z);
+		 _uvtData.push(uv.x,uv.y,1);
+		 _indices.push(this._indicesTotal++);
 		}
 		
 		/**

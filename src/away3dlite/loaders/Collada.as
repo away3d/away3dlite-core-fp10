@@ -1,4 +1,4 @@
-﻿package away3dlite.loaders
+package away3dlite.loaders
 {
 	import away3dlite.animators.*;
 	import away3dlite.animators.bones.*;
@@ -35,19 +35,19 @@
 		private var _containers:Dictionary = new Dictionary(true);
 		private var _skinControllers:Vector.<SkinController> = new Vector.<SkinController>();
 		private var _skinController:SkinController;
-
+		
 		public var bothsides:Boolean = true;
 		public var useIDAsName:Boolean = true;
 		
-		private function buildContainers(containerData:ContainerData, parent:ObjectContainer3D):void
+		private function buildContainers(containerData:ContainerData, parent:ObjectContainer3D, depth:int):void
 		{
-			Debug.trace(" + Build Container : " + containerData.name);
+			var spaces:String = "";
+			for (var s:int = 0 ; s < depth ; s++)
+				spaces += " ";
+			Debug.trace(" + Build Container : " + spaces + containerData.name);
 			
 			for each (var _objectData:ObjectData in containerData.children) {
-				if (_objectData is MeshData) {
-					var mesh:Mesh = buildMesh(_objectData as MeshData, parent);
-					_containers[_objectData.name] = mesh;
-				} else if (_objectData is BoneData) {
+				if (_objectData is BoneData) {
 					var _boneData:BoneData = _objectData as BoneData;
 					var bone:Bone = new Bone();
 					bone.name = _boneData.name;
@@ -62,7 +62,7 @@
 					
 					bone.joint.transform.matrix3D = _boneData.jointTransform;
 					
-					buildContainers(_boneData, bone.joint);
+					buildContainers(_boneData, bone.joint, depth+1);
 					
 					parent.addChild(bone);
 					
@@ -71,11 +71,17 @@
 					var objectContainer:ObjectContainer3D = _containerData.container = new ObjectContainer3D();
 					objectContainer.name = _containerData.name;
 					
-					_containers[objectContainer.name] = objectContainer;
-					
 					objectContainer.transform.matrix3D = _objectData.transform;
 					
-					buildContainers(_containerData, objectContainer);
+					if ((_objectData as ContainerData).geometry)	// The container is also mesh
+					{
+						fillMesh(objectContainer as Mesh, _objectData as MeshData, parent);
+						_containers[_objectData.name] = objectContainer;
+					}
+					else
+						_containers[objectContainer.name] = objectContainer;
+					
+					buildContainers(_containerData, objectContainer, depth+1);
 					
 					//TODO: set bounding values (max/min) on _containerData objects
 					if (centerMeshes && objectContainer.children.length) {
@@ -98,15 +104,29 @@
 					
 					parent.addChild(objectContainer);
 					
+				} else if (_objectData is MeshData) {
+					var mesh:Mesh = buildMesh(_objectData as MeshData, parent, depth+1);
+					_containers[_objectData.name] = mesh;
+
+					parent.addChild(mesh);
 				}
 			}
 		}
-		
-		private function buildMesh(_meshData:MeshData, parent:ObjectContainer3D):Mesh
+
+		private function buildMesh(_meshData:MeshData, parent:ObjectContainer3D, depth:int):Mesh
 		{
-			Debug.trace(" + Build Mesh : "+_meshData.name);
-			
+			var spaces:String = "";
+			for (var s:int = 0 ; s < depth ; s++)
+				spaces += " ";
+			Debug.trace(" + Build Mesh      : " + spaces + _meshData.name);
+
 			var mesh:Mesh = new Mesh();
+			fillMesh(mesh, _meshData, parent);
+			return mesh;
+		}
+				
+		private function fillMesh(mesh:Mesh, _meshData:MeshData, parent:ObjectContainer3D):void
+		{
 			mesh.name = _meshData.name;
 			mesh.transform.matrix3D = _meshData.transform;
 			mesh.bothsides = _meshData.geometry.bothsides;
@@ -188,8 +208,6 @@
 			}
 			
 			mesh.type = ".Collada";
-			parent.addChild(mesh);
-			return mesh;
 		}
 		
 		private function buildSkinVertices(geometryData:GeometryData, i:int, vertices:Vector.<Number>):void
@@ -473,7 +491,7 @@
         /** @private */
         arcane override function prepareData(data:*):void
         {
-			// void junk byte, flash player bug
+        	// void junk byte, flash player bug
 			try{
             	collada = Cast.xml(data);
    			}catch(e:*){
@@ -507,7 +525,7 @@
 				buildMaterials();
 				
 				//build the containers
-				buildContainers(containerData, container as ObjectContainer3D);
+				buildContainers(containerData, container as ObjectContainer3D, 0);
 				
 				//build animations
 				buildAnimations();
@@ -573,28 +591,23 @@
 				_objectData = new MeshData();
 			}
 			
-			parent.children.push(_objectData);
-			
 			//ColladaMaya 3.05B
 			if (String(node.@type) == "JOINT")
 				_objectData.id = node.@sid;
 			else
 				_objectData.id = node.@id;
 			
-			if(String(node.@name) != "" && !useIDAsName)
+			/* Deprecated for ColladaMaya 3.02
+			if(String(node.@name) != "")
 			{
-				//#case 1 : 3dsMax 8 - Feeling ColladaMax v3.05B.
-				//@example <node id="WheelFL-node_PIVOT" name="WheelFL_PIVOT" type="NODE">
-				
-				//#case 2 : Maya8.5 | ColladaMaya v3.05B
-				//@example <node id="skeleton" name="skeleton" type="NODE">
             	_objectData.name = String(node.@name);
    			}else{
-   				//#case 3 : Maya8.5 | ColladaMaya v3.02
-				//@example <node id="skeleton" type="NODE">
    				_objectData.name = String(node.@id);
    			}
+   			*/
    			
+   			_objectData.name = String(node.@id);
+   
             _transform = _objectData.transform;
 			
 			Debug.trace(" + Parse Node : " + _objectData.id + " : " + _objectData.name);
@@ -609,11 +622,11 @@
 			
             for each (var childNode:XML in node.children())
             {
-                arrayChild = getArray(childNode);
                 nodeName = String(childNode.name()["localName"]);
 				switch(nodeName)
                 {
 					case "translate":
+		                arrayChild = getArray(childNode);
 						if (yUp)
 			                _transform.prependTranslation(-arrayChild[0]*scaling, -arrayChild[1]*scaling, arrayChild[2]*scaling);
 			            else
@@ -622,6 +635,7 @@
                         break;
 
                     case "rotate":
+		                arrayChild = getArray(childNode);
                     	sid = childNode.@sid;
                         if (_objectData is BoneData && (sid == "rotateX" || sid == "rotateY" || sid == "rotateZ" || sid == "rotX" || sid == "rotY" || sid == "rotZ")) {
 	                        if (yUp) {
@@ -640,6 +654,11 @@
                         break;
 						
                     case "scale":
+		                arrayChild = getArray(childNode);
+                    	if (arrayChild[0] == 0)	arrayChild[0] = 1;
+                    	if (arrayChild[1] == 0)	arrayChild[1] = 1;
+                    	if (arrayChild[2] == 0)	arrayChild[2] = 1;
+                    	
                         if (_objectData is BoneData) {
                         	if (yUp)
 				                boneData.jointTransform.prependScale(arrayChild[0], arrayChild[1], arrayChild[2]);
@@ -656,6 +675,7 @@
 						
                     // Baked transform matrix
                     case "matrix":
+		                arrayChild = getArray(childNode);
                     	var m:Matrix3D = new Matrix3D();
                     	m.rawData = array2matrix(arrayChild, yUp, scaling);
                         _transform.prepend(m);
@@ -664,13 +684,22 @@
                     case "node":
                     	//3dsMax 11 - Feeling ColladaMax v3.05B
                     	//<node><node/></node>
-                    	if(_objectData is MeshData)
+                    	if((_objectData is MeshData) && !(_objectData is ContainerData))
                     	{
-							parseNode(childNode, parent as ContainerData);
-                    	}else{
-                    		parseNode(childNode, _objectData as ContainerData);
+							//WRONG: parseNode(childNode, parent as ContainerData);
+							
+							// _objectData is a Mesh but ALSO a container!!!
+							// WE MUST preserve the hierarchy because if animation is applied onto the mesh _objectData
+							// then its children must apply this animation too.
+							// We could use the fact that an ObjectContainer3D is also a Mesh, but on the loader side
+							// ContainerData doesn't derive from MeshData.
+							// So I have added this missing derivative to ContainerData class.
+							var fooContainer:ContainerData = new ContainerData();
+							_objectData.clone(fooContainer as MeshData);
+							_objectData = fooContainer;
                     	}
-                        
+                    	parseNode(childNode, _objectData as ContainerData);
+                    	
                         break;
 
     				case "instance_node":
@@ -707,6 +736,8 @@
 						break;
                 }
             }
+            
+			parent.children.push(_objectData);
         }
 		
 		/**
@@ -948,32 +979,67 @@
             
             var _channel_id:uint = 0;
             
-            //loop through all animation channels
+            //loop through all animations and for each through all its channels
+			var _channelName:String;
+			var _channels:XMLList;
+			var channelIndex:int;
+			var id:String;
+			var type:String;
             if(anims["animation"]["animation"].length()==0)
-			for each (var channel:XML in anims["animation"])
-			{
-				if(String(channel.@id).length>0)
+            {
+				for each (var animation:XML in anims["animation"])
 				{
-					channelLibrary.addChannel(channel.@id, channel);
-				}else{
-					// COLLADAMax NextGen;  Version: 1.1.0;  Platform: Win32;  Configuration: Release Max2009
-					// issue#1 : missing channel.@id -> use automatic id instead
-					Debug.trace(" ! COLLADAMax2009 id : _"+_channel_id);
-					channelLibrary.addChannel("_"+String(_channel_id++), channel);
+					if(String(animation.@id).length>0)
+					{
+						_channelName = animation.@id;
+					}else{
+						// COLLADAMax NextGen;  Version: 1.1.0;  Platform: Win32;  Configuration: Release Max2009
+						// issue#1 : missing channel.@id -> use automatic id instead
+						Debug.trace(" ! COLLADAMax2009 id : _"+_channel_id);
+						_channelName = "_"+String(_channel_id++);
+					}
+
+					_channels = animation["channel"];
+					if (_channels.length() == 1)
+						channelLibrary.addChannel(_channelName, animation, 0);
+					else
+					{
+						for (channelIndex = 0 ; channelIndex < _channels.length() ; channelIndex++)
+						{
+							id = _channels[channelIndex].@target;
+				            type = id.split("/")[1];
+							
+							channelLibrary.addChannel(_channelName + "_subAnim_" + type, animation, channelIndex);
+						}
+					}
 				}
-			}
+            }
 
 			// C4D 
 			// issue#1 : animation -> animation.animation
 			// issue#2 : missing channel.@id -> use automatic id instead
-			for each (channel in anims["animation"]["animation"])
+			for each (animation in anims["animation"]["animation"])
 			{
-				if(String(channel.@id).length > 0)
+				if(String(animation.@id).length > 0)
 				{
-					channelLibrary.addChannel(channel.@id, channel);
+					_channelName = animation.@id;
 				}else{
 					Debug.trace(" ! C4D id : _"+_channel_id);
-					channelLibrary.addChannel("_"+String(_channel_id++), channel);
+					_channelName = "_"+String(_channel_id++);
+				}
+				
+				_channels = animation["channel"];
+				if (_channels.length() == 1)
+					channelLibrary.addChannel(_channelName, animation, 0);
+				else
+				{
+					for (channelIndex = 0 ; channelIndex < _channels.length() ; channelIndex++)
+					{
+						id = _channels[channelIndex].@target;
+			            type = id.split("/")[1];
+						
+						channelLibrary.addChannel(_channelName + "_subAnim_" + type, animation, channelIndex);
+					}
 				}
 			}
 					
@@ -999,6 +1065,7 @@
         {
 			var animationClip:AnimationData = animationLibrary.addAnimation(clip.@id);
 			
+			//TODO: Is there a need to handle case where there is multiple channels inside an animation channel (_subAnim_) ?
 			for each (var channel:XML in clip["instance_animation"])
 				animationClip.channels[getId(channel.@url)] = channelLibrary[getId(channel.@url)];
         }
@@ -1006,10 +1073,11 @@
 		private function parseChannel(channelData:ChannelData) : void
         {
         	var node:XML = channelData.xml;
-			var id:String = node["channel"].@target;
+        	var channels:XMLList = node["channel"];
+        	var channelChunk:XML = channels[channelData.channelIndex];
+			var id:String = channelChunk.@target;
 			var name:String = id.split("/")[0];
             var type:String = id.split("/")[1];
-			var sampler:XML = node["sampler"][0];
 			
             if (!type) {
             	Debug.trace(" ! No animation type detected");
@@ -1030,14 +1098,16 @@
             	type = type.split(".").join("");
             }
             
-			
-
-            
             var channel:Channel = channelData.channel = new Channel(name);
 			var i:int;
 			var j:int;
 			
 			_defaultAnimationClip.channels[channelData.name] = channelData;
+			
+			Debug.trace(" ! channelType : " + type);
+
+			var sourceName:String = getId(channelChunk.@source);
+			var sampler:XML = node["sampler"].(@id == sourceName)[0];
 			
             for each (var input:XML in sampler["input"])
             {

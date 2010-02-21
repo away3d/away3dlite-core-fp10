@@ -1,5 +1,6 @@
 package away3dlite.containers
 {
+	import away3dlite.lights.AbstractLight3D;
 	import away3dlite.arcane;
 	import away3dlite.cameras.*;
 	import away3dlite.core.base.*;
@@ -15,6 +16,8 @@ package away3dlite.containers
     */
 	public class Scene3D extends ObjectContainer3D
 	{
+		private var _index:int;
+		
 		arcane var _id:uint;
 		/** @private */
 		arcane var _broadcaster:Sprite = new Sprite();
@@ -24,6 +27,8 @@ package away3dlite.containers
     	arcane var _materialsPreviousList:Vector.<Material> = new Vector.<Material>();
     	/** @private */
     	arcane var _materialsNextList:Vector.<Material> = new Vector.<Material>();
+    	/** @private */
+    	arcane var _sceneLights:Vector.<AbstractLight3D> = new Vector.<AbstractLight3D>();
     	/** @private */
     	arcane function removeSceneMaterial(mat:Material):void
     	{
@@ -69,6 +74,19 @@ package away3dlite.containers
 			mat._faceCount[_id]++;
     	}
     	/** @private */
+		arcane function addSceneLight(light:AbstractLight3D):void
+		{
+			_sceneLights[_sceneLights.length] = light;
+		}
+    	/** @private */
+		arcane function removeSceneLight(light:AbstractLight3D):void
+		{
+			_index = _sceneLights.indexOf(light);
+			
+			if (_index != -1)
+				_sceneLights.splice(_index, 1);
+		}
+    	/** @private */
 		arcane override function project(camera:Camera3D, parentSceneMatrix3D:Matrix3D = null):void
 		{
 			_materialsNextList = new Vector.<Material>(_materialsNextList.length);
@@ -99,7 +117,15 @@ package away3dlite.containers
 		}
 		
     	private static var _idTotal:uint = 0;
-    	
+    	        
+        /**
+        * Returns the lights of the scene as an array of 3d lights.
+        */
+		public function get sceneLights():Vector.<AbstractLight3D>
+		{
+			return _sceneLights;
+		}
+		
 		/**
 		 * Creates a new <code>Scene3D</code> object
 	     * 

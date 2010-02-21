@@ -42,7 +42,7 @@ package away3dlite.containers {
         }
         
         private const VERSION:String = "1";
-        private const REVISION:String = "0.3";
+        private const REVISION:String = "0.4";
         private const APPLICATION_NAME:String = "Away3D.com";
         
         private var _customContextMenu:ContextMenu;

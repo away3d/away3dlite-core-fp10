@@ -145,5 +145,17 @@ package away3dlite.cameras
 			//set default z position
 			z = -1000;
 		}
+    	
+    	/**
+    	 * Returns a <code>Vector3D</code> object describing the resolved x and y position of the given 3d vertex position.
+    	 * 
+    	 * @param	vertex	The vertex to be resolved.
+    	 */
+		public function screen(vertex:Vector3D):Vector3D
+		{
+			update();
+			
+			return Utils3D.projectVector(_screenMatrix3D, vertex);
+		}
 	}
 }

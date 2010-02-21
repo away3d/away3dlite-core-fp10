@@ -1,7 +1,9 @@
 package away3dlite.materials
 {
 	import away3dlite.arcane;
+	import away3dlite.cameras.*;
 	import away3dlite.containers.*;
+	import away3dlite.core.base.*;
 	import away3dlite.events.*;
 
 	import flash.events.*;
@@ -35,6 +37,8 @@ package away3dlite.materials
 		/** @private */
 		arcane function notifyActivate(scene:Scene3D):void
 		{
+			scene;
+			
 			if (!hasEventListener(MaterialEvent.MATERIAL_ACTIVATED))
                 return;
 			
@@ -46,6 +50,8 @@ package away3dlite.materials
 		/** @private */
 		arcane function notifyDeactivate(scene:Scene3D):void
 		{
+			scene;
+			
 			if (!hasEventListener(MaterialEvent.MATERIAL_DEACTIVATED))
                 return;
 			
@@ -53,6 +59,11 @@ package away3dlite.materials
                 _materialdeactivated = new MaterialEvent(MaterialEvent.MATERIAL_DEACTIVATED, this);
                 
             dispatchEvent(_materialdeactivated);
+		}
+		/** @private */
+		arcane function updateMaterial(source:Mesh, camera:Camera3D):void
+		{
+			
 		}
 		
 		private const DEBUG_STROKE:GraphicsStroke = new GraphicsStroke(1, false, "normal", "none", "round", 0, new GraphicsSolidFill(0xFF00FF));
