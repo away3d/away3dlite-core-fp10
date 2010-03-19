@@ -129,8 +129,8 @@ package away3dlite.cameras
             }
             
 			var gx:Number = target.x + distance*Math.sin(_currentPanAngle*toRADIANS)*Math.cos(_currentTiltAngle*toRADIANS);
-            var gz:Number = target.y + distance*Math.cos(_currentPanAngle*toRADIANS)*Math.cos(_currentTiltAngle*toRADIANS);
-            var gy:Number = target.z - distance*Math.sin(_currentTiltAngle*toRADIANS)*yfactor;
+            var gz:Number = target.z + distance*Math.cos(_currentPanAngle*toRADIANS)*Math.cos(_currentTiltAngle*toRADIANS);
+            var gy:Number = target.y - distance*Math.sin(_currentTiltAngle*toRADIANS)*yfactor;
 			
             if ((x == gx) && (y == gy) && (z == gz))
                 return false;
