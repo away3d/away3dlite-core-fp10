@@ -20,10 +20,10 @@ package away3dlite.core.utils
 		 * 
 		 * @param message	The message to trace.
 		 */
-        public static function trace(message:Object):void
+        public static function trace(...agrs):void
         {
         	if (active)
-           		dotrace(message);
+           		doTrace(agrs);
         }
 		
 		/**
@@ -59,8 +59,7 @@ package away3dlite.core.utils
 /**
  * @private
  */
-function dotrace(message:Object):void
+function doTrace(...agrs):void
 {
-    trace(message);
+    trace.apply(this, agrs);
 }
-
