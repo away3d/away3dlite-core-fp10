@@ -29,7 +29,7 @@
 			
             for (j = 0; j <= _segmentsH; ++j) {
             	for (i = 0; i <= _segmentsW; ++i) {
-                	_yUp? _vertices.push((i/_segmentsW - 0.5)*_width, 0, (j/_segmentsH - 0.5)*_height) : _vertices.push((i/_segmentsW - 0.5)*_width, (j/_segmentsH - 0.5)*_height, 0);
+            		_yUp? _vertices.push((i/_segmentsW - 0.5)*_width, 0, (j/_segmentsH - 0.5)*_height) : _vertices.push((i/_segmentsW - 0.5)*_width, (0.5 - j/_segmentsH)*_height, 0);
                 	_uvtData.push(i/_segmentsW, 1 - j/_segmentsH, 1);
                 }
             }
