@@ -103,7 +103,7 @@ package away3dlite.cameras
 		}
 		
 		/**
-		 * Defines the lens used for calculating the <code>projectionMatrix3D/code> of the camera.
+		 * Defines the lens used for calculating the <code>projectionMatrix3D</code> of the camera.
 		 */
 		public function get lens():AbstractLens
 		{
@@ -132,7 +132,7 @@ package away3dlite.cameras
 		 * 
 		 * @param focus		Defines the distance from the focal point of the camera to the viewing plane.
 		 * @param zoom		Defines the overall scale value of the view.
-		 * @param lens		Defines the lens used for calculating the <code>projectionMatrix3D/code> of the camera.
+		 * @param lens		Defines the lens used for calculating the <code>projectionMatrix3D</code> of the camera.
 		 */
 		public function Camera3D(zoom:Number = 10, focus:Number = 100, lens:AbstractLens = null)
 		{
