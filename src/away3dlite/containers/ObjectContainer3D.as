@@ -229,6 +229,7 @@ package away3dlite.containers
 		 */
 		public function addSprite(sprite:Sprite3D):Sprite3D
 		{
+            vectorsFixed = false;
 			_sprites[sprite.index = _sprites.length] = sprite;
 			
 			_indices.length += 4;
@@ -239,6 +240,7 @@ package away3dlite.containers
 			_faceLengths.push(4);
 			
 			_spritesDirty = true;
+            vectorsFixed = true;
 			
 			return sprite;
 		}
@@ -250,6 +252,7 @@ package away3dlite.containers
 		 */
 		public function removeSprite(sprite:Sprite3D):Sprite3D
 		{
+            vectorsFixed = false;
 			_index = _sprites.indexOf(sprite);
 			
 			if (_index == -1)
@@ -257,18 +260,36 @@ package away3dlite.containers
 			
 			_sprites.splice(_index, 1);
 			
+            // shift indices down one - get vertices chokes on this
+            for (var i:int = _index; i<_sprites.length; ++i)
+                _sprites[i].index = i;
+
+            // remove screen vertices if needed - clipping chokes on them
+            if (_screenVertices.length > 0)
+                _screenVertices.length -= 8;
+    
 			_indices.length -= 4;
 			_vertices.length -= 12;
 			
 			_uvtData.splice(_index*12, 12);
 			_faceMaterials.splice(_index, 1);
 			_faceLengths.splice(_index, 1);
-			
+			_faces.splice(_index, 1); // rectangle clipping chokes on faces
 			_spritesDirty = true;
+            vectorsFixed = true;
 			
 			return sprite;
 		}
-		        
+		       
+
+        /**
+         * lock or unlock vectors when adding or removing sprites
+         */
+        public function set vectorsFixed(value:Boolean):void 
+        {
+            _sprites.fixed = _indices.fixed = _vertices.fixed = _uvtData.fixed = _faceMaterials.fixed = _faceLengths.fixed = _faces.fixed = value;
+        }
+ 
 		/**
 		 * Adds a 3d light to the lights array of the container.
 		 * 
