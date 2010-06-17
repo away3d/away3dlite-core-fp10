@@ -71,7 +71,10 @@ package away3dlite.primitives
 			}
 
 			for each (var _cone:Cone in _cones)
+			{
 				_cone.bothsides = true;
+				_cone.mouseEnabled = false;
+			}
 		}
 
 		override public function destroy():void
