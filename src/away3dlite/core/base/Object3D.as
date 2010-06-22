@@ -200,6 +200,83 @@ package away3dlite.core.base
 		}
 		
 		/**
+		 * Moves the 3D object forwards along it's local z axis
+		 *
+		 * @param	distance	The length of the movement
+		 */
+		public function moveForward(distance:Number):void
+		{
+			translate(new Vector3D(0, 0, 1), distance);
+		}
+
+		/**
+		 * Moves the 3D object backwards along it's local z axis
+		 *
+		 * @param	distance	The length of the movement
+		 */
+		public function moveBackward(distance:Number):void
+		{
+			translate(new Vector3D(0, 0, -1), distance);
+		}
+
+		/**
+		 * Moves the 3D object backwards along it's local x axis
+		 *
+		 * @param	distance	The length of the movement
+		 */
+		public function moveLeft(distance:Number):void
+		{
+			translate(new Vector3D(-1, 0, 0), distance);
+		}
+
+		/**
+		 * Moves the 3D object forwards along it's local x axis
+		 *
+		 * @param	distance	The length of the movement
+		 */
+		public function moveRight(distance:Number):void
+		{
+			translate(new Vector3D(1, 0, 0), distance);
+		}
+
+		/**
+		 * Moves the 3D object forwards along it's local y axis
+		 *
+		 * @param	distance	The length of the movement
+		 */
+		public function moveUp(distance:Number):void
+		{
+			translate(new Vector3D(0, -1, 0), distance);
+		}
+
+		/**
+		 * Moves the 3D object backwards along it's local y axis
+		 *
+		 * @param	distance	The length of the movement
+		 */
+		public function moveDown(distance:Number):void
+		{
+			translate(new Vector3D(0, 1, 0), distance);
+		}
+
+		/**
+		 * Moves the 3D object along a vector by a defined length
+		 *
+		 * @param	axis		The vector defining the axis of movement
+		 * @param	distance	The length of the movement
+		 */
+		public function translate(axis:Vector3D, distance:Number):void
+		{
+			axis.normalize();
+			
+			var _matrix3D:Matrix3D = transform.matrix3D;
+			
+			axis.scaleBy(distance);
+			
+			_matrix3D.position = _matrix3D.transformVector(axis);
+		}
+
+		/**
 		 * Rotates the 3D object around it's local x-axis
 		 *
 		 * @param	degrees		The degree of the rotation.
@@ -230,7 +307,7 @@ package away3dlite.core.base
 		}
 
 		/**
-		 * Rotates the 3d object around an axis by a defined degrees
+		 * Rotates the 3D object around an axis by a defined degrees
 		 *
 		 * @param	degrees		The degree of the rotation.
 		 * @param	axis		The axis or direction of rotation. The usual axes are the X_AXIS (Vector3D(1,0,0)), Y_AXIS (Vector3D(0,1,0)), and Z_AXIS (Vector3D(0,0,1)).
@@ -245,36 +322,36 @@ package away3dlite.core.base
 		}
 
 		/**
-		 * Rotates the 3d object around to face a point defined relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
-		 * 
+		 * Rotates the 3D object around to face a point defined relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
+		 *
 		 * @param	target		The vector defining the point to be looked at
-		 * @param	upAxis		An optional vector used to define the desired up orientation of the 3d object after rotation has occurred
+		 * @param	upAxis		An optional vector used to define the desired up orientation of the 3D object after rotation has occurred
 		 */
-        public function lookAt(target:Vector3D, upAxis:Vector3D = null):void
-        {
-        	transform.matrix3D.pointAt(target, Vector3D.Z_AXIS, upAxis || new Vector3D(0,-1,0));
-        }
-		
+		public function lookAt(target:Vector3D, upAxis:Vector3D = null):void
+		{
+			transform.matrix3D.pointAt(target, Vector3D.Z_AXIS, upAxis || new Vector3D(0, -1, 0));
+		}
+
 		/**
-		 * Duplicates the 3d object's properties to another <code>Object3D</code> object
-		 * 
+		 * Duplicates the 3D object's properties to another <code>Object3D</code> object
+		 *
 		 * @param	object	[optional]	The new object instance into which all properties are copied
 		 * @return						The new object instance with duplicated properties applied
 		 */
-		 public function clone(object:Object3D = null):Object3D
-		 {
-            var object3D:Object3D = object || new Object3D();
-            
-            object3D.transform.matrix3D = transform.matrix3D.clone();
-            object3D.name = name;
-            object3D.filters = filters.concat();
-            object3D.blendMode = blendMode;
-            object3D.alpha = alpha;
-            object3D.visible = visible;
-            object3D.mouseEnabled = mouseEnabled;
-            object3D.useHandCursor = useHandCursor;
-            
-            return object3D;
-        }
+		public function clone(object:Object3D = null):Object3D
+		{
+			var object3D:Object3D = object || new Object3D();
+
+			object3D.transform.matrix3D = transform.matrix3D.clone();
+			object3D.name = name;
+			object3D.filters = filters.concat();
+			object3D.blendMode = blendMode;
+			object3D.alpha = alpha;
+			object3D.visible = visible;
+			object3D.mouseEnabled = mouseEnabled;
+			object3D.useHandCursor = useHandCursor;
+
+			return object3D;
+		}
 	}
 }
