@@ -200,6 +200,51 @@ package away3dlite.core.base
 		}
 		
 		/**
+		 * Rotates the 3D object around it's local x-axis
+		 *
+		 * @param	degrees		The degree of the rotation.
+		 */
+		public function pitch(degrees:Number):void
+		{
+			rotate(degrees, Vector3D.X_AXIS);
+		}
+
+		/**
+		 * Rotates the 3D object around it's local y-axis
+		 *
+		 * @param	degrees		The degree of the rotation.
+		 */
+		public function yaw(degrees:Number):void
+		{
+			rotate(degrees, Vector3D.Y_AXIS);
+		}
+
+		/**
+		 * Rotates the 3D object around it's local z-axis
+		 *
+		 * @param	degrees		The degree of the rotation.
+		 */
+		public function roll(degrees:Number):void
+		{
+			rotate(degrees, Vector3D.Z_AXIS);
+		}
+
+		/**
+		 * Rotates the 3d object around an axis by a defined degrees
+		 *
+		 * @param	degrees		The degree of the rotation.
+		 * @param	axis		The axis or direction of rotation. The usual axes are the X_AXIS (Vector3D(1,0,0)), Y_AXIS (Vector3D(0,1,0)), and Z_AXIS (Vector3D(0,0,1)).
+		 * @param	pivotPoint	A point that determines the center of an object's rotation. The default pivot point for an object is its registration point.
+		 */
+		public function rotate(degrees:Number, axis:Vector3D, pivotPoint:Vector3D = null):void
+		{
+			axis.normalize();
+
+			var _matrix3D:Matrix3D = transform.matrix3D;
+			_matrix3D.appendRotation(degrees, _matrix3D.deltaTransformVector(axis), pivotPoint);
+		}
+
+		/**
 		 * Rotates the 3d object around to face a point defined relative to the local coordinates of the parent <code>ObjectContainer3D</code>.
 		 * 
 		 * @param	target		The vector defining the point to be looked at

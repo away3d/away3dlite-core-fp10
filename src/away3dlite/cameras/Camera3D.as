@@ -147,6 +147,32 @@ package away3dlite.cameras
 		}
     	
     	/**
+		 * Rotates the <code>Camera3D</code> object around an axis by a defined degrees.
+		 *
+		 * @param	degrees		The degree of the rotation.
+		 * @param	axis		The axis or direction of rotation. The usual axes are the X_AXIS (Vector3D(1,0,0)), Y_AXIS (Vector3D(0,1,0)), and Z_AXIS (Vector3D(0,0,1)).
+		 * @param	pivotPoint	A point that determines the center of an object's rotation. The default pivot point for an object is its registration point.
+		 */
+		override public function rotate(degrees:Number, axis:Vector3D, pivotPoint:Vector3D = null):void
+		{
+			axis.normalize();
+
+			var _matrix3D:Matrix3D = transform.matrix3D;
+
+			// keep current position
+			var _position:Vector3D = _matrix3D.position.clone();
+
+			// need only rotation matrix
+			_matrix3D.position = new Vector3D();
+
+			// rotate
+			_matrix3D.appendRotation(degrees, _matrix3D.deltaTransformVector(axis), pivotPoint);
+
+			// restore current position
+			_matrix3D.position = _position;
+		}
+
+		/**
     	 * Returns a <code>Vector3D</code> object describing the resolved x and y position of the given 3d vertex position.
     	 * 
     	 * @param	vertex	The vertex to be resolved.
