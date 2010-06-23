@@ -76,23 +76,5 @@ package away3dlite.primitives
 				_cone.mouseEnabled = false;
 			}
 		}
-
-		override public function destroy():void
-		{
-			if (_isDestroyed)
-				return;
-
-			if (_lines)
-				for each (var _line:LineSegment in _lines)
-					removeChild(_line);
-			_lines = null;
-
-			if (_cones)
-				for each (var _cone:Cone in _cones)
-					removeChild(_cone);
-			_cones = null;
-
-			super.destroy();
-		}
 	}
 }
