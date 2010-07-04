@@ -107,7 +107,9 @@ package away3dlite.core.base
 			// speed up
 			_vertices.fixed = _uvtData.fixed = _indices.fixed = _faceLengths.fixed = _faces.fixed = _sort.fixed = true;
  			
- 			updateSortType();
+			_screenVertices.length = 0;
+			
+			updateSortType();
  			
  			_materialsDirty = true;
 		}
