@@ -224,6 +224,7 @@ package away3dlite.containers {
             var event:MouseEvent3D = getMouseEvent(type);
             var outArray:Array = [];
             var overArray:Array = [];
+            event.face = _face;
             event.ctrlKey = ctrlKey;
             event.shiftKey = shiftKey;
 			

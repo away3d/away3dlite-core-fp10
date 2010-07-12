@@ -91,7 +91,12 @@ package away3dlite.events
         * Indicates whether the Shift key is active (true) or inactive (false).
         */
         public var shiftKey:Boolean;
-		
+
+        /**
+        * Indicates the face that received the mouse event.
+        */
+        public var face:Face;
+
 		/**
 		 * Creates a new <code>MouseEvent3D</code> object.
 		 * 
@@ -111,7 +116,9 @@ package away3dlite.events
 
 			if(isDefaultPrevented())
             	result.preventDefault();
-			
+
+            result.face = face;
+
             result.screenX = screenX;
             result.screenY = screenY;
             
