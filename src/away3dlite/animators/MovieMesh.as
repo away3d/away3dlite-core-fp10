@@ -96,7 +96,7 @@ package away3dlite.animators
 		 */
 		public function addFrame(frame:Frame):void
 		{
-			var _name:String = frame.name.slice(0, frame.name.length - 3);
+			var _name:String = frame.name.replace(/[0-9]/g, "");
 			
 			if (!labels[_name])
 				labels[_name] = {begin:framesLength, end:framesLength};
